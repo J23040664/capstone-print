@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Track Order</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+  <h2>Track My Orders</h2>
+
+  <!-- Optional: Search by Order ID -->
+  <form class="my-4">
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="Enter Order ID">
+      <button class="btn btn-outline-primary" type="submit">Search</button>
+    </div>
+  </form>
+
+  <!-- Sample Orders List -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Order ID: #ORD12345</h5>
+      <p class="card-text">
+        Date: 2025-05-18<br>
+        Type: A4, Color, 100 copies<br>
+        Binding: Stapled
+      </p>
+      <div class="mb-2">
+        <span class="badge bg-warning text-dark">Status: Printing</span>
+      </div>
+      <div class="progress mb-2">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+             style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+          60% - Printing
+        </div>
+      </div>
+      <a href="view_order.php?id=ORD12345" class="btn btn-sm btn-outline-primary">View Details</a>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Order ID: #ORD12344</h5>
+      <p class="card-text">
+        Date: 2025-05-15<br>
+        Type: A3, B&W, 50 copies<br>
+        Binding: Ring-bound
+      </p>
+      <div class="mb-2">
+        <span class="badge bg-success">Status: Completed</span>
+      </div>
+      <div class="progress">
+        <div class="progress-bar bg-success" role="progressbar"
+             style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+          100% - Completed
+        </div>
+      </div>
+      <a href="view_order.php?id=ORD12344" class="btn btn-sm btn-outline-primary mt-2">View Details</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
