@@ -168,32 +168,32 @@
             <label for="email" class="form-label">Email (optional)</label>
             <input type="email" class="form-control" id="email">
           </div>
-        <div class="row">
-            <!-- Print Color Option -->
-            <div class="col-md-6 mb-3">
-                <label class="form-label">Print Color</label><br>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="color" value="BlackWhite" checked>
-                    <label class="form-check-label">Black & White</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="color" value="Color">
-                    <label class="form-check-label">Color (+RM 0.30)</label>
-                </div>
+
+          <!-- Print Color Option -->
+          <div class="mb-3">
+            <label class="form-label">Print Color</label><br>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="color" value="BlackWhite" checked>
+              <label class="form-check-label">Black & White</label>
             </div>
-            <!-- Print Side Option -->
-            <div class="col-md-6 mb-3">
-                <label class="form-label">Print Side</label><br>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="side" value="Single-sided" checked>
-                    <label class="form-check-label">Single-sided</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="side" value="Double-sided">
-                    <label class="form-check-label">Double-sided</label>
-                </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="color" value="Color">
+              <label class="form-check-label">Color (+RM 0.30)</label>
             </div>
-        </div>
+          </div>
+
+          <!-- Print Side Option -->
+          <div class="mb-3">
+            <label class="form-label">Print Side</label><br>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="side" value="Single-sided" checked>
+              <label class="form-check-label">Single-sided</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="side" value="Double-sided">
+              <label class="form-check-label">Double-sided</label>
+            </div>
+          </div>
 
           <div class="row">
             <!-- File Upload Field -->
@@ -265,6 +265,8 @@
       mainContent.classList.toggle('collapsed');
     });
   </script>
-</body>
 
+  <!-- TODO: Add pdfjsLib integration script here -->
+
+</body>
 </html>
