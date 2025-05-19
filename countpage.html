@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Count PDF Pages</title>
+    <link rel="stylesheet" href="./assets/bootstrap/bootstrap.min.css">
+    <script src="./assets/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="./assets/jquery-3.7.1.js"></script>
+</head>
+
+<body>
+    <div class="container my-5">
+        <a href="dashboard.html">dashboard</a>
+        <h2 class="mb-4 text-center">Print Order Form</h2>
+        <form id="printForm" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="ordername" class="form-label">Title:</label>
+                <input type="text" class="form-control" id="ordername" name="ordername" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="file" class="form-label">Upload File (PDF only)</label>
+                <input class="form-control" type="file" id="file" name="file" accept="application/pdf" required>
+            </div>
+    
+            <div class="mb-3">
+                <label for="copies" class="form-label">Number of Copies</label>
+                <input class="form-control" type="number" id="copies" name="copies" min="1" value="1" required>
+            </div>
+    
+            <div class="mb-3">
+                <label class="form-label">Color Option</label>
+                <select class="form-select" id="colorOption" name="colorOption" required>
+                    <option value="blackwhite">Black & White</option>
+                    <option value="color">Color</option>
+                </select>
+            </div>
+    
+            <div class="mb-3">
+                <label for="pages" class="form-label">Number of Pages</label>
+                <input class="form-control" type="number" id="pages" name="pages" readonly>
+            </div>
+
+            <div class="mb-3">
+                <label for="remarks" class="form-label">Remarks:</label>
+                <textarea class="form-control" rows="3" name="remarks" id="remarks"></textarea>
+            </div>
+    
+            <div class="mb-4">
+                <label class="form-label">Total Cost: <strong id="totalCost">RM0.00</strong></label>
+            </div>
+    
+            <!-- <button type="submit" class="btn btn-primary w-100">Next</button> -->
+             <a href="payment.html" class="btn btn-primary w-100">Next</a>
+        </form>
+    </div>
+    
+    <!-- PDF.js Module -->
+    <script type="module">
+        import * as pdfjsLib from './assets/pdfjs/pdf-5.0.375.min.js';
+        pdfjsLib.GlobalWorkerOptions.workerSrc = './assets/pdfjs/pdf-5.0.375.worker.min.js';
+
+        const fileInput = document.getElementById('file');
+        const pagesInput = document.getElementById('pages');
+        const copiesInput = document.getElementById('copies');
+        const colorSelect = document.getElementById('colorOption');
+        const totalCostText = document.getElementById('totalCost');
+        const form = document.getElementById('printForm');
+
+        fileInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file || file.type !== "application/pdf") {
+                pagesInput.value = "";
+                totalCostText.textContent = "RM0.00";
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function () {
+                const typedArray = new Uint8Array(this.result);
+                pdfjsLib.getDocument(typedArray).promise.then(pdf => {
+                    pagesInput.value = pdf.numPages;
+                    calculateCost();
+                }).catch(err => {
+                    pagesInput.value = "";
+                    alert("Can't read PDF: " + err.message);
+                });
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        function calculateCost() {
+            const pages = parseInt(pagesInput.value) || 0;
+            const copies = parseInt(copiesInput.value) || 0;
+            const color = colorSelect.value;
+
+            if (pages === 0 || copies === 0) {
+                totalCostText.textContent = "RM0.00";
+                return;
+            }
+
+            const pricePerPage = color === 'color' ? 3.00 : 1.50;
+            const total = pages * copies * pricePerPage;
+
+            totalCostText.textContent = `RM${total.toFixed(2)}`;
+        }
+
+        copiesInput.addEventListener('input', calculateCost);
+        colorSelect.addEventListener('change', calculateCost);
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            alert("Form is submitted");
+        });
+    </script>
+
+
+</body>
+
+</html>
