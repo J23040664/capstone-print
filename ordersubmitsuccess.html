@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Submitted</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .icon {
+            background: linear-gradient(135deg, #ff7a18, #ffb347);
+            border-radius: 50%;
+            display: inline-block;
+            width: 64px;
+            height: 64px;
+            line-height: 64px;
+            color: white;
+            font-size: 32px;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .icon::after {
+            content: "✔";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        h2 {
+            margin: 0 0 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        p {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            border: none;
+            transition: 0.3s ease;
+        }
+
+        .btn-outline {
+            background-color: white;
+            border: 2px solid #ff7a18;
+            color: #ff7a18;
+        }
+
+        .btn-outline:hover {
+            background-color: #fff3e0;
+        }
+
+        .btn-filled {
+            background-color: #ff7a18;
+            color: white;
+        }
+
+        .btn-filled:hover {
+            background-color: #ff8c42;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <div class="icon"></div>
+        <h2>Thank you for your order!</h2>
+        <p>Your request has been submitted. We will process it shortly.</p>
+        <div class="buttons">
+            <button class="btn btn-outline" onclick="window.location.href='view_order.php'">View Order</button>
+            <button class="btn btn-filled" onclick="window.location.href='index.php'">Continue Shopping</button>
+        </div>
+    </div>
+</body>
+
+</html>
