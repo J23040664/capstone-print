@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Responsive Sidebar Layout</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        body {
+            overflow-x: hidden;
+            background-color: #ffff;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background-color: #343a40;
+            color: white;
+            transition: all 0.3s ease;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            z-index: 1030;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .s_logo {
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .sidebar .nav-link {
+            color: #ccc;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #495057;
+            color: white;
+            text-decoration: none;
+        }
+
+        .sidebar.collapsed .nav-link span,
+        .sidebar.collapsed .s_logo span {
+            display: none;
+        }
+
+        /* top navbar */
+        .top-navbar {
+            margin-left: 240px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .top-navbar.collapsed {
+            margin-left: 80px;
+        }
+
+        /* Main content */
+        .main-content {
+            margin-left: 240px;
+            transition: margin-left 0.3s ease;
+            padding: 1rem;
+        }
+
+        .main-content.collapsed {
+            margin-left: 80px;
+        }
+
+        /* mobile adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(0);
+                left: 0;
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.collapsed {
+                transform: translateX(-100%);
+            }
+
+            .top-navbar,
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- sidebar -->
+    <div id="sidebar" class="sidebar d-flex flex-column p-3">
+        <div class="s_logo fs-5">
+            <span>System Name</span>
+        </div>
+        <hr />
+        <ul class="nav nav-pills flex-column">
+            <li class="nav-item">
+                <a href="dashboard.html" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
+            </li>
+            <li class="nav-item">
+                <a href="orderlist.html" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- top Navbar -->
+    <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3 top-navbar">
+        <div class="container-fluid">
+            <button class="btn btn-outline-secondary me-2" id="toggleSidebar">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="d-flex align-items-center ms-auto">
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle d-flex align-items-center gap-2" type="button"
+                        data-bs-toggle="dropdown">
+                        <img src="./assets/icon/userpicture.png" class="rounded-circle" width="30" height="30"
+                            alt="profile_picture" />
+                        <span>abc</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#">My Profile</a></li>
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li><a class="dropdown-item text-danger" href="login.html">Log out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="mainContent" class="main-content">
+        <div class="container-fluid">
+            <div class="mt-3 fw-bold">
+                <span>Create New Order</span>
+            </div>
+
+            <div class="container mt-4" style="background-color: gray;">
+                <br>
+                    <form id="printForm" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="ordername" class="form-label">Title:</label>
+                                <input type="text" class="form-control" id="ordername" name="ordername" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Color Option:</label>
+                                <select class="form-select" id="colorOption" name="colorOption" required>
+                                    <option value="blackwhite">Black & White</option>
+                                    <option value="color">Color</option>
+                                </select>
+                            </div>        
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="file" class="form-label">Upload File (PDF only):</label>
+                                <input class="form-control" type="file" id="file" name="file" accept="application/pdf" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="copies" class="form-label">Number of Copies:</label>
+                                <input class="form-control" type="number" id="copies" name="copies" min="1" value="1" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="typeservices" class="form-label">Type Of Services:</label>
+                                <select class="form-select" id="typeservices" name="typeservices">
+                                    <option value="None">None</option>
+                                    <option value="Lamination">Lamination</option>
+                                    <option value="Stapler">Stapler</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="pages" class="form-label">Number of Pages:</label>
+                                <input class="form-control" type="number" id="pages" name="pages" readonly>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label">Total Cost:</label>
+                                <input class="form-control" type="text" id="totalCost" name="totalCost" value="RM 0.00" readonly>
+                            </div>
+                        
+                            <div class="col-md-6 mb-3">
+                                <label for="remarks" class="form-label">Remarks:</label>
+                                <textarea class="form-control" rows="3" name="remarks" id="remarks"></textarea>
+                            </div>
+                        </div>
+                        <br><br>
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="orderlist.html" class="btn btn-light">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                <br>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const toggleBtn = document.getElementById('toggleSidebar');
+        const sidebar = document.getElementById('sidebar');
+        const topNavbar = document.getElementById('topNavbar');
+        const mainContent = document.getElementById('mainContent');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            topNavbar.classList.toggle('collapsed');
+            mainContent.classList.toggle('collapsed');
+        });
+    </script>
+
+<script type="module">
+    import * as pdfjsLib from './assets/pdfjs/pdf-5.0.375.min.js';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = './assets/pdfjs/pdf-5.0.375.worker.min.js';
+
+    const fileInput = document.getElementById('file');
+    const pagesInput = document.getElementById('pages');
+    const copiesInput = document.getElementById('copies');
+    const colorSelect = document.getElementById('colorOption');
+    const totalCostText = document.getElementById('totalCost');
+    const form = document.getElementById('printForm');
+
+    fileInput.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+
+        const reader = new FileReader();
+        reader.onload = function () {
+            const typedArray = new Uint8Array(this.result);
+            pdfjsLib.getDocument(typedArray).promise.then(pdf => {
+                pagesInput.value = pdf.numPages;
+                calculateCost();
+            }).catch(err => {
+                pagesInput.value = "";
+                alert("Can't read PDF: " + err.message);
+            });
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    function calculateCost() {
+        const pages = parseInt(pagesInput.value) || 0;
+        const copies = parseInt(copiesInput.value) || 0;
+        const color = colorSelect.value;
+
+        if (pages === 0 || copies === 0) {
+            totalCostText.value = "RM 0.00";
+            return;
+        }
+
+        const pricePerPage = color === 'color' ? 3.00 : 1.50;
+        const total = pages * copies * pricePerPage;
+
+        totalCostText.value = `RM${total.toFixed(2)}`;
+    }
+
+    copiesInput.addEventListener('input', calculateCost);
+    colorSelect.addEventListener('change', calculateCost);
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        alert("Form is submitted");
+    });
+</script>
+</body>
+
+</html>

@@ -83,15 +83,16 @@
             margin-left: 80px;
         }
 
+        /* mobile adjustments */
         @media (max-width: 768px) {
             .sidebar {
-                position: absolute;
-                left: -240px;
-                transition: left 0.3s ease;
+                transform: translateX(0);
+                left: 0;
+                transition: transform 0.3s ease;
             }
 
-            .sidebar.show {
-                left: 0;
+            .sidebar.collapsed {
+                transform: translateX(-100%);
             }
 
             .top-navbar,
@@ -136,8 +137,8 @@
                         <span>abc</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="profile.html">My Profile</a></li>
-                        <li><a class="dropdown-item" href="settings.html">Settings</a></li>
+                        <li><a class="dropdown-item" href="#">My Profile</a></li>
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
                         <li>
                             <hr class="dropdown-divider" />
                         </li>
@@ -152,38 +153,92 @@
     <main id="mainContent" class="main-content">
         <div class="container-fluid">
             <div class="mt-3 fw-bold">
-                <span>Dashboard</span>
+                <span>Edit Order #123</span>
             </div>
 
-            <div class="row">
-                <div class="col-md-4 mt-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title fs-6">Daily Order</h5>
-                            <p class="card-text fs-3">1000</p>
-                        </div>
+            <div class="container mt-4" style="background-color: gray;">
+                <br>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="ordername" class="form-label">Title:</label>
+                        <input type="text" class="form-control" id="ordername" name="ordername">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Color Option:</label>
+                        <select class="form-select" id="colorOption" name="colorOption">
+                            <option value="blackwhite">Black & White</option>
+                            <option value="color">Color</option>
+                        </select>
                     </div>
                 </div>
 
-                <div class="col-md-4 mt-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title fs-6">Daily Cost</h5>
-                            <p class="card-text fs-3">1000</p>
-                        </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="file" class="form-label">Upload File (PDF only):</label>
+                        <input class="form-control" type="file" id="file" name="file" accept="application/pdf" required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="copies" class="form-label">Number of Copies:</label>
+                        <input class="form-control" type="number" id="copies" name="copies" value="1">
                     </div>
                 </div>
 
-                <div class="col-md-4 mt-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title fs-6">Pending Order</h5>
-                            <p class="card-text fs-3">1000</p>
-                        </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="typeservices" class="form-label">Type Of Services:</label>
+                        <select class="form-select" id="typeservices" name="typeservices">
+                            <option value="None">None</option>
+                            <option value="Lamination">Lamination</option>
+                            <option value="Stapler">Stapler</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="pages" class="form-label">Number of Pages:</label>
+                        <input class="form-control" type="number" id="pages" name="pages">
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">Total Cost:</label>
+                        <input class="form-control" type="text" id="totalCost" name="totalCost" value="RM 0.00">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="remarks" class="form-label">Remarks:</label>
+                        <textarea class="form-control" rows="3" name="remarks" id="remarks"></textarea>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div>
+                    <div class="col-md-6 mb-3">
+                        <label for="orderstatus" class="form-label">Order Status:</label>
+                        <select class="form-select" id="orderstatus" name="orderstatus">
+                            <option value="Pending">Pending</option>
+                            <option value="Process">Process</option>
+                            <option value="Ready to Collect">Ready to Collect</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <br><br>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="orderlist.html" class="btn btn-light">Back</a>
+                    <button type="submit" class="btn btn-primary">Save & Changes</button>
+                </div>
+
+                <br>
             </div>
+        </div>
     </main>
+
     <script>
         const toggleBtn = document.getElementById('toggleSidebar');
         const sidebar = document.getElementById('sidebar');

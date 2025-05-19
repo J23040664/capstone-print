@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Responsive Sidebar Layout</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        body {
+            overflow-x: hidden;
+            background-color: #ffff;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background-color: #343a40;
+            color: white;
+            transition: all 0.3s ease;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            z-index: 1030;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .s_logo {
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .sidebar .nav-link {
+            color: #ccc;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #495057;
+            color: white;
+            text-decoration: none;
+        }
+
+        .sidebar.collapsed .nav-link span,
+        .sidebar.collapsed .s_logo span {
+            display: none;
+        }
+
+        /* top navbar */
+        .top-navbar {
+            margin-left: 240px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .top-navbar.collapsed {
+            margin-left: 80px;
+        }
+
+        /* Main content */
+        .main-content {
+            margin-left: 240px;
+            transition: margin-left 0.3s ease;
+            padding: 1rem;
+        }
+
+        .main-content.collapsed {
+            margin-left: 80px;
+        }
+
+        /* mobile adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(0);
+                left: 0;
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.collapsed {
+                transform: translateX(-100%);
+            }
+
+            .top-navbar,
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- sidebar -->
+    <div id="sidebar" class="sidebar d-flex flex-column p-3">
+        <div class="s_logo fs-5">
+            <span>System Name</span>
+        </div>
+        <hr />
+        <ul class="nav nav-pills flex-column">
+            <li class="nav-item">
+                <a href="dashboard.html" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
+            </li>
+            <li class="nav-item">
+                <a href="orderlist.html" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- top Navbar -->
+    <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3 top-navbar">
+        <div class="container-fluid">
+            <button class="btn btn-outline-secondary me-2" id="toggleSidebar">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="d-flex align-items-center ms-auto">
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle d-flex align-items-center gap-2" type="button"
+                        data-bs-toggle="dropdown">
+                        <img src="./assets/icon/userpicture.png" class="rounded-circle" width="30" height="30" alt="profile_picture">
+                        <span>abc</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#">My Profile</a></li>
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li><a class="dropdown-item text-danger" href="login.html">Log out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="mainContent" class="main-content">
+        <div class="container-fluid">
+            <div class="mt-3 fw-bold">
+                <span>My Profile</span>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="mb-3 mt-3" id="myTab" role="tablist">
+                <button class="btn btn-outline-primary me-2 btn-sm active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profileTab"
+                    type="button" role="tab" aria-controls="profileTab" aria-selected="true">
+                    <i class="bi bi-person me-2"></i>
+                    <span>Personal Info</span>
+                </button>
+
+                <button class="btn btn-outline-primary btn-sm" id="security-tab" data-bs-toggle="tab" data-bs-target="#securityTab"
+                    type="button" role="tab" aria-controls="securityTab" aria-selected="false">
+                    <i class="bi bi-lock me-2"></i>
+                    <span>Security & Password</span>
+                </button>
+            </div>
+
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="profileTab" role="tabpanel" aria-labelledby="profile-tab">
+                    
+                    <div class="container mt-4 d-flex flex-column" style="background-color: gray; min-height: 500px;">
+                        <br>
+                        <div>
+                            <img src="./assets/icon/userpicture.png" class="rounded-circle mb-1" width="120" height="120"
+                                alt="profile_picture">
+                            <br>
+                            <button type="button" class="btn btn-primary btn-sm px-1 py-1" data-bs-toggle="modal"
+                                data-bs-target="#editProfileModal">Edit Profile Picture</button>
+                    
+                            <!-- Modal -->
+                            <div class="modal fade" id="editProfileModal">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                    
+                                        <!-- Modal Header -->
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editProfileModalLabel">Edit Profile Picture</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                    
+                                        <!-- Modal Body -->
+                                        <div class="modal-body">
+                    
+                                            <form action="">
+                                                <div class="mb-3">
+                                                    <label for="newprofilepic" class="form-label">Choose a new profile picture:</label>
+                                                    <input class="form-control" type="file" id="newprofilepic">
+                                                </div>
+                                            </form>
+                    
+                                        </div>
+                    
+                                        <!-- Modal Footer -->
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary">Save</button>
+                                        </div>
+                    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <div>
+                            <div class="col-md-6 mb-3 mt-3">
+                                <label for="newname" class="form-label">Full Name:</label>
+                                <input type="text" class="form-control" id="newname" name="newname">
+                            </div>
+                        </div>
+                    
+                        <br><br>
+                    
+                        <div class="d-flex justify-content-end gap-2 mt-auto">
+                            <a href="dashboard.html" class="btn btn-light">Back</a>
+                            <button type="submit" class="btn btn-primary">Save & Changes</button>
+                        </div>
+                    
+                        <br>
+                    </div>
+
+                </div>
+
+                <div class="tab-pane fade" id="securityTab" role="tabpanel" aria-labelledby="security-tab">
+
+                    <div class="container mt-4 d-flex flex-column" style="background-color: gray; min-height: 500px;">
+                        <br>
+                        <div>
+                            <div class="col-md-6 mb-3 mt-3">
+                                <label for="newpassword" class="form-label">Password:</label>
+                                <input type="text" class="form-control" id="newpassword" name="newpassword">
+                            </div>
+
+                            <div class="col-md-6 mb-3 mt-3">
+                                <label for="newconfirmpassword" class="form-label">Confirm Password:</label>
+                                <input type="text" class="form-control" id="newconfirmpassword" name="newconfirmpassword">
+                            </div>
+                        </div>
+                        
+                        <br><br>
+                        
+                        <div class="d-flex justify-content-end gap-2 mt-auto">
+                            <a href="dashboard.html" class="btn btn-light">Back</a>
+                            <button type="submit" class="btn btn-primary">Save & Changes</button>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <script>
+        const toggleBtn = document.getElementById('toggleSidebar');
+        const sidebar = document.getElementById('sidebar');
+        const topNavbar = document.getElementById('topNavbar');
+        const mainContent = document.getElementById('mainContent');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            topNavbar.classList.toggle('collapsed');
+            mainContent.classList.toggle('collapsed');
+        });
+    </script>
+</body>
+
+</html>
