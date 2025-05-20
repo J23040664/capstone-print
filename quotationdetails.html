@@ -1,12 +1,10 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Ask Quotation</title>
+    <title>Quotation Details</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -103,8 +101,9 @@
         }
     </style>
 </head>
+
 <body class="bg-light">
- <!-- sidebar -->
+    <!-- sidebar -->
     <div id="sidebar" class="sidebar d-flex flex-column p-3">
         <div class="s_logo fs-5">
             <span>System Name</span>
@@ -118,7 +117,8 @@
                 <a href="orderlist.html" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
             </li>
             <li class="nav-item">
-                <a href="ask_quotation.html" class="nav-link"><i class="bi bi-question-circle"></i><span>Ask Quotation</span></a>
+                <a href="ask_quotation.html" class="nav-link"><i class="bi bi-question-circle"></i><span>Ask
+                        Quotation</span></a>
             </li>
         </ul>
     </div>
@@ -150,83 +150,85 @@
             </div>
         </div>
     </nav>
-        <!-- Main Content -->
+    <!-- Main Content -->
     <main id="mainContent" class="main-content">
-<div class="container mt-5 mb-5">
-  <h2 class="mb-4">Ask for Quotation</h2>
-  <form action="submit_quotation.php" method="POST" enctype="multipart/form-data" class="bg-white p-4 rounded shadow-sm">
+        <div class="container mt-5 mb-5">
+            <h2 class="mb-4">Quotation Details</h2>
+            <form action="submit_quotation.php" method="POST" enctype="multipart/form-data"
+                class="bg-white p-4 rounded shadow-sm">
 
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label class="form-label">Full Name</label>
-        <input type="text" name="name" class="form-control" required>
-      </div>
-      <div class="col-md-6">
-        <label class="form-label">Email Address</label>
-        <input type="email" name="email" class="form-control" required>
-      </div>
-    </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="name" class="form-control" disabled>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" name="email" class="form-control" disabled>
+                    </div>
+                </div>
 
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label class="form-label">Phone Number</label>
-        <input type="text" name="phone" class="form-control" required>
-      </div>
-      <div class="col-md-6">
-        <label class="form-label">Type of Request</label>
-        <select name="request_type" class="form-select" required>
-          <option value="">-- Select --</option>
-          <option>Poster</option>
-          <option>Booklet</option>
-          <option>Business Card</option>
-          <option>Others</option>
-        </select>
-      </div>
-    </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Phone Number</label>
+                        <input type="text" name="phone" class="form-control" disabled>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Type of Request</label>
+                        <select name="request_type" class="form-select" disabled>
+                            <option value="">-- Select --</option>
+                            <option>Poster</option>
+                            <option>Booklet</option>
+                            <option>Business Card</option>
+                            <option>Others</option>
+                        </select>
+                    </div>
+                </div>
 
-    <div class="row mb-3">
-      <div class="col-md-4">
-        <label class="form-label">Quantity</label>
-        <input type="number" name="quantity" class="form-control" required>
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Paper Size</label>
-        <select name="paper_size" class="form-select" required>
-          <option value="">-- Select --</option>
-          <option>A4</option>
-          <option>A3</option>
-          <option>Custom</option>
-        </select>
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Paper Type</label>
-        <select name="paper_type" class="form-select" required>
-          <option value="">-- Select --</option>
-          <option>Glossy</option>
-          <option>Matte</option>
-          <option>Art Paper</option>
-        </select>
-      </div>
-    </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" name="quantity" class="form-control" disabled>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Paper Size</label>
+                        <select name="paper_size" class="form-select" disabled>
+                            <option value="">-- Select --</option>
+                            <option>A4</option>
+                            <option>A3</option>
+                            <option>Custom</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Paper Type</label>
+                        <select name="paper_type" class="form-select" disabled>
+                            <option value="">-- Select --</option>
+                            <option>Glossy</option>
+                            <option>Matte</option>
+                            <option>Art Paper</option>
+                        </select>
+                    </div>
+                </div>
 
-    <div class="mb-3">
-      <label class="form-label">Finishing (optional)</label>
-      <input type="text" name="finishing" class="form-control" placeholder="e.g. Lamination, Binding">
-    </div>
+                <div class="mb-3">
+                    <label class="form-label">Finishing (optional)</label>
+                    <input type="text" name="finishing" class="form-control" placeholder="e.g. Lamination, Binding" disabled>
+                </div>
 
-    <div class="mb-3">
-      <label class="form-label">Upload Reference File (optional)</label>
-      <input type="file" name="reference_file" class="form-control">
-    </div>
+                <div class="mb-3">
+                    <label class="form-label">Upload Reference File (optional)</label>
+                    <input type="file" name="reference_file" class="form-control" disabled>
+                </div>
 
-    <div class="mb-4">
-      <label class="form-label">Additional Notes</label>
-      <textarea name="notes" class="form-control" rows="4" placeholder="Any specific requirements..."></textarea>
-    </div>
+                <div class="mb-4">
+                    <label class="form-label">Additional Notes</label>
+                    <textarea name="notes" class="form-control" rows="4"
+                        placeholder="Any specific requirements..." disabled></textarea>
+                </div>
 
-    <button type="submit" class="btn btn-primary w-100">Send Quotation Request</button>
-  </form>
-</div>
+                <a href="quotationlist.html" class="btn btn-primary w-100">Back</a>
+            </form>
+        </div>
     </main>
     <script>
         const toggleBtn = document.getElementById('toggleSidebar');
@@ -241,4 +243,5 @@
         });
     </script>
 </body>
+
 </html>
