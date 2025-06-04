@@ -12,8 +12,12 @@ for shape in shape_lists:
 # Main function is controls the overall game loop, including difficulty selection and replay
 def main():
     # print the title
-    print("Welcome to Master Mind – The Shape Guessing Challenge!")
-
+    print("*"*55)
+    print("        Welcome to Master Mind – Shape Edition!")
+    print("*"*55)
+    see_rules = input("Do you want to see how to play? (yes/no): ").strip().lower()
+    if see_rules == 'yes':
+        show_instructions()
     # print the shape and input example to let user know how to play
     print(f"\nShape List: {shape_lists}\nInput example: (circle square triangle oval) or (c s t o)\n")
 
@@ -34,7 +38,7 @@ def main():
         while True:
 
             # Print current attempts to 1
-            print(f"\nAttempt {cur_attempt + 1}")
+            print(f"\nAttempt [{cur_attempt + 1}]")
 
             # The function to get user input for guess the shape
             user_guess = get_user_guess()
@@ -73,6 +77,25 @@ def main():
         if replay != 'yes':
             print("Thanks for playing Master Mind! Goodbye!")
             break
+
+# This function is to show steps and rules for this game for first time player.
+def show_instructions():
+    print("\n" + "="*60)
+    print("                HOW TO PLAY - MASTER MIND")
+    print("="*60)
+    print("1. A secret code of 4 shapes will be randomly generated.")
+    print("2. You must guess the correct shapes in the correct order.")
+    print("3. Valid shapes: circle, square, triangle, star, heart,")
+    print("                 rectangle, pentagon")
+    print("4. You can enter shapes using their full names or first letters.")
+    print("   For example: c s t h (means circle square triangle heart)")
+    print("5. After each guess, you’ll receive feedback:")
+    print("   ✔ Correct shape in correct place")
+    print("   ➜ Correct shape but in the wrong place")
+    print("6. EASY mode: Unlimited guesses.")
+    print("   HARD mode: Only 10 guesses allowed.")
+    print("7. Try to crack the code before you run out of guesses!")
+    print("="*60 + "\n")
 
 # The function is generates and returns a list of 4 randomly selected shapes
 def generate_secret_code():
@@ -175,15 +198,15 @@ def evaluate_guess(user_guess, secret_shape):
 # The function is display the summary of game outcome
 # get all the data needs
 def print_game_summary(secret_shape, correct_guess, mode, attempts, game_status):
-    print("\n" + "-" * 55)
-    print("                 Game Result Summary")
-    print("-" * 55)
-    print(f"Secret Code     : {' '.join(secret_shape)}")
-    print(f"Final Guess     : {' '.join(correct_guess)}")
-    print(f"Mode            : {mode}")
-    print(f"Total Attempts  : {attempts}")
-    print(f"Game Status     : {'WON' if game_status else 'LOST'}") # If game_status true show won else show lost
-    print("-" * 55)
+    print("\n" + "*" * 50)
+    print(" GAME RESULT ".center(50))
+    print("*" * 50)
+    print(f"{'Secret Code:':<18} {' | '.join(secret_shape)}")
+    print(f"{'Final Guess:':<18} {' | '.join(correct_guess)}")
+    print(f"{'Mode:':<18} {mode}")
+    print(f"{'Total Attempts:':<18} {attempts}")
+    print(f"{'Status:':<18} {'YOU WON!' if game_status else 'YOU LOST!'}")
+    print("*" * 50 + "\n")
 
 # Run the main function
 main()
