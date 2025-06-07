@@ -4,6 +4,6 @@ session_unset();
 session_destroy();
 
 echo "You have successfully logged out!<br>";
-echo "<a href='login.php'>Click here to login again</a>";
+header("refresh:2; url=login.php");
 
 ?>
