@@ -1,0 +1,8 @@
+.login-box {
+    background-color: #d9d9d9;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
