@@ -82,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
                         <i class="bi bi-eye-slash"></i>
                     </button>
                 </div>
-                <a href="forgot_pass.html" class="d-inline-block mt-2">Forgot your password?</a>
+                <a href="reset_pass1.php" class="d-inline-block mt-2">Forgot your password?</a>
             </div>
 
             <div class="d-grid mb-3">
