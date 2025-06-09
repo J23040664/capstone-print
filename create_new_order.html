@@ -166,15 +166,6 @@
         <input type="number" class="form-control" id="quantity" min="1" required>
       </div>
 
-      <!-- Paper Type -->
-      <div class="mb-3">
-        <label for="paperType" class="form-label">Paper Type</label>
-        <select class="form-select" id="paperType">
-          <option value="Plain">Plain</option>
-          <option value="Glossy">Glossy (+RM 0.10)</option>
-          <option value="Card">Card (+RM 0.15)</option>
-        </select>
-      </div>
 
       <!-- Paper Size -->
       <div class="mb-3">
@@ -194,7 +185,7 @@
         </div>
         <div class="form-check form-check-inline">
           <input class="form-check-input" type="radio" name="color" value="Color">
-          <label class="form-check-label">Color (+RM 0.30)</label>
+          <label class="form-check-label">Color</label>
         </div>
       </div>
 
@@ -244,9 +235,6 @@
 
       let basePrice = 0.10; // RM0.10 per page
 
-      // Paper type cost
-      if (paperType === "Glossy") basePrice += 0.10;
-      else if (paperType === "Card") basePrice += 0.15;
 
       // Color cost
       if (color === "Color") basePrice += 0.30;
