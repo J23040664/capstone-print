@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 07, 2025 at 09:32 AM
+-- Generation Time: Jun 09, 2025 at 04:32 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -53,7 +53,7 @@ INSERT INTO `file` (`file_id`, `order_id`, `item_id`, `file_name`, `file_path`, 
 
 CREATE TABLE `finishing_list` (
   `finishing_id` varchar(4) NOT NULL,
-  `finishing_type` varchar(50) DEFAULT NULL,
+  `finishing_desc` varchar(50) DEFAULT NULL,
   `finishing_price` decimal(6,2) DEFAULT NULL,
   `finishing_status` varchar(15) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -62,7 +62,7 @@ CREATE TABLE `finishing_list` (
 -- Dumping data for table `finishing_list`
 --
 
-INSERT INTO `finishing_list` (`finishing_id`, `finishing_type`, `finishing_price`, `finishing_status`) VALUES
+INSERT INTO `finishing_list` (`finishing_id`, `finishing_desc`, `finishing_price`, `finishing_status`) VALUES
 ('F001', 'Lamination-A3', 2.50, 'Available'),
 ('F002', 'Lamination-A4', 5.00, 'Not Available'),
 ('F003', 'Stapler-Top Left', 0.20, 'Available'),
@@ -85,24 +85,30 @@ CREATE TABLE `order` (
   `finishing_quantity` int(1) DEFAULT NULL,
   `finishing_total_price` decimal(6,2) DEFAULT NULL,
   `total_price` decimal(6,2) DEFAULT NULL,
-  `order_date` date DEFAULT NULL,
   `order_status` varchar(9) DEFAULT NULL,
   `customer_id` int(8) DEFAULT NULL,
   `customer_name` varchar(100) DEFAULT NULL,
   `staff_id` int(8) DEFAULT NULL,
   `staff_name` varchar(100) DEFAULT NULL,
   `payment_id` varchar(8) DEFAULT NULL,
-  `payment_status` varchar(50) DEFAULT NULL
+  `payment_status` varchar(50) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `order`
 --
 
-INSERT INTO `order` (`order_id`, `item_id`, `service_total_price`, `finishing_quantity`, `finishing_total_price`, `total_price`, `order_date`, `order_status`, `customer_id`, `customer_name`, `staff_id`, `staff_name`, `payment_id`, `payment_status`) VALUES
-('O0000001', 'I0000001', 10.00, 2, 4.50, 14.50, '2025-01-06', 'Completed', 10000003, 'Mickie Joe', 10000001, 'Michael Bay', 'P0000001', 'Completed'),
-('O0000002', 'I0000002', 80.00, 0, NULL, 80.00, '2025-02-06', 'Completed', 10000004, 'Johny Deep', 10000002, 'Jackson Mirana', 'P0000002', 'Completed'),
-('O0000003', 'I0000003', 10.00, 0, NULL, 10.00, '2025-03-06', 'Pending', 10000005, 'Brunice Kee', 10000002, 'Jackson Mirana', 'P0000003', 'Completed');
+INSERT INTO `order` (`order_id`, `item_id`, `service_total_price`, `finishing_quantity`, `finishing_total_price`, `total_price`, `order_status`, `customer_id`, `customer_name`, `staff_id`, `staff_name`, `payment_id`, `payment_status`, `created_at`) VALUES
+('O0000001', 'I0000001', 10.00, 2, 4.50, 14.50, 'Completed', 10000003, 'Mickie Joe', 10000001, 'Michael Bay', 'P0000001', 'Completed', '0000-00-00 00:00:00'),
+('O0000002', 'I0000002', 80.00, 0, NULL, 80.00, 'Completed', 10000004, 'Johny Deep', 10000002, 'Jackson Mirana', 'P0000002', 'Completed', '0000-00-00 00:00:00'),
+('O0000003', 'I0000003', 10.00, 0, NULL, 10.00, 'Pending', 10000005, 'Brunice Kee', 10000002, 'Jackson Mirana', 'P0000003', 'Completed', '0000-00-00 00:00:00'),
+('O0000004', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-06-09 00:00:00'),
+('O0000005', 'I0000005', 20.00, 2, 4.50, 24.50, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-06-09 00:00:00'),
+('O0000006', 'I0000006', 20.00, 2, 4.50, 24.50, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-06-09 00:00:00'),
+('O0000007', 'I0000007', 20.00, 2, 4.50, 24.50, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-06-09 00:00:00'),
+('O0000008', 'I0000008', 20.00, 2, 4.50, 24.50, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-06-09 00:00:00'),
+('O0000009', 'I0000009', 20.00, 2, 4.50, 24.50, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-06-09 22:15:00');
 
 -- --------------------------------------------------------
 
@@ -114,33 +120,41 @@ CREATE TABLE `order_detail` (
   `item_id` varchar(8) NOT NULL,
   `order_id` varchar(8) DEFAULT NULL,
   `service_id` varchar(4) DEFAULT NULL,
-  `service_type` varchar(50) DEFAULT NULL,
+  `service_desc` varchar(50) DEFAULT NULL,
   `service_price` decimal(6,2) DEFAULT NULL,
-  `quantity` int(4) DEFAULT NULL,
+  `copies` int(4) DEFAULT NULL,
+  `pages` int(4) NOT NULL,
   `size` varchar(4) DEFAULT NULL,
-  `colour` varchar(4) DEFAULT NULL,
+  `colour` varchar(50) DEFAULT NULL,
   `service_total_price` decimal(6,2) DEFAULT NULL,
   `finishing_1` varchar(4) DEFAULT NULL,
-  `finishing_type1` varchar(50) DEFAULT NULL,
+  `finishing_desc1` varchar(50) DEFAULT NULL,
   `finishing_price1` decimal(6,2) DEFAULT 0.00,
   `finishing_2` varchar(4) DEFAULT NULL,
-  `finishing_type2` varchar(50) DEFAULT NULL,
+  `finishing_desc2` varchar(50) DEFAULT NULL,
   `finishing_price2` decimal(6,2) DEFAULT 0.00,
   `finishing_3` varchar(4) DEFAULT NULL,
-  `finishing_type3` varchar(50) DEFAULT NULL,
+  `finishing_desc3` varchar(50) DEFAULT NULL,
   `finishing_price3` decimal(6,2) DEFAULT 0.00,
   `item_price` decimal(6,2) DEFAULT NULL,
-  `created_at` date DEFAULT NULL
+  `remarks` varchar(200) NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `order_detail`
 --
 
-INSERT INTO `order_detail` (`item_id`, `order_id`, `service_id`, `service_type`, `service_price`, `quantity`, `size`, `colour`, `service_total_price`, `finishing_1`, `finishing_type1`, `finishing_price1`, `finishing_2`, `finishing_type2`, `finishing_price2`, `finishing_3`, `finishing_type3`, `finishing_price3`, `item_price`, `created_at`) VALUES
-('I0000001', 'O0000001', 'S001', 'Print-1side', 0.20, 50, 'A4', 'BW', 10.00, 'F006', 'Comb Binding', 3.00, 'F008', 'Hard Cover-Front&Back', 1.50, NULL, '', NULL, 14.50, '2025-01-06'),
-('I0000002', 'O0000002', 'S003', 'Photocopy-1side', 0.20, 100, 'A3', 'CL', 80.00, NULL, '', NULL, NULL, '', NULL, NULL, '', NULL, 80.00, '2025-02-06'),
-('I0000003', 'O0000003', 'S009', 'Lamination(Photocopy)', 2.50, 2, 'A4', 'CL', 10.00, NULL, '', NULL, NULL, '', NULL, NULL, '', NULL, 10.00, '2025-03-06');
+INSERT INTO `order_detail` (`item_id`, `order_id`, `service_id`, `service_desc`, `service_price`, `copies`, `pages`, `size`, `colour`, `service_total_price`, `finishing_1`, `finishing_desc1`, `finishing_price1`, `finishing_2`, `finishing_desc2`, `finishing_price2`, `finishing_3`, `finishing_desc3`, `finishing_price3`, `item_price`, `remarks`, `created_at`) VALUES
+('I0000001', 'O0000001', 'S001', 'Print-1side', 0.20, 1, 50, 'A4', 'BW', 10.00, 'F006', 'Comb Binding', 3.00, 'F008', 'Hard Cover-Front&Back', 1.50, NULL, '', NULL, 14.50, '', '2025-01-06 00:00:00'),
+('I0000002', 'O0000002', 'S003', 'Photocopy-1side', 0.20, 100, 1, 'A3', 'CL', 80.00, NULL, '', NULL, NULL, '', NULL, NULL, '', NULL, 80.00, '', '2025-02-06 00:00:00'),
+('I0000003', 'O0000003', 'S009', 'Lamination(Photocopy)', 2.50, 1, 2, 'A4', 'CL', 10.00, NULL, '', NULL, NULL, '', NULL, NULL, '', NULL, 10.00, '', '2025-03-06 00:00:00'),
+('I0000004', 'O0000004', 'S001', 'Print-1side', 0.20, 1, 50, 'A4', 'Colour', 20.00, 'F006', 'Comb Binding', 3.00, 'F008', 'Hard Cover-Front&Back', 1.50, NULL, '', 0.00, 24.50, '', '2025-06-09 00:00:00'),
+('I0000005', 'O0000005', 'S001', 'Print-1side', 0.20, 1, 50, 'A4', 'Colour', 20.00, 'F006', 'Comb Binding', 3.00, 'F008', 'Hard Cover-Front&Back', 1.50, NULL, '', 0.00, 24.50, '', '2025-06-09 00:00:00'),
+('I0000006', 'O0000006', 'S001', 'Print-1side', 0.20, 1, 50, 'A4', 'Colour', 20.00, 'F006', 'Comb Binding', 3.00, 'F008', 'Hard Cover-Front&Back', 1.50, NULL, '', 0.00, 24.50, '', '2025-06-09 00:00:00'),
+('I0000007', 'O0000007', 'S001', 'Print-1side', 0.20, 1, 50, 'A4', 'Colour', 20.00, 'F006', 'Comb Binding', 3.00, 'F008', 'Hard Cover-Front&Back', 1.50, NULL, '', 0.00, 24.50, '', '2025-06-09 00:00:00'),
+('I0000008', 'O0000008', 'S001', 'Print-1side', 0.20, 1, 50, 'A4', 'Colour', 20.00, 'F006', 'Comb Binding', 3.00, 'F008', 'Hard Cover-Front&Back', 1.50, NULL, '', 0.00, 24.50, '', '2025-06-09 00:00:00'),
+('I0000009', 'O0000009', 'S001', 'Print-1side', 0.20, 1, 50, 'A4', 'Colour', 20.00, 'F006', 'Comb Binding', 3.00, 'F008', 'Hard Cover-Front&Back', 1.50, NULL, '', 0.00, 24.50, '', '2025-06-09 22:15:00');
 
 -- --------------------------------------------------------
 
@@ -174,7 +188,8 @@ INSERT INTO `payment` (`payment_id`, `order_id`, `total_price`, `payment_type`, 
 
 CREATE TABLE `service_list` (
   `service_id` varchar(4) NOT NULL,
-  `service_type` varchar(50) DEFAULT NULL,
+  `service_type` varchar(50) NOT NULL,
+  `service_desc` varchar(50) DEFAULT NULL,
   `service_price` decimal(6,2) DEFAULT NULL,
   `service_status` varchar(15) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -183,17 +198,17 @@ CREATE TABLE `service_list` (
 -- Dumping data for table `service_list`
 --
 
-INSERT INTO `service_list` (`service_id`, `service_type`, `service_price`, `service_status`) VALUES
-('S001', 'Print-1side', 0.20, 'Available'),
-('S002', 'Print-2side', 0.20, 'Not Available'),
-('S003', 'Photocopy-1side', 0.20, 'Available'),
-('S004', 'Photocopy-2side', 0.20, 'Not Available'),
-('S005', 'Colour', 2.00, 'Available'),
-('S006', 'Black and White', 1.00, 'Available'),
-('S007', 'A3', 2.00, 'Available'),
-('S008', 'A4', 1.00, 'Available'),
-('S009', 'Lamination(Photocopy)', 2.50, 'Available'),
-('S010', 'Lamination(Print)', 2.50, 'Available');
+INSERT INTO `service_list` (`service_id`, `service_type`, `service_desc`, `service_price`, `service_status`) VALUES
+('S001', 'print', 'Print-1side', 0.20, 'Available'),
+('S002', 'print', 'Print-2side', 0.20, 'Not Available'),
+('S003', 'print', 'Photocopy-1side', 0.20, 'Available'),
+('S004', 'print', 'Photocopy-2side', 0.20, 'Not Available'),
+('S005', 'colour', 'Colour', 2.00, 'Available'),
+('S006', 'colour', 'Black and White', 1.00, 'Available'),
+('S007', 'size', 'A3', 2.00, 'Available'),
+('S008', 'size', 'A4', 1.00, 'Available'),
+('S009', 'print', 'Lamination(Photocopy)', 2.50, 'Available'),
+('S010', 'print', 'Lamination(Print)', 2.50, 'Available');
 
 -- --------------------------------------------------------
 
@@ -241,7 +256,6 @@ ALTER TABLE `finishing_list`
 --
 ALTER TABLE `order`
   ADD PRIMARY KEY (`order_id`),
-  ADD KEY `order_order_detail_FK` (`item_id`),
   ADD KEY `order_user_FK` (`customer_id`),
   ADD KEY `order_user_FK_1` (`staff_id`),
   ADD KEY `order_payment_FK` (`payment_id`);
@@ -300,7 +314,6 @@ ALTER TABLE `file`
 -- Constraints for table `order`
 --
 ALTER TABLE `order`
-  ADD CONSTRAINT `order_order_detail_FK` FOREIGN KEY (`item_id`) REFERENCES `order_detail` (`item_id`),
   ADD CONSTRAINT `order_payment_FK` FOREIGN KEY (`payment_id`) REFERENCES `payment` (`payment_id`);
 
 --
