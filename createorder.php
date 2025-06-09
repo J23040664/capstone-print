@@ -1,6 +1,9 @@
 <?php
 // Include your database connection
 include 'dbms.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 // Preload service prices (print + size + color)
 $service_prices = [];
@@ -17,6 +20,144 @@ $result_finishing = mysqli_query($conn, $sql_finishing);
 while ($row = mysqli_fetch_assoc($result_finishing)) {
     $finishing_prices[$row['finishing_id']] = $row['finishing_price'];
 }
+
+function getNextItemId($conn) {
+    $result = mysqli_query($conn, "SELECT MAX(item_id) AS max_id FROM order_detail");
+    $row = mysqli_fetch_assoc($result);
+    $max_id = $row['max_id'];
+    if ($max_id) {
+        $num = (int)substr($max_id, 1) + 1;
+    } else {
+        $num = 1;
+    }
+    return 'I' . str_pad($num, 7, '0', STR_PAD_LEFT);
+}
+
+// Generate next order_id
+function getNextOrderId($conn) {
+    $result = mysqli_query($conn, "SELECT MAX(order_id) AS max_id FROM order_detail");
+    $row = mysqli_fetch_assoc($result);
+    $max_id = $row['max_id'];
+    if ($max_id) {
+        $num = (int)substr($max_id, 1) + 1;
+    } else {
+        $num = 1;
+    }
+    return 'O' . str_pad($num, 7, '0', STR_PAD_LEFT);
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get form data
+    $service_id = $_POST['serviceType'];
+    $paperSize = $_POST['paperSize'];
+    $color_id = $_POST['color'];
+    $copies = (int)$_POST['copies'];
+    $pages = (int)$_POST['pages'];
+    $serviceCost = str_replace('RM ', '', $_POST['serviceCost']);
+    $finishing1 = $_POST['finishing1'];
+    $finishing2 = $_POST['finishing2'];
+    $finishing3 = $_POST['finishing3'];
+    $totalCost = str_replace('RM ', '', $_POST['totalCost']);
+    $remarks = $_POST['remarks'] ?? '';
+
+    // Lookup service_desc and service_price
+    $service_data = mysqli_fetch_assoc(mysqli_query($conn, "SELECT service_desc, service_price FROM service_list WHERE service_id = '$service_id'"));
+    $service_desc = $service_data['service_desc'];
+    $service_price = $service_data['service_price'];
+
+    // Lookup paperSize desc
+    $size_data = mysqli_fetch_assoc(mysqli_query($conn, "SELECT service_desc FROM service_list WHERE service_id = '$paperSize'"));
+    $size_desc = $size_data['service_desc'];
+
+    // Lookup color desc
+    $color_data = mysqli_fetch_assoc(mysqli_query($conn, "SELECT service_desc FROM service_list WHERE service_id = '$color_id'"));
+    $color_desc = $color_data['service_desc'];
+
+    // Lookup finishing 1
+    if ($finishing1 !== 'None') {
+        $f1_data = mysqli_fetch_assoc(mysqli_query($conn, "SELECT finishing_desc, finishing_price FROM finishing_list WHERE finishing_id = '$finishing1'"));
+        $f1_desc = $f1_data['finishing_desc'];
+        $f1_price = $f1_data['finishing_price'];
+    } else {
+        $f1_desc = '';
+        $f1_price = 0;
+    }
+
+    // Lookup finishing 2
+    if ($finishing2 !== 'None') {
+        $f2_data = mysqli_fetch_assoc(mysqli_query($conn, "SELECT finishing_desc, finishing_price FROM finishing_list WHERE finishing_id = '$finishing2'"));
+        $f2_desc = $f2_data['finishing_desc'];
+        $f2_price = $f2_data['finishing_price'];
+    } else {
+        $f2_desc = '';
+        $f2_price = 0;
+    }
+
+    // Lookup finishing 3
+    if ($finishing3 !== 'None') {
+        $f3_data = mysqli_fetch_assoc(mysqli_query($conn, "SELECT finishing_desc, finishing_price FROM finishing_list WHERE finishing_id = '$finishing3'"));
+        $f3_desc = $f3_data['finishing_desc'];
+        $f3_price = $f3_data['finishing_price'];
+    } else {
+        $f3_desc = '';
+        $f3_price = 0;
+    }
+
+    // Prepare finishing FK safe values (NULL if 'None')
+    $finishing1_value = ($finishing1 !== 'None') ? $finishing1 : null;
+    $finishing2_value = ($finishing2 !== 'None') ? $finishing2 : null;
+    $finishing3_value = ($finishing3 !== 'None') ? $finishing3 : null;
+
+
+    // Generate IDs
+    $item_id = getNextItemId($conn);
+    $order_id = getNextOrderId($conn);
+
+    // Set created_at
+    date_default_timezone_set('Asia/Kuala_Lumpur');
+    $created_at = date('Y-m-d H:i:s');
+
+
+    // Calculate finishing_total_price and finishing_quantity
+    $finishing_total_price = $f1_price + $f2_price + $f3_price;
+
+    $finishing_quantity = 0;
+    if ($finishing1 !== 'None') $finishing_quantity++;
+    if ($finishing2 !== 'None') $finishing_quantity++;
+    if ($finishing3 !== 'None') $finishing_quantity++;
+
+    // Insert into order table
+    mysqli_query($conn, "INSERT INTO `order` (
+        order_id, created_at, item_id, service_total_price, finishing_total_price, total_price, finishing_quantity
+    ) VALUES (
+        '$order_id', NOW(), '$item_id', $serviceCost, $finishing_total_price, $totalCost, $finishing_quantity
+    )");
+
+    // Insert into order_detail
+    $sql_insert = "INSERT INTO order_detail (
+        item_id, order_id, service_id, service_desc, service_price, copies, pages, size, colour, service_total_price,
+        finishing_1, finishing_desc1, finishing_price1,
+        finishing_2, finishing_desc2, finishing_price2,
+        finishing_3, finishing_desc3, finishing_price3,
+        item_price, remarks, created_at
+    ) VALUES (
+        '$item_id', '$order_id', '$service_id', '$service_desc', $service_price, $copies, $pages, '$size_desc', '$color_desc', $serviceCost,
+        " . ($finishing1_value !== null ? "'$finishing1_value'" : "NULL") . ", '$f1_desc', $f1_price,
+        " . ($finishing2_value !== null ? "'$finishing2_value'" : "NULL") . ", '$f2_desc', $f2_price,
+        " . ($finishing3_value !== null ? "'$finishing3_value'" : "NULL") . ", '$f3_desc', $f3_price,
+        $totalCost, '$remarks', NOW()
+        )
+    ";
+
+
+    if (mysqli_query($conn, $sql_insert)) {
+        echo "<script>alert('Order inserted successfully!'); window.location.href='orderlist.html';</script>";
+        exit;
+    } else {
+        echo "Error: " . mysqli_error($conn);
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -176,7 +317,7 @@ while ($row = mysqli_fetch_assoc($result_finishing)) {
 
             <!-- Order Form -->
             <div class="container mt-4 bg-white p-4 rounded shadow-sm" style="max-height: 80vh; overflow-y: auto;">
-                <form id="printForm" enctype="multipart/form-data">
+                <form id="printForm" method="POST" enctype="multipart/form-data">
 
                     <!-- Service Type Dropdown -->
                     <div class="mb-4">
