@@ -188,28 +188,48 @@
               // Include your database connection
               include 'dbms.php'; // make sure this file connects to your DB
 
-              $sql = "SELECT service_id, service_type FROM service_list WHERE service_status = 'Available'";
+              $sql = "SELECT service_id, service_desc FROM service_list WHERE service_status = 'Available' and service_type = 'print'";
               $result = mysqli_query($conn, $sql);
 
               while ($row = mysqli_fetch_assoc($result)) {
-                  echo "<option value='" . $row['service_id'] . "'>" . $row['service_type'] . "</option>";
+                  echo "<option value='" . $row['service_id'] . "'>" . $row['service_desc'] . "</option>";
               }
               ?>
+            </select>
+          </div>
+
+          <!-- Paper Size Dropdown -->
+          <div class="mb-4">
+            <label for="paperSize" class="form-label">Paper Size:</label>
+            <select class="form-select" id="paperSize" name="paperSize">
+              <option value="None">-- Select Paper Size --</option>
+              <?php
+              // Include your database connection
+              include 'dbms.php'; // make sure this file connects to your DB
+
+              $sql = "SELECT service_id, service_desc FROM service_list WHERE service_status = 'Available' and service_type = 'size'";
+              $result = mysqli_query($conn, $sql);
+
+              while ($row = mysqli_fetch_assoc($result)) {
+                  echo "<option value='" . $row['service_id'] . "'>" . $row['service_desc'] . "</option>";
+              }
+              ?>
+            </select>
           </div>
 
           <!-- Print Color Option -->
           <div class="mb-4">
-            <label class="form-label">Print Color:</label>
+            <label class="form-label">Print Colour:</label>
             <div class="row">
               <div class="col-2">
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="color" value="BlackWhite" checked>
+                  <input class="form-check-input" type="radio" name="colour" value="S006" checked>
                   <label class="form-check-label w-100">Black & White</label>
                 </div>
               </div>
               <div class="col-2">
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="color" value="Color">
+                  <input class="form-check-input" type="radio" name="colour" value="S005">
                   <label class="form-check-label w-100">Colour</label>
                 </div>
               </div>
@@ -226,7 +246,7 @@
           <!-- Pages Count (Read-only, to be updated via script) -->
           <div class="mb-4">
             <label for="pages" class="form-label">Number of Pages:</label>
-            <input class="form-control" type="number" id="pages" name="pages" readonly>
+            <input class="form-control" type="number" id="pages" name="pages" value="1"> 
           </div>
 
           <!-- Service Cost Output -->
@@ -239,9 +259,18 @@
           <div class="mb-4">
             <label for="finishing1" class="form-label">Finishing 1:</label>
             <select class="form-select" id="finishing1" name="finishing1">
-              <option value="None">None</option>
-              <option value="Lamination">Lamination</option>
-              <option value="Stapler">Stapler</option>
+              <option value="None">-- Select Finishing 1 --</option>
+              <?php
+              // Include your database connection
+              include 'dbms.php'; // make sure this file connects to your DB
+
+              $sql = "SELECT finishing_id, finishing_type FROM finishing_list WHERE finishing_status = 'Available'";
+              $result = mysqli_query($conn, $sql);
+
+              while ($row = mysqli_fetch_assoc($result)) {
+                  echo "<option value='" . $row['finishing_id'] . "'>" . $row['finishing_type'] . "</option>";
+              }
+              ?>
             </select>
           </div>
           
@@ -249,9 +278,18 @@
           <div class="mb-4">
             <label for="finishing2" class="form-label">Finishing 2:</label>
             <select class="form-select" id="finishing2" name="finishing2">
-              <option value="None">None</option>
-              <option value="Lamination">Lamination</option>
-              <option value="Stapler">Stapler</option>
+              <option value="None">-- Select Finishing 2 --</option>
+              <?php
+              // Include your database connection
+              include 'dbms.php'; // make sure this file connects to your DB
+
+              $sql = "SELECT finishing_id, finishing_type FROM finishing_list WHERE finishing_status = 'Available'";
+              $result = mysqli_query($conn, $sql);
+
+              while ($row = mysqli_fetch_assoc($result)) {
+                  echo "<option value='" . $row['finishing_id'] . "'>" . $row['finishing_type'] . "</option>";
+              }
+              ?>
             </select>
           </div>
           
@@ -259,9 +297,18 @@
           <div class="mb-4">
             <label for="finishing3" class="form-label">Finishing 2:</label>
             <select class="form-select" id="finishing3" name="finishing3">
-              <option value="None">None</option>
-              <option value="Lamination">Lamination</option>
-              <option value="Stapler">Stapler</option>
+              <option value="None">-- Select Finishing 3 --</option>
+              <?php
+              // Include your database connection
+              include 'dbms.php'; // make sure this file connects to your DB
+
+              $sql = "SELECT finishing_id, finishing_type FROM finishing_list WHERE finishing_status = 'Available'";
+              $result = mysqli_query($conn, $sql);
+
+              while ($row = mysqli_fetch_assoc($result)) {
+                  echo "<option value='" . $row['finishing_id'] . "'>" . $row['finishing_type'] . "</option>";
+              }
+              ?>
             </select>
           </div>
 
@@ -307,7 +354,64 @@
       topNavbar.classList.toggle('collapsed');
       mainContent.classList.toggle('collapsed');
     });
-  </script>
+    document.getElementById('printForm').addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent default form submission
+        
+        // Collect all form data
+        const formData = {
+          customerName: document.getElementById('customerName').value,
+          email: document.getElementById('email').value,
+          file: document.getElementById('file').files[0],
+          serviceType: document.getElementById('serviceType').value,
+          paperSize: document.getElementById('paperSize').value,
+          color: document.querySelector('input[name="color"]:checked').value,
+          copies: document.getElementById('copies').value,
+          pages: document.getElementById('pages').value,
+          serviceCost: document.getElementById('serviceCost').value,
+          finishing1: document.getElementById('finishing1').value,
+          finishing2: document.getElementById('finishing2').value,
+          finishing3: document.getElementById('finishing3').value,
+          finishingCost: document.getElementById('finishingCost').value,
+          totalCost: document.getElementById('totalCost').value,
+          remarks: document.getElementById('remarks').value
+        };
+
+        // For file upload, we need to use FormData
+        const formDataObj = new FormData();
+        for (const key in formData) {
+          formDataObj.append(key, formData[key]);
+        }
+
+        // Send data to server using AJAX
+        fetch('process_order.php', {
+          method: 'POST',
+          body: formDataObj
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('Order submitted successfully!');
+            window.location.href = 'orderlist.html'; // Redirect after success
+          } else {
+            alert('Error: ' + data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while submitting the order.');
+        });
+      });
+
+      // You can add other event listeners here to update costs in real-time
+      // For example, when copies or pages change:
+      document.getElementById('copies').addEventListener('change', updateCosts);
+      document.getElementById('pages').addEventListener('change', updateCosts);
+      
+      function updateCosts() {
+        // Your logic to calculate and update costs
+        // This would update the serviceCost, finishingCost, and totalCost fields
+      }
+    </script>
 </body>
 
 </html>
