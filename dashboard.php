@@ -1,6 +1,8 @@
 <?php
+$pageTitle = "Dashboard";
 include('dbms.php');
 include('navbar.php');
+header('Content-Type: application/json');
 
 // === Get today's date ===
 // $today = date("Y-m-d"); // For live usage
@@ -96,13 +98,12 @@ $todayCost = $orderCosts[$today] ?? 0.0;
     </div>
 
     <div class="mt-4">
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title fs-6">Pending Order</h5>
-            pending order: 1
-            table here
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title fs-6">Pending Order</h5>
+                <p class="card-text fs-2" id="pending-count">0</p>
+            </div>
         </div>
-    </div>
     </div>
 </div>
 
@@ -171,6 +172,19 @@ $todayCost = $orderCosts[$today] ?? 0.0;
             }
         }
     });
+</script>
+
+<script>
+    function checkPendingOrders() {
+        fetch('checkPendingOrder.php')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('pending-count').innerText = data.pending_orders;
+            });
+    }
+
+    setInterval(checkPendingOrders, 5000); // every 5 seconds
+    window.onload = checkPendingOrders;
 </script>
 
 </body>
