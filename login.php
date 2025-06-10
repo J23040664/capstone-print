@@ -17,11 +17,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
 
             if (password_verify($password, $user['password'])) {
                 // Login success: store user info in session
-                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['role'] = $user['role'];
 
-                echo "<p style='color:green;'>Login successful. Redirecting...</p>";
-                header("refresh:2; url=dashboard.php");
+                echo "<p style='color:green;'>Login successful. Redirecting in 2 seconds...</p>";
+                header("Refresh: 2; url=dashboard.php?id=" . urlencode($user['user_id']));
                 exit;
             } else {
                 echo "<p style='color:red;'>Incorrect password.</p>";
