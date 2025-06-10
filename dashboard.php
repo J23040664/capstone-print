@@ -38,7 +38,7 @@ if ($resultCount) {
 }
 
 // === Query 2: Get total cost per day ===
-$sqlCost = "SELECT DATE(created_at) AS order_day, SUM(cost) AS total_cost
+$sqlCost = "SELECT DATE(created_at) AS order_day, SUM(total_price) AS total_cost
             FROM `order`
             WHERE created_at BETWEEN '$startDate' AND '$today'
             GROUP BY DATE(created_at)
@@ -79,7 +79,7 @@ $todayCost = $orderCosts[$today] ?? 0.0;
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title fs-6">Daily Order</h5>
-                <p class="card-text fs-3"><?php echo $todayCount; ?></p>
+                <p class="card-text fs-2"><?php echo $todayCount; ?></p>
                 <canvas id="orderCountChart" height="100"></canvas>
             </div>
         </div>
@@ -89,19 +89,20 @@ $todayCost = $orderCosts[$today] ?? 0.0;
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title fs-6">Daily Cost</h5>
+                <p class="card-text fs-2"><?php echo $todayCost; ?></p>
                 <canvas id="orderCostChart" height="100" class="mt-4"></canvas>
             </div>
         </div>
     </div>
 
-    <!-- <div class="col-md-4 mt-4"> -->
+    <div class="mt-4">
     <div class="card">
         <div class="card-body">
             <h5 class="card-title fs-6">Pending Order</h5>
             <p class="card-text fs-3">1000</p>
         </div>
     </div>
-    <!-- </div> -->
+    </div>
 </div>
 
 </main>
