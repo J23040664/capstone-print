@@ -1,6 +1,6 @@
 <?php
-include('navbar.php');
 include('dbms.php');
+include('navbar.php');
 
 // === Get today's date ===
 // $today = date("Y-m-d"); // For live usage
@@ -99,7 +99,8 @@ $todayCost = $orderCosts[$today] ?? 0.0;
     <div class="card">
         <div class="card-body">
             <h5 class="card-title fs-6">Pending Order</h5>
-            <p class="card-text fs-3">1000</p>
+            pending order: 1
+            table here
         </div>
     </div>
     </div>

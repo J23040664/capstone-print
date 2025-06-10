@@ -1,3 +1,21 @@
+<?php
+include('dbms.php');
+session_start();
+
+if (isset($_SESSION['user_id']) && $_GET['id'] == $_SESSION['user_id']) {
+    $user_id = $_SESSION['user_id'];
+
+} else {
+    header("Location: login.php");
+    exit;
+}
+
+// show the image
+$showUserInfo = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id WHERE a.user_id = '$user_id'";
+$queryShowUserInfor = mysqli_query($conn, $showUserInfo) or die(mysqli_error($conn));
+$rowShowUserInfo = mysqli_fetch_assoc($queryShowUserInfor);
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,7 +39,7 @@
                     <hr>
 
                     <li class="nav-item">
-                        <a href="dashboard.html" class="nav-link text-white d-flex align-items-center">
+                        <a href="dashboard.php" class="nav-link text-white d-flex align-items-center">
                             <i class="bi bi-house me-2"></i><span>Dashboard</span>
                         </a>
                     </li>
@@ -81,12 +99,14 @@
                         <div class="dropdown ms-auto">
                             <button class="btn dropdown-toggle d-flex align-items-center gap-2"
                                 data-bs-toggle="dropdown">
-                                <img src="./assets/icon/userpicture.png" class="rounded-circle"
-                                    width="30" height="30" alt="profile" />
-                                <span>abc</span>
+                                <img src="data:<?php echo $rowShowUserInfo['img_type']; ?>;base64,<?php echo base64_encode($rowShowUserInfo['img_data']); ?>"
+                                    class="rounded-circle" width="30" height="30" alt="profile" />
+                                <span><?php echo $rowShowUserInfo['name']; ?></span>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="profile.html">My Profile</a></li>
+                                <p class="text-center justify-content-center">User ID: <strong><?php echo $rowShowUserInfo['user_id']; ?></strong></p>
+                                <hr>
+                                <li><a class="dropdown-item" href="profile.php">My Profile</a></li>
                                 <li><a class="dropdown-item" href="settings.html">Settings</a></li>
                                 <li>
                                     <hr class="dropdown-divider" />
