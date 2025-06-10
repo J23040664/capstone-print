@@ -3,49 +3,71 @@ include('navbar.php');
 include('dbms.php');
 
 // === Get today's date ===
-// $today = date("Y-m-d"); // Use system date
-$today = "2025-01-06"; // Uncomment this for testing fixed date
+// $today = date("Y-m-d"); // For live usage
+$today = "2025-06-09"; // For testing
 
-// === Calculate the start date (6 days ago) ===
 $startDate = date("Y-m-d", strtotime("-6 days", strtotime($today)));
 
-// === Initialize array for past 7 days (default count = 0) ===
-$dateLabels = [];
+// === Initialize arrays ===
+$orderCounts = [];
+$orderCosts = [];
+
 for ($i = 6; $i >= 0; $i--) {
     $date = date("Y-m-d", strtotime("-$i days", strtotime($today)));
-    $dateLabels[$date] = 0;
+    $orderCounts[$date] = 0;
+    $orderCosts[$date] = 0.0;
 }
-ksort($dateLabels); // Sort dates from oldest to newest
+ksort($orderCounts); // sort both arrays
+ksort($orderCosts);
 
-// === SQL to get total orders per day in past week ===
-$sql = "SELECT DATE(order_date) AS order_day, COUNT(*) AS total
-        FROM `order`
-        WHERE order_date BETWEEN '$startDate' AND '$today'
-        GROUP BY DATE(order_date)
-        ORDER BY order_day ASC";
+// === Query 1: Get order count per day ===
+$sqlCount = "SELECT DATE(created_at) AS order_day, COUNT(*) AS total
+             FROM `order`
+             WHERE created_at BETWEEN '$startDate' AND '$today'
+             GROUP BY DATE(created_at)
+             ORDER BY order_day ASC";
 
-$result = $conn->query($sql);
-
-// === Update $dateLabels with actual counts ===
-if ($result) {
-    while ($row = $result->fetch_assoc()) {
+$resultCount = $conn->query($sqlCount);
+if ($resultCount) {
+    while ($row = $resultCount->fetch_assoc()) {
         $date = $row['order_day'];
-        if (array_key_exists($date, $dateLabels)) {
-            $dateLabels[$date] = (int)$row['total'];
+        if (array_key_exists($date, $orderCounts)) {
+            $orderCounts[$date] = (int)$row['total'];
         }
     }
 }
 
-// === Prepare arrays for JavaScript ===
+// === Query 2: Get total cost per day ===
+$sqlCost = "SELECT DATE(created_at) AS order_day, SUM(cost) AS total_cost
+            FROM `order`
+            WHERE created_at BETWEEN '$startDate' AND '$today'
+            GROUP BY DATE(created_at)
+            ORDER BY order_day ASC";
+
+$resultCost = $conn->query($sqlCost);
+if ($resultCost) {
+    while ($row = $resultCost->fetch_assoc()) {
+        $date = $row['order_day'];
+        if (array_key_exists($date, $orderCosts)) {
+            $orderCosts[$date] = (float)$row['total_cost'];
+        }
+    }
+}
+
+// === Prepare data for JavaScript ===
 $labels = [];
-$data = [];
-foreach ($dateLabels as $date => $count) {
-    $labels[] = date("D", strtotime($date)); // e.g., "Mon", "Tue"
-    $data[] = $count;
+$dataCounts = [];
+$dataCosts = [];
+
+foreach ($orderCounts as $date => $count) {
+    $labels[] = date("D", strtotime($date)); // e.g., Mon, Tue
+    $dataCounts[] = $count;
+    $dataCosts[] = round($orderCosts[$date], 2);
 }
 
 // === Get today's order count to display ===
-$todayCount = $dateLabels[$today] ?? 0;
+$todayCount = $orderCounts[$today] ?? 0;
+$todayCost = $orderCosts[$today] ?? 0.0;
 ?>
 
 <div class="mt-3 fw-bold">
@@ -58,7 +80,7 @@ $todayCount = $dateLabels[$today] ?? 0;
             <div class="card-body">
                 <h5 class="card-title fs-6">Daily Order</h5>
                 <p class="card-text fs-3"><?php echo $todayCount; ?></p>
-                <canvas id="weeklyOrderChart" width="600" height="400"></canvas>
+                <canvas id="orderCountChart" height="100"></canvas>
             </div>
         </div>
     </div>
@@ -67,18 +89,18 @@ $todayCount = $dateLabels[$today] ?? 0;
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title fs-6">Daily Cost</h5>
-                <p class="card-text fs-3">1000</p>
+                <canvas id="orderCostChart" height="100" class="mt-4"></canvas>
             </div>
         </div>
     </div>
 
     <!-- <div class="col-md-4 mt-4"> -->
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title fs-6">Pending Order</h5>
-                <p class="card-text fs-3">1000</p>
-            </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title fs-6">Pending Order</h5>
+            <p class="card-text fs-3">1000</p>
         </div>
+    </div>
     <!-- </div> -->
 </div>
 
@@ -91,44 +113,64 @@ $todayCount = $dateLabels[$today] ?? 0;
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const ctx = document.getElementById('weeklyOrderChart').getContext('2d');
+    const labels = <?php echo json_encode($labels); ?>;
+    const orderCounts = <?php echo json_encode($dataCounts); ?>;
+    const orderCosts = <?php echo json_encode($dataCosts); ?>;
 
-    const weeklyOrderChart = new Chart(ctx, {
+    // Chart 1: Order Count
+    new Chart(document.getElementById('orderCountChart'), {
         type: 'bar',
         data: {
-            labels: <?php echo json_encode($labels); ?>,
+            labels: labels,
             datasets: [{
-                label: 'Orders',
-                data: <?php echo json_encode($data); ?>,
+                label: 'Order Count',
+                data: orderCounts,
                 backgroundColor: 'rgba(54, 162, 235, 0.7)',
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1
             }]
         },
         options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Chart 2: Total Cost
+    new Chart(document.getElementById('orderCostChart'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Total Cost (RM)',
+                data: orderCosts,
+                fill: false,
+                backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 2,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
             scales: {
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        stepSize: 1
-                    }
-                }
-            },
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `Orders: ${context.raw}`;
+                        callback: function(value) {
+                            return 'RM ' + value;
                         }
                     }
-                },
-                legend: {
-                    display: true
                 }
             }
         }
     });
 </script>
+
 </body>
 
 </html>
