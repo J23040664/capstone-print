@@ -6,3 +6,34 @@
     max-width: 500px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+
+/* sidebar and topbar */
+
+.sidebar {
+    width: 250px;
+    background-color: #212529;
+}
+
+.sidebar .nav-link {
+    color: #adb5bd;
+}
+
+.sidebar .nav-link.active,
+.sidebar .nav-link:hover {
+    background-color: #343a40;
+    color: white;
+}
+
+.sidebar h5 {
+    color: white;
+}
+
+.topbar-profile-img {
+    object-fit: cover;
+}
+
+@media (min-width: 768px) {
+    .content-wrapper {
+        margin-left: 250px;
+    }
+}
