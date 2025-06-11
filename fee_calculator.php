@@ -14,8 +14,8 @@ session_start();
     <?php
     require_once 'includes/header.php';
     ?>
-    <main><!-- Calculator Section -->
-<section id="calculator" class="section">
+    <main>
+        <section id="calculator" class="section">
             <div class="container">
                 <h2 class="section-title">Fee Calculator</h2>
                 <div class="calculator">
@@ -70,8 +70,7 @@ session_start();
         }
 
         let total = 0;
-        // Logic similar to updateCalculator should be applied here if calcService also has general options
-        // For now, assuming calcService options match prices keys directly or have similar logic.
+            
         if (service === 'namecard') {
             const minQuantity = Math.max(quantity, 100);
             total = minQuantity * prices[service];
