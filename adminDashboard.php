@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Dashboard";
 include('dbms.php');
-include('navbar.php');
+include('adminNavbar.php');
 header('Content-Type: application/json');
 
 // === Get today's date ===

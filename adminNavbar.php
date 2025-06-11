@@ -108,7 +108,7 @@ $rowShowUserInfo = mysqli_fetch_assoc($queryShowUserInfor);
                                 <p class="text-center justify-content-center">User ID: <strong><?php echo $rowShowUserInfo['user_id']; ?></strong></p>
                                 <hr>
                                 <li><a class="dropdown-item" href="profile.php">My Profile</a></li>
-                                <li><a class="dropdown-item" href="settings.html">Settings</a></li>
+                                <li><a class="dropdown-item" href="adminSettings.php">Settings</a></li>
                                 <li>
                                     <hr class="dropdown-divider" />
                                 </li>
