@@ -43,6 +43,11 @@ def main():
             # The function to get user input for guess the shape
             user_guess = get_user_guess()
 
+            # If user chooses to give up
+            if user_guess == "GIVE_UP":
+                print("\nYou chose to give up! The secret code was:", " | ".join(secret_shape))
+                break
+            
             # If the function return to none, 
             # skip the rest of this loop iteration and go back to the start, so won't count the attempt
             if user_guess is None:
@@ -126,7 +131,13 @@ def choose_difficulty():
 # The function is prompts and validates user input; accepts full shape names or first letters
 def get_user_guess():
     # Get the input as lowercase, remove spaces and split it
-    user_input = input("Please guess and enter 4 shape names or initials (shapes can be repeated): ").strip().lower().split()
+    user_input = input("Please guess and enter 4 shape names or initials (or enter 999 to give up): ").strip().lower()
+
+    # Check if user wants to give up
+    if user_input == '999':
+        return "GIVE_UP"
+
+    user_input = user_input.split()
 
     # if user input not enough 4 shape names, show the message and input again
     if len(user_input) != 4:
@@ -145,18 +156,16 @@ def get_user_guess():
 
         # if user input in shape initials, stored the user input into guess list
         elif shape in shape_initials:
-            # map user input to shape intials to find index and find the shape names in shape list based on the index, 
             index = shape_initials.index(shape)
-            # stored the shape names into guess list
             guess_list.append(shape_lists[index])
+
         # show the message if user input not correct shape names or initials
         else:
             print(f"Invalid shape or initial: '{shape}'")
-            # Return none to main function
             return None
         
-    # Return the guess list to main function
     return guess_list
+
 
 # The function is Compares user’s guess to the secret code and returns two values:
 # • correct_place: number of shapes in the correct position
