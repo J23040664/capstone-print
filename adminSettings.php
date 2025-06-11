@@ -286,6 +286,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editServiceBtn'])) {
                                                 <input type="text" class="form-control" name="newServicePrice">
                                             </div>
 
+                                            <div class="mb-3">
+                                                <label for="newServiceStatus">Service Status:</label>
+                                                <select class="form-select" name="newServiceStatus">
+                                                    <option value="Available">Available</option>
+                                                    <option value="Not Available">Not Available</option>
+                                                </select>
+                                            </div>
+
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -395,7 +403,153 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editServiceBtn'])) {
 
 
 
-                        <hr>
+                        <hr class="mt-5 mb-5">
+
+
+
+                        <h5>Finishing List</h5>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addFinishingModal">Add Finishing</button>
+                        </div>
+
+                        <!-- add finishing modal -->
+                        <div class="modal fade" id="addFinishingModal">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="addFinishingModalLabel">Add Finishing</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form method="post">
+
+                                            <div class="mb-3">
+                                                <label for="newFinishingId">Finishing ID:</label>
+                                                <input type="text" class="form-control" name="newFinishingId">
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="newFinishingDesc">Finishing Description:</label>
+                                                <input type="text" class="form-control" name="newFinishingDesc">
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="newFinishingPrice">Finishing Price:</label>
+                                                <input type="text" class="form-control" name="newFinishingPrice">
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="new">Finishing Status:</label>
+                                                <select class="form-select" name="newServiceStatus">
+                                                    <option value="Available">Available</option>
+                                                    <option value="Not Available">Not Available</option>
+                                                </select>
+                                            </div>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-primary" name="addFinishingBtn">Add Finishing</button>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <?php
+                        $showFinishingList = "SELECT * FROM finishing_list";
+                        $queryShowFinishingList = mysqli_query($conn, $showFinishingList) or die("Error: " . mysqli_error($conn));
+                        ?>
+
+                        <div>
+                            <table id="finishingList" class="table table-striped mt-3 mb-3">
+                                <thead>
+                                    <tr>
+                                        <th>Finishing ID</th>
+                                        <th>Finishing Description</th>
+                                        <th>Finishing Price</th>
+                                        <th>Finishing Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php while ($rowShowFinishingList = $queryShowFinishingList->fetch_assoc()) { ?>
+                                        <tr>
+                                            <td><?php echo $rowShowFinishingList['finishing_id']; ?></td>
+                                            <td><?php echo $rowShowFinishingList['finishing_desc']; ?></td>
+                                            <td><?php echo $rowShowFinishingList['finishing_price']; ?></td>
+                                            <td>
+                                                <?php if ($rowShowFinishingList['finishing_status'] == "Available") { ?>
+                                                    <span class="badge bg-success text-white"><?php echo $rowShowFinishingList['finishing_status']; ?></span>
+                                                <?php } else if ($rowShowFinishingList['finishing_status'] == "Not Available") { ?>
+                                                    <span class="badge bg-danger text-white"><?php echo $rowShowFinishingList['finishing_status']; ?></span>
+                                                <?php } ?>
+                                            </td>
+
+                                            <td>
+                                                <button class="btn btn-primary" data-bs-toggle="modal"
+                                                    data-bs-target="#editFinishing<?php echo $rowShowFinishingList['finishing_id']; ?>"><i class="bi bi-pencil-square"></i>
+                                                </button>
+
+                                                <!-- service edit modal -->
+                                                <div class="modal fade" id="editFinishing<?php echo $rowShowFinishingList['finishing_id']; ?>">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h1 class="modal-title fs-5"><?php echo $rowShowFinishingList['finishing_id']; ?></h1>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <form method="POST">
+                                                                    <div class="mb-3">
+                                                                        <label for="updateServiceId">Service Id:</label>
+                                                                        <input type="text" class="form-control" name="updateServiceId" value="<?php echo $rowShowServiceList['service_id']; ?>" readonly>
+                                                                    </div>
+
+                                                                    <div class="mb-3">
+                                                                        <label for="updateServiceType">Service Type</label>
+                                                                        <input type="text" class="form-control" name="updateServiceType" value="<?php echo $rowShowServiceList['service_type']; ?>">
+                                                                    </div>
+
+                                                                    <div class="mb-3">
+                                                                        <label for="updateServiceDesc">Service Description</label>
+                                                                        <input type="text" class="form-control" name="updateServiceDesc" value="<?php echo $rowShowServiceList['service_desc']; ?>">
+                                                                    </div>
+
+                                                                    <div class="mb-3">
+                                                                        <label for="updateServicePrice">Service Price</label>
+                                                                        <input type="text" class="form-control" name="updateServicePrice" value="<?php echo $rowShowServiceList['service_price']; ?>">
+                                                                    </div>
+
+                                                                    <div class="mb-3">
+                                                                        <label for="updateServiceStatus">Service Status:</label>
+                                                                        <select class="form-select" name="updateServiceStatus">
+                                                                            <option value="<?php echo $rowShowServiceList['service_status']; ?>" selected><?php echo $rowShowServiceList['service_status']; ?></option>
+                                                                            <hr>
+                                                                            <option value="Available">Available</option>
+                                                                            <option value="Not Available">Not Available</option>
+                                                                        </select>
+                                                                    </div>
+
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                                <button type="submit" class="btn btn-primary" name="editServiceBtn">Save changes</button>
+                                                            </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <button class="btn btn-danger" data-bs-toggle="modal"
+                                                    data-bs-target="#danger-alert-modal"><i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>
 
 
 

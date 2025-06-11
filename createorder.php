@@ -5,6 +5,11 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+$user_id = $_GET['id'];
+$user_info = "SELECT * FROM user WHERE user_id = '$user_id'";
+$result_user_info = mysqli_query($conn, $user_info);
+$row_user_info = mysqli_fetch_assoc($result_user_info);
+
 // Preload service prices (print + size + color)
 $service_prices = [];
 $sql_service = "SELECT service_id, service_price FROM service_list WHERE service_status = 'Available'";
@@ -26,7 +31,8 @@ $user_id = $_GET['id'];
 
 
 // Generate next item_id
-function getNextItemId($conn) {
+function getNextItemId($conn)
+{
     $result = mysqli_query($conn, "SELECT MAX(item_id) AS max_id FROM order_detail");
     $row = mysqli_fetch_assoc($result);
     $max_id = $row['max_id'];
@@ -39,7 +45,8 @@ function getNextItemId($conn) {
 }
 
 // Generate next order_id
-function getNextOrderId($conn) {
+function getNextOrderId($conn)
+{
     $result = mysqli_query($conn, "SELECT MAX(order_id) AS max_id FROM order_detail");
     $row = mysqli_fetch_assoc($result);
     $max_id = $row['max_id'];
@@ -51,7 +58,8 @@ function getNextOrderId($conn) {
     return 'O' . str_pad($num, 7, '0', STR_PAD_LEFT);
 }
 // Generate next item_id
-function getNextFileId($conn) {
+function getNextFileId($conn)
+{
     $result = mysqli_query($conn, "SELECT MAX(file_id) AS max_id FROM file");
     $row = mysqli_fetch_assoc($result);
     $max_id = $row['max_id'];
@@ -71,35 +79,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $copies = (int)$_POST['copies'];
 
     // pdf page count
-    require_once 'vendor/autoload.php'; 
+    require_once 'vendor/autoload.php';
 
     $pdfPages = 1; // default fallback
 
     if (isset($_FILES['pdfFile']) && $_FILES['pdfFile']['error'] == 0) {
-            // No need to move or upload to folder
+        // No need to move or upload to folder
 
-            $file_tmp_path = $_FILES['pdfFile']['tmp_name'];
+        $file_tmp_path = $_FILES['pdfFile']['tmp_name'];
 
-            // Create parser
-            $parser = new \Smalot\PdfParser\Parser();
+        // Create parser
+        $parser = new \Smalot\PdfParser\Parser();
 
-            // Parse PDF
-            $pdf = $parser->parseFile($file_tmp_path);
+        // Parse PDF
+        $pdf = $parser->parseFile($file_tmp_path);
 
-            // Read file content to store in DB
-            $file_content = addslashes(file_get_contents($file_tmp_path));
+        // Read file content to store in DB
+        $file_content = addslashes(file_get_contents($file_tmp_path));
 
-            // Get page count
-            $details = $pdf->getDetails();
-            if (isset($details['Pages'])) {
-                $pdfPages = (int)$details['Pages'];
-            } else {
-                $pagesArray = $pdf->getPages();
-                $pdfPages = count($pagesArray);
-            }
+        // Get page count
+        $details = $pdf->getDetails();
+        if (isset($details['Pages'])) {
+            $pdfPages = (int)$details['Pages'];
+        } else {
+            $pagesArray = $pdf->getPages();
+            $pdfPages = count($pagesArray);
         }
+    }
 
-            // Set to variable used in rest of the code
+    // Set to variable used in rest of the code
     $pages = $pdfPages;
 
     $serviceCost = str_replace('RM ', '', $_POST['serviceCost']);
@@ -108,6 +116,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $finishing3 = $_POST['finishing3'];
     $totalCost = str_replace('RM ', '', $_POST['totalCost']);
     $remarks = $_POST['remarks'] ?? '';
+
+    $customerName = $_POST['customerName'];
 
     // Lookup service_desc and service_price
     $service_data = mysqli_fetch_assoc(mysqli_query($conn, "SELECT service_desc, service_price FROM service_list WHERE service_id = '$service_id'"));
@@ -183,9 +193,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Insert into order table
     mysqli_query($conn, "INSERT INTO `order` (
-        order_id, created_at, item_id, service_total_price, finishing_total_price, total_price, finishing_quantity
+        order_id, created_at, item_id, service_total_price, finishing_total_price, total_price, finishing_quantity, customer_id, customer_name
     ) VALUES (
-        '$order_id', NOW(), '$item_id', $serviceCost, $finishing_total_price, $totalCost, $finishing_quantity
+        '$order_id', NOW(), '$item_id', $serviceCost, $finishing_total_price, $totalCost, $finishing_quantity, $user_id, $customerName
     )");
 
     // Insert into order_detail
@@ -223,9 +233,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // If everything is successful
     echo "<script>alert('Order inserted successfully!'); window.location.href='orderlist.html';</script>";
     exit;
-
-
-    }
+}
 
 
 
@@ -233,6 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <!-- Keep your head unchanged -->
     <meta charset="UTF-8" />
@@ -243,310 +252,304 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
 
-  <style>
-    body {
-      overflow-x: hidden;
-      background-color: #fff;
-    }
+    <style>
+        body {
+            overflow-x: hidden;
+            background-color: #fff;
+        }
 
-    /* Sidebar styling */
-    .sidebar {
-      width: 240px;
-      background-color: #343a40;
-      color: white;
-      transition: all 0.3s ease;
-      height: 100vh;
-      position: fixed;
-      top: 0;
-      left: 0;
-      overflow-y: auto;
-      z-index: 1030;
-    }
+        /* Sidebar styling */
+        .sidebar {
+            width: 240px;
+            background-color: #343a40;
+            color: white;
+            transition: all 0.3s ease;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            z-index: 1030;
+        }
 
-    .sidebar.collapsed {
-      width: 80px;
-    }
+        .sidebar.collapsed {
+            width: 80px;
+        }
 
-    .s_logo {
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 10px 0;
-    }
+        .s_logo {
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+        }
 
-    .sidebar .nav-link {
-      color: #ccc;
-      padding: 12px 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      white-space: nowrap;
-    }
+        .sidebar .nav-link {
+            color: #ccc;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
 
-    .sidebar .nav-link:hover {
-      background-color: #495057;
-      color: white;
-      text-decoration: none;
-    }
+        .sidebar .nav-link:hover {
+            background-color: #495057;
+            color: white;
+            text-decoration: none;
+        }
 
-    .sidebar.collapsed .nav-link span,
-    .sidebar.collapsed .s_logo span {
-      display: none;
-    }
+        .sidebar.collapsed .nav-link span,
+        .sidebar.collapsed .s_logo span {
+            display: none;
+        }
 
-    /* Top navbar positioning */
-    .top-navbar {
-      margin-left: 240px;
-      transition: margin-left 0.3s ease;
-    }
+        /* Top navbar positioning */
+        .top-navbar {
+            margin-left: 240px;
+            transition: margin-left 0.3s ease;
+        }
 
-    .top-navbar.collapsed {
-      margin-left: 80px;
-    }
+        .top-navbar.collapsed {
+            margin-left: 80px;
+        }
 
-    /* Main content positioning */
-    .main-content {
-      margin-left: 240px;
-      transition: margin-left 0.3s ease;
-      padding: 1rem;
-    }
+        /* Main content positioning */
+        .main-content {
+            margin-left: 240px;
+            transition: margin-left 0.3s ease;
+            padding: 1rem;
+        }
 
-    .main-content.collapsed {
-      margin-left: 80px;
-    }
+        .main-content.collapsed {
+            margin-left: 80px;
+        }
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .sidebar {
-        transform: translateX(0);
-        left: 0;
-        transition: transform 0.3s ease;
-      }
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(0);
+                left: 0;
+                transition: transform 0.3s ease;
+            }
 
-      .sidebar.collapsed {
-        transform: translateX(-100%);
-      }
+            .sidebar.collapsed {
+                transform: translateX(-100%);
+            }
 
-      .top-navbar,
-      .main-content {
-        margin-left: 0 !important;
-      }
-    }
-  </style>
+            .top-navbar,
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
+    </style>
 </head>
 
-  <!-- Sidebar Navigation -->
-  <div id="sidebar" class="sidebar d-flex flex-column p-3">
+<!-- Sidebar Navigation -->
+<div id="sidebar" class="sidebar d-flex flex-column p-3">
     <div class="s_logo fs-5">
-      <span>System Name</span>
+        <span>System Name</span>
     </div>
     <hr />
     <ul class="nav nav-pills flex-column">
-      <li class="nav-item">
-        <a href="dashboard.html" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
-      </li>
-      <li class="nav-item">
-        <a href="orderlist.html" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
-      </li>
+        <li class="nav-item">
+            <a href="dashboard.html" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
+        </li>
+        <li class="nav-item">
+            <a href="orderlist.html" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
+        </li>
     </ul>
-  </div>
+</div>
 
-  <!-- Top Navbar -->
-  <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3 top-navbar">
+<!-- Top Navbar -->
+<nav id="topNavbar" class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3 top-navbar">
     <div class="container-fluid">
-      <button class="btn btn-outline-secondary me-2" id="toggleSidebar">
-        <i class="bi bi-list"></i>
-      </button>
+        <button class="btn btn-outline-secondary me-2" id="toggleSidebar">
+            <i class="bi bi-list"></i>
+        </button>
 
-      <!-- User dropdown on the right -->
-      <div class="d-flex align-items-center ms-auto">
-        <div class="dropdown">
-          <button class="btn dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
-            <img src="./assets/icon/userpicture.png" class="rounded-circle" width="30" height="30"
-              alt="profile_picture" />
-            <span>abc</span>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="#">My Profile</a></li>
-            <li><a class="dropdown-item" href="#">Settings</a></li>
-            <li>
-              <hr class="dropdown-divider" />
-            </li>
-            <li><a class="dropdown-item text-danger" href="login.html">Log out</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </nav>
-
-
-    <main id="mainContent" class="main-content">
-        <div class="container-fluid">
-            <div class="mt-3 fw-bold">
-                <span>Create New Order</span>
+        <!-- User dropdown on the right -->
+        <div class="d-flex align-items-center ms-auto">
+            <div class="dropdown">
+                <button class="btn dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+                    <img src="./assets/icon/userpicture.png" class="rounded-circle" width="30" height="30"
+                        alt="profile_picture" />
+                    <span>abc</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#">My Profile</a></li>
+                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li>
+                        <hr class="dropdown-divider" />
+                    </li>
+                    <li><a class="dropdown-item text-danger" href="login.html">Log out</a></li>
+                </ul>
             </div>
+        </div>
+    </div>
+</nav>
 
-            <!-- Order Form -->
-            <div class="container mt-4 bg-white p-4 rounded shadow-sm" style="max-height: 80vh; overflow-y: auto;">
-                <form id="printForm" method="POST" enctype="multipart/form-data">
 
-                    <!-- Customer Name -->
-                    <div class="mb-4">
-                        <label for="customerName" class="form-label">Name:</label>
-                        <input class="form-control" type="text" id="customerName" name="customerName" required>
-                    </div>
+<main id="mainContent" class="main-content">
+    <div class="container-fluid">
+        <div class="mt-3 fw-bold">
+            <span>Create New Order</span>
+        </div>
 
-                    <!-- Customer Email -->
-                    <div class="mb-4">
-                        <label for="customerEmail" class="form-label">Email:</label>
-                        <input class="form-control" type="email" id="customerEmail" name="customerEmail" required>
-                    </div>
+        <!-- Order Form -->
+        <div class="container mt-4 bg-white p-4 rounded shadow-sm" style="max-height: 80vh; overflow-y: auto;">
+            <form id="printForm" method="POST" enctype="multipart/form-data">
 
-                    <!-- File Upload -->
-                    <div class="mb-4">
-                        <label for="pdfFile" class="form-label">Upload PDF File:</label>
-                        <input class="form-control" type="file" id="pdfFile" name="pdfFile" accept="application/pdf" required>
-                    </div>
+                <!-- Customer Name -->
+                <div class="mb-4">
+                    <label for="customerName" class="form-label">Name:</label>
+                    <input class="form-control" type="text" id="customerName" name="customerName" value="<?php echo $row_user_info['name']; ?>" required>
+                </div>
 
-                    <!-- Service Type Dropdown -->
-                    <div class="mb-4">
-                        <label for="serviceType" class="form-label">Type Of Services:</label>
-                        <select class="form-select" id="serviceType" name="serviceType">
-                            <option value="None">-- Select Service --</option>
-                            <?php
-                            $sql = "SELECT service_id, service_desc FROM service_list WHERE service_status = 'Available' AND service_type = 'print'";
-                            $result = mysqli_query($conn, $sql);
-                            while ($row = mysqli_fetch_assoc($result)) {
-                                echo "<option value='" . $row['service_id'] . "'>" . $row['service_desc'] . "</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
+                <!-- File Upload -->
+                <div class="mb-4">
+                    <label for="pdfFile" class="form-label">Upload PDF File:</label>
+                    <input class="form-control" type="file" id="pdfFile" name="pdfFile" accept="application/pdf" required>
+                </div>
 
-                    <!-- Paper Size Dropdown -->
-                    <div class="mb-4">
-                        <label for="paperSize" class="form-label">Paper Size:</label>
-                        <select class="form-select" id="paperSize" name="paperSize">
-                            <option value="None">-- Select Paper Size --</option>
-                            <?php
-                            $sql = "SELECT service_id, service_desc FROM service_list WHERE service_status = 'Available' AND service_type = 'size'";
-                            $result = mysqli_query($conn, $sql);
-                            while ($row = mysqli_fetch_assoc($result)) {
-                                echo "<option value='" . $row['service_id'] . "'>" . $row['service_desc'] . "</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
+                <!-- Service Type Dropdown -->
+                <div class="mb-4">
+                    <label for="serviceType" class="form-label">Type Of Services:</label>
+                    <select class="form-select" id="serviceType" name="serviceType">
+                        <option value="None">-- Select Service --</option>
+                        <?php
+                        $sql = "SELECT service_id, service_desc FROM service_list WHERE service_status = 'Available' AND service_type = 'print'";
+                        $result = mysqli_query($conn, $sql);
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            echo "<option value='" . $row['service_id'] . "'>" . $row['service_desc'] . "</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
 
-                    <!-- Print Color Option -->
-                    <div class="mb-4">
-                        <label class="form-label">Print Colour:</label>
-                        <div class="row">
-                            <div class="col-2">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="color" value="S006" checked>
-                                    <label class="form-check-label w-100">Black & White</label>
-                                </div>
+                <!-- Paper Size Dropdown -->
+                <div class="mb-4">
+                    <label for="paperSize" class="form-label">Paper Size:</label>
+                    <select class="form-select" id="paperSize" name="paperSize">
+                        <option value="None">-- Select Paper Size --</option>
+                        <?php
+                        $sql = "SELECT service_id, service_desc FROM service_list WHERE service_status = 'Available' AND service_type = 'size'";
+                        $result = mysqli_query($conn, $sql);
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            echo "<option value='" . $row['service_id'] . "'>" . $row['service_desc'] . "</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <!-- Print Color Option -->
+                <div class="mb-4">
+                    <label class="form-label">Print Colour:</label>
+                    <div class="row">
+                        <div class="col-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="color" value="S006" checked>
+                                <label class="form-check-label w-100">Black & White</label>
                             </div>
-                            <div class="col-2">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="color" value="S005">
-                                    <label class="form-check-label w-100">Colour</label>
-                                </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="color" value="S005">
+                                <label class="form-check-label w-100">Colour</label>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Number of Copies Input -->
-                    <div class="mb-4">
-                        <label for="copies" class="form-label">Number of Copies:</label>
-                        <input class="form-control" type="number" id="copies" name="copies" min="1" value="1" required>
-                    </div>
+                <!-- Number of Copies Input -->
+                <div class="mb-4">
+                    <label for="copies" class="form-label">Number of Copies:</label>
+                    <input class="form-control" type="number" id="copies" name="copies" min="1" value="1" required>
+                </div>
 
-                    <!-- Pages Count -->
-                    <div class="mb-4">
-                        <label for="pages" class="form-label">Number of Pages:</label>
-                        <input class="form-control" type="number" id="pages" name="pages" readonly>
-                    </div>
+                <!-- Pages Count -->
+                <div class="mb-4">
+                    <label for="pages" class="form-label">Number of Pages:</label>
+                    <input class="form-control" type="number" id="pages" name="pages" readonly>
+                </div>
 
-                    <!-- Service Cost Output -->
-                    <div class="mb-4">
-                        <label class="form-label">Service Cost:</label>
-                        <input class="form-control" type="text" id="serviceCost" name="serviceCost" value="RM 0.00" readonly>
-                    </div>
+                <!-- Service Cost Output -->
+                <div class="mb-4">
+                    <label class="form-label">Service Cost:</label>
+                    <input class="form-control" type="text" id="serviceCost" name="serviceCost" value="RM 0.00" readonly>
+                </div>
 
-                    <!-- Finishing Type 1 Dropdown -->
-                    <div class="mb-4">
-                        <label for="finishing1" class="form-label">Finishing 1:</label>
-                        <select class="form-select finishing-select" id="finishing1" name="finishing1">
-                            <option value="None">-- Select Finishing 1 --</option>
-                            <?php
-                            $sql = "SELECT finishing_id, finishing_desc FROM finishing_list WHERE finishing_status = 'Available'";
-                            $result = mysqli_query($conn, $sql);
-                            while ($row = mysqli_fetch_assoc($result)) {
-                                echo "<option value='" . $row['finishing_id'] . "'>" . $row['finishing_desc'] . "</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    
-                    <!-- Finishing Type 2 Dropdown -->
-                    <div class="mb-4">
-                        <label for="finishing2" class="form-label">Finishing 2:</label>
-                        <select class="form-select finishing-select" id="finishing2" name="finishing2">
-                            <option value="None">-- Select Finishing 2 --</option>
-                            <?php
-                            $sql = "SELECT finishing_id, finishing_desc FROM finishing_list WHERE finishing_status = 'Available'";
-                            $result = mysqli_query($conn, $sql);
-                            while ($row = mysqli_fetch_assoc($result)) {
-                                echo "<option value='" . $row['finishing_id'] . "'>" . $row['finishing_desc'] . "</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
+                <!-- Finishing Type 1 Dropdown -->
+                <div class="mb-4">
+                    <label for="finishing1" class="form-label">Finishing 1:</label>
+                    <select class="form-select finishing-select" id="finishing1" name="finishing1">
+                        <option value="None">-- Select Finishing 1 --</option>
+                        <?php
+                        $sql = "SELECT finishing_id, finishing_desc FROM finishing_list WHERE finishing_status = 'Available'";
+                        $result = mysqli_query($conn, $sql);
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            echo "<option value='" . $row['finishing_id'] . "'>" . $row['finishing_desc'] . "</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
 
-                    <!-- Finishing Type 3 Dropdown -->
-                    <div class="mb-4">
-                        <label for="finishing3" class="form-label">Finishing 3:</label>
-                        <select class="form-select finishing-select" id="finishing3" name="finishing3">
-                            <option value="None">-- Select Finishing 3 --</option>
-                            <?php
-                            $sql = "SELECT finishing_id, finishing_desc FROM finishing_list WHERE finishing_status = 'Available'";
-                            $result = mysqli_query($conn, $sql);
-                            while ($row = mysqli_fetch_assoc($result)) {
-                                echo "<option value='" . $row['finishing_id'] . "'>" . $row['finishing_desc'] . "</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
+                <!-- Finishing Type 2 Dropdown -->
+                <div class="mb-4">
+                    <label for="finishing2" class="form-label">Finishing 2:</label>
+                    <select class="form-select finishing-select" id="finishing2" name="finishing2">
+                        <option value="None">-- Select Finishing 2 --</option>
+                        <?php
+                        $sql = "SELECT finishing_id, finishing_desc FROM finishing_list WHERE finishing_status = 'Available'";
+                        $result = mysqli_query($conn, $sql);
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            echo "<option value='" . $row['finishing_id'] . "'>" . $row['finishing_desc'] . "</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <!-- Finishing Type 3 Dropdown -->
+                <div class="mb-4">
+                    <label for="finishing3" class="form-label">Finishing 3:</label>
+                    <select class="form-select finishing-select" id="finishing3" name="finishing3">
+                        <option value="None">-- Select Finishing 3 --</option>
+                        <?php
+                        $sql = "SELECT finishing_id, finishing_desc FROM finishing_list WHERE finishing_status = 'Available'";
+                        $result = mysqli_query($conn, $sql);
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            echo "<option value='" . $row['finishing_id'] . "'>" . $row['finishing_desc'] . "</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
 
 
-                    <!-- Finishing Cost Output -->
-                    <div class="mb-4">
-                        <label class="form-label">Finishing Cost:</label>
-                        <input class="form-control" type="text" id="finishingCost" name="finishingCost" value="RM 0.00" readonly>
-                    </div>
+                <!-- Finishing Cost Output -->
+                <div class="mb-4">
+                    <label class="form-label">Finishing Cost:</label>
+                    <input class="form-control" type="text" id="finishingCost" name="finishingCost" value="RM 0.00" readonly>
+                </div>
 
-                    <!-- Total Cost Output -->
-                    <div class="mb-4">
-                        <label class="form-label">Total Cost:</label>
-                        <input class="form-control" type="text" id="totalCost" name="totalCost" value="RM 0.00" readonly>
-                    </div>
+                <!-- Total Cost Output -->
+                <div class="mb-4">
+                    <label class="form-label">Total Cost:</label>
+                    <input class="form-control" type="text" id="totalCost" name="totalCost" value="RM 0.00" readonly>
+                </div>
 
-                    <!-- Form Buttons -->
-                    <div class="d-flex justify-content-end gap-2">
-                        <a href="orderlist.html" class="btn btn-light">Cancel</a>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
+                <!-- Form Buttons -->
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="orderlist.html" class="btn btn-light">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
 
-                </form>
-            </div>
+            </form>
         </div>
-    </main>
+    </div>
+</main>
 
-    <!-- JS price maps + update logic -->
-    <script>
+<!-- JS price maps + update logic -->
+<script>
     // Service prices map (service_id -> price)
     const servicePrices = <?php echo json_encode($service_prices); ?>;
     const finishingPrices = <?php echo json_encode($finishing_prices); ?>;
@@ -643,7 +646,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     document.getElementById('copies').addEventListener('input', updateServiceCost);
     document.getElementById('pages').addEventListener('input', updateServiceCost);
 
-    document.getElementById('pdfFile').addEventListener('change', function (e) {
+    document.getElementById('pdfFile').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file && file.type === 'application/pdf') {
             const fileReader = new FileReader();
@@ -665,8 +668,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             document.getElementById('pages').value = '';
         }
     });
-
-
-    </script>
+</script>
 </body>
+
 </html>
