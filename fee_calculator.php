@@ -1,0 +1,85 @@
+<?php
+include 'dbms.php';
+session_start();
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art & Print SS15 - Professional Printing Services</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <?php
+    require_once 'includes/header.php';
+    ?>
+    <main><!-- Calculator Section -->
+<section id="calculator" class="section">
+            <div class="container">
+                <h2 class="section-title">Fee Calculator</h2>
+                <div class="calculator">
+                    <div class="form-group">
+                        <label>Service Type</label>
+                        <select id="calcService" onchange="calculateFee()">
+                            <option value="">Select Service</option>
+                            <option value="print-bw">Document Printing (B&W) - RM 0.10/page</option>
+                            <option value="print-color">Document Printing (Color) - RM 0.50/page</option>
+                            <option value="photocopy-bw">Photocopy (B&W) - RM 0.08/page</option>
+                            <option value="photocopy-color">Photocopy (Color) - RM 0.40/page</option>
+                            <option value="namecard">Name Cards - RM 25/100pcs</option>
+                            <option value="binding-spiral">Spiral Binding - RM 3.00/book</option>
+                            <option value="binding-hard">Hard Cover Binding - RM 8.00/book</option>
+                            <option value="lamination-a4">Lamination A4 - RM 2.00/sheet</option>
+                            <option value="lamination-a3">Lamination A3 - RM 3.00/sheet</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="number" id="calcQuantity" min="1" onchange="calculateFee()">
+                    </div>
+
+                    <div class="calc-result" id="calcResult">
+                        Enter service and quantity to calculate
+                    </div>
+                </div>
+            </div>
+        </section>
+<script>
+    const prices = {
+        'print-bw': 0.10,
+        'print-color': 0.50,
+        'photocopy-bw': 0.08,
+        'photocopy-color': 0.40,
+        'namecard': 0.25, // per piece, minimum 100
+        'binding-spiral': 3.00,
+        'binding-hard': 8.00,
+        'lamination-a4': 2.00,
+        'lamination-a3': 3.00
+    };
+        function calculateFee() {
+        console.log("calculateFee() called!");
+        const service = document.getElementById('calcService').value;
+        const quantity = parseInt(document.getElementById('calcQuantity').value) || 0;
+        const resultDiv = document.getElementById('calcResult');
+
+        if (!service || !quantity) {
+            resultDiv.textContent = 'Enter service and quantity to calculate';
+            return;
+        }
+
+        let total = 0;
+        // Logic similar to updateCalculator should be applied here if calcService also has general options
+        // For now, assuming calcService options match prices keys directly or have similar logic.
+        if (service === 'namecard') {
+            const minQuantity = Math.max(quantity, 100);
+            total = minQuantity * prices[service];
+            resultDiv.innerHTML = `<strong>Total: RM ${total.toFixed(2)}</strong><br><small>Minimum 100 pieces for name cards</small>`;
+        } else {
+            // This part might need adjustment if calcService also uses general terms like 'binding'/'lamination'
+            total = quantity * prices[service];
+            resultDiv.innerHTML = `<strong>Total: RM ${total.toFixed(2)}</strong>`;
+        }
+    }
+</script>
