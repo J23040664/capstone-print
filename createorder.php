@@ -118,6 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $remarks = $_POST['remarks'] ?? '';
 
     $customerName = $_POST['customerName'];
+    $orderStatus = "Pending";
 
     // Lookup service_desc and service_price
     $service_data = mysqli_fetch_assoc(mysqli_query($conn, "SELECT service_desc, service_price FROM service_list WHERE service_id = '$service_id'"));
@@ -193,9 +194,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Insert into order table
     mysqli_query($conn, "INSERT INTO `order` (
-        order_id, created_at, item_id, service_total_price, finishing_total_price, total_price, finishing_quantity, customer_id, customer_name
+        order_id, created_at, item_id, service_total_price, finishing_total_price, total_price, finishing_quantity, customer_id, customer_name, order_status
     ) VALUES (
-        '$order_id', NOW(), '$item_id', $serviceCost, $finishing_total_price, $totalCost, $finishing_quantity, $user_id, $customerName
+        '$order_id', NOW(), '$item_id', '$serviceCost', '$finishing_total_price', '$totalCost', '$finishing_quantity', '$user_id', '$customerName', '$orderStatus'
     )");
 
     // Insert into order_detail
