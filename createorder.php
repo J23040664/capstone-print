@@ -27,9 +27,6 @@ while ($row = mysqli_fetch_assoc($result_finishing)) {
 }
 
 
-$user_id = $_GET['id'];
-
-
 // Generate next item_id
 function getNextItemId($conn)
 {

@@ -10,6 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signupbtn'])) {
     $confirmpassword = htmlspecialchars(trim($_POST["confirmpassword"]));
     $role = "Customer";
     $create_date = date("Y-m-d");
+    $img_id = 1;
 
     if (!empty($name) && !empty($email) && !empty($phonenumber) && !empty($password) && !empty($confirmpassword)) {
 
@@ -28,8 +29,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signupbtn'])) {
                 // Hash password and insert user
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-                $insert = $conn->prepare("INSERT INTO user (name, email, phone_number, password, role, create_date) VALUES (?, ?, ?, ?, ?, ?)");
-                $insert->bind_param("ssssss", $name, $email, $phonenumber, $hashedPassword, $role, $create_date);
+                $insert = $conn->prepare("INSERT INTO user (name, email, phone_number, password, role, create_date, img_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $insert->bind_param("sssssss", $name, $email, $phonenumber, $hashedPassword, $role, $create_date, $img_id);
 
                 if ($insert->execute()) {
                     echo "<p style='color:green;'>Account created successfully. Redirecting to login...</p>";
