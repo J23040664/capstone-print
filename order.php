@@ -81,13 +81,9 @@ session_start();
 </body>
 
 <script>
-    // Global variables (keep these as they are)
-    let currentUser = null; // Unused in this snippet, but keep if needed elsewhere
     let orders = [];
     let orderCounter = 12347;
 
-    // Navigation (keep these as they are, but remember they are for client-side display,
-    // not direct page navigation if you're using PHP for navigation now)
     function showSection(sectionId) {
         // Hide all sections
         const sections = document.querySelectorAll('.section');
@@ -95,10 +91,8 @@ session_start();
 
         // Show selected section
         document.getElementById(sectionId).classList.add('active');
-        // The commented-out navLinks update might be for single-page navigation, not full PHP page loads.
     }
 
-    // Price calculator data (this is correct)
     const prices = {
         'print-bw': 0.10,
         'print-color': 0.50,
@@ -111,7 +105,6 @@ session_start();
         'lamination-a3': 3.00
     };
 
-    // CORRECTED updateCalculator function for your order form
     function updateCalculator() {
         const service = document.getElementById('serviceType').value;
         const quantity = parseInt(document.getElementById('quantity').value) || 0;
