@@ -121,19 +121,16 @@ session_start();
 
         // Determine the correct price based on the selected service type
         if (service === 'namecard') {
-            // Name cards have a minimum quantity logic
             const minQuantity = Math.max(quantity, 100);
-            pricePerUnit = prices[service]; // prices['namecard'] is 0.25
+            pricePerUnit = prices[service];
             total = minQuantity * pricePerUnit;
-        } else if (service === 'binding') { // This specific check might not be needed if your options are 'binding-spiral' etc.
+        } else if (service === 'binding') { 
             pricePerUnit = prices['binding-spiral'];
             total = quantity * pricePerUnit;
-        } else if (service === 'lamination') { // Same as above for lamination
+        } else if (service === 'lamination') {
             pricePerUnit = prices['lamination-a4'];
             total = quantity * pricePerUnit;
         } else if (prices[service]) {
-            // For other services (print-bw, print-color, photocopy-bw, photocopy-color)
-            // where the dropdown value directly matches a key in the 'prices' object
             pricePerUnit = prices[service];
             total = quantity * pricePerUnit;
         } else {
@@ -142,7 +139,6 @@ session_start();
             return; // Exit function if price not found
         }
 
-        // Update the total display
         totalDiv.textContent = `Total: RM ${total.toFixed(2)}`;
     }
 
@@ -169,7 +165,6 @@ session_start();
             fileUpload.style.backgroundColor = '';
         });
 
-        // --- FIX STARTS HERE (corrected 'drop' event listener) ---
         fileUpload.addEventListener('drop', function(e) {
             e.preventDefault();
             fileUpload.style.backgroundColor = '';
@@ -177,17 +172,15 @@ session_start();
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 fileInput.files = files;
-                const fileNames = Array.from(files).map(file => file.name).join(', '); // Fixed this line
-                fileUpload.innerHTML = `<p><strong>Files selected:</strong></p><p>${fileNames}</p>`; // Added this line back
+                const fileNames = Array.from(files).map(file => file.name).join(', ');
+                fileUpload.innerHTML = `<p><strong>Files selected:</strong></p><p>${fileNames}</p>`;
             }
-        }); // Correctly closed 'drop' event listener function
-        // --- FIX ENDS HERE ---
+        });
 
-    }); // Correctly closed DOMContentLoaded event listener
+    });
 
-    // --- FIX STARTS HERE (corrected 'submitOrder' function) ---
     function submitOrder(event) {
-        event.preventDefault(); // Prevent default form submission (page reload)
+        event.preventDefault();
 
         const orderData = {
             id: orderCounter++,
@@ -202,15 +195,10 @@ session_start();
             total: document.getElementById('orderTotal').textContent
         };
 
-        orders.push(orderData); // This line is now INSIDE the function
+        orders.push(orderData);
         alert(`Order placed successfully! Your order ID is #${orderData.id}. You will receive a confirmation email shortly.`);
         
-        // Optional: Clear the form after submission
         document.querySelector('.order-form').reset();
-        document.getElementById('orderTotal').textContent = 'Total: RM 0.00'; // Reset total display
+        document.getElementById('orderTotal').textContent = 'Total: RM 0.00';
     }
-    // --- FIX ENDS HERE ---
-
-    // You might also need to call updateCalculator() on page load if you have default values
-    // window.onload = updateCalculator; // Uncomment if you want to initialize total on load
 </script>
