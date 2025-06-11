@@ -9,6 +9,7 @@ if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin") {
     exit;
 }
 
+// function get next service id
 function getNextIServiceId($conn)
 {
     $result = mysqli_query($conn, "SELECT MAX(service_id) AS max_id FROM service_list");
@@ -22,6 +23,7 @@ function getNextIServiceId($conn)
     return 'S' . str_pad($num, 3, '0', STR_PAD_LEFT);
 }
 
+// function get next finishing id
 function getNextIFinishingId($conn)
 {
     $result = mysqli_query($conn, "SELECT MAX(finishing_id) AS max_id FROM finishing_list");
@@ -35,6 +37,7 @@ function getNextIFinishingId($conn)
     return 'S' . str_pad($num, 3, '0', STR_PAD_LEFT);
 }
 
+// add service
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['addServiceBtn'])) {
     $newServiceId = getNextIServiceId($conn);
     $newServiceType1 = $_POST['newServiceType'];
@@ -59,6 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['addServiceBtn'])) {
     }
 }
 
+// edit service
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editServiceBtn'])) {
     $updateServiceId = $_POST['updateServiceId'];
     $updateServiceType = $_POST['updateServiceType'];
@@ -81,6 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editServiceBtn'])) {
     }
 }
 
+// delete service
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteServiceBtn'])) {
 
     $deleteServiceId = $_POST['deleteServiceId'];
@@ -98,6 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteServiceBtn'])) {
     }
 }
 
+// add finishing
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['addFinishingBtn'])) {
     $newFinishingId = getNextIFinishingId($conn);
     $newFinishingDesc = $_POST['newFinishingDesc'];
@@ -141,6 +147,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editFinishingBtn'])) {
     }
 }
 
+// delete finishing
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteFinishingBtn'])) {
 
     $deleteFinishingId = $_POST['deleteFinishingId'];
