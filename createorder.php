@@ -21,6 +21,11 @@ while ($row = mysqli_fetch_assoc($result_finishing)) {
     $finishing_prices[$row['finishing_id']] = $row['finishing_price'];
 }
 
+
+$user_id = $_GET['id'];
+
+
+// Generate next item_id
 function getNextItemId($conn) {
     $result = mysqli_query($conn, "SELECT MAX(item_id) AS max_id FROM order_detail");
     $row = mysqli_fetch_assoc($result);
@@ -45,6 +50,18 @@ function getNextOrderId($conn) {
     }
     return 'O' . str_pad($num, 7, '0', STR_PAD_LEFT);
 }
+// Generate next item_id
+function getNextFileId($conn) {
+    $result = mysqli_query($conn, "SELECT MAX(file_id) AS max_id FROM file");
+    $row = mysqli_fetch_assoc($result);
+    $max_id = $row['max_id'];
+    if ($max_id) {
+        $num = (int)substr($max_id, 1) + 1;
+    } else {
+        $num = 1;
+    }
+    return 'F' . str_pad($num, 7, '0', STR_PAD_LEFT);
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get form data
@@ -52,7 +69,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $paperSize = $_POST['paperSize'];
     $color_id = $_POST['color'];
     $copies = (int)$_POST['copies'];
-    $pages = (int)$_POST['pages'];
+
+    // pdf page count
+    require_once 'vendor/autoload.php'; 
+
+    $pdfPages = 1; // default fallback
+
+    if (isset($_FILES['pdfFile']) && $_FILES['pdfFile']['error'] == 0) {
+            // No need to move or upload to folder
+
+            $file_tmp_path = $_FILES['pdfFile']['tmp_name'];
+
+            // Create parser
+            $parser = new \Smalot\PdfParser\Parser();
+
+            // Parse PDF
+            $pdf = $parser->parseFile($file_tmp_path);
+
+            // Read file content to store in DB
+            $file_content = addslashes(file_get_contents($file_tmp_path));
+
+            // Get page count
+            $details = $pdf->getDetails();
+            if (isset($details['Pages'])) {
+                $pdfPages = (int)$details['Pages'];
+            } else {
+                $pagesArray = $pdf->getPages();
+                $pdfPages = count($pagesArray);
+            }
+        }
+
+            // Set to variable used in rest of the code
+    $pages = $pdfPages;
+
     $serviceCost = str_replace('RM ', '', $_POST['serviceCost']);
     $finishing1 = $_POST['finishing1'];
     $finishing2 = $_POST['finishing2'];
@@ -112,6 +161,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Generate IDs
     $item_id = getNextItemId($conn);
     $order_id = getNextOrderId($conn);
+    $file_id = getNextFileId($conn);
+
+    $file_name = $_FILES['pdfFile']['name'];
+    $file_type = pathinfo($file_name, PATHINFO_EXTENSION); // eg: pdf
+    $file_tmp_path = $_FILES['pdfFile']['tmp_name'];
+    $file_content = addslashes(file_get_contents($file_tmp_path));
 
     // Set created_at
     date_default_timezone_set('Asia/Kuala_Lumpur');
@@ -135,28 +190,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Insert into order_detail
     $sql_insert = "INSERT INTO order_detail (
-        item_id, order_id, service_id, service_desc, service_price, copies, pages, size, colour, service_total_price,
+        item_id, order_id, file_id, service_id, service_desc, service_price, copies, pages, size, colour, service_total_price,
         finishing_1, finishing_desc1, finishing_price1,
         finishing_2, finishing_desc2, finishing_price2,
         finishing_3, finishing_desc3, finishing_price3,
         item_price, remarks, created_at
     ) VALUES (
-        '$item_id', '$order_id', '$service_id', '$service_desc', $service_price, $copies, $pages, '$size_desc', '$color_desc', $serviceCost,
+        '$item_id', '$order_id', '$file_id', '$service_id', '$service_desc', $service_price, $copies, $pages, '$size_desc', '$color_desc', $serviceCost,
         " . ($finishing1_value !== null ? "'$finishing1_value'" : "NULL") . ", '$f1_desc', $f1_price,
         " . ($finishing2_value !== null ? "'$finishing2_value'" : "NULL") . ", '$f2_desc', $f2_price,
         " . ($finishing3_value !== null ? "'$finishing3_value'" : "NULL") . ", '$f3_desc', $f3_price,
         $totalCost, '$remarks', NOW()
-        )
-    ";
+    )";
 
-
-    if (mysqli_query($conn, $sql_insert)) {
-        echo "<script>alert('Order inserted successfully!'); window.location.href='orderlist.html';</script>";
+    if (!mysqli_query($conn, $sql_insert)) {
+        echo "Order Detail Insert Error: " . mysqli_error($conn);
         exit;
-    } else {
-        echo "Error: " . mysqli_error($conn);
     }
-}
+
+    // Insert into file
+    $sql_file_insert = "INSERT INTO file (
+        file_id, order_id, item_id, file_name, file_path, file_type
+    ) VALUES (
+        '$file_id', '$order_id', '$item_id', '$file_name', '$file_content', '$file_type'
+    )";
+
+    if (!mysqli_query($conn, $sql_file_insert)) {
+        echo "File Insert Error: " . mysqli_error($conn);
+        exit;
+    }
+
+    // If everything is successful
+    echo "<script>alert('Order inserted successfully!'); window.location.href='orderlist.html';</script>";
+    exit;
+
+
+    }
+
+
 
 ?>
 
@@ -170,6 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
 
   <style>
     body {
@@ -319,6 +391,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="container mt-4 bg-white p-4 rounded shadow-sm" style="max-height: 80vh; overflow-y: auto;">
                 <form id="printForm" method="POST" enctype="multipart/form-data">
 
+                    <!-- Customer Name -->
+                    <div class="mb-4">
+                        <label for="customerName" class="form-label">Name:</label>
+                        <input class="form-control" type="text" id="customerName" name="customerName" required>
+                    </div>
+
+                    <!-- Customer Email -->
+                    <div class="mb-4">
+                        <label for="customerEmail" class="form-label">Email:</label>
+                        <input class="form-control" type="email" id="customerEmail" name="customerEmail" required>
+                    </div>
+
+                    <!-- File Upload -->
+                    <div class="mb-4">
+                        <label for="pdfFile" class="form-label">Upload PDF File:</label>
+                        <input class="form-control" type="file" id="pdfFile" name="pdfFile" accept="application/pdf" required>
+                    </div>
+
                     <!-- Service Type Dropdown -->
                     <div class="mb-4">
                         <label for="serviceType" class="form-label">Type Of Services:</label>
@@ -377,7 +467,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <!-- Pages Count -->
                     <div class="mb-4">
                         <label for="pages" class="form-label">Number of Pages:</label>
-                        <input class="form-control" type="number" id="pages" name="pages" min="1" value="1" required>
+                        <input class="form-control" type="number" id="pages" name="pages" readonly>
                     </div>
 
                     <!-- Service Cost Output -->
@@ -553,6 +643,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     document.getElementById('copies').addEventListener('input', updateServiceCost);
     document.getElementById('pages').addEventListener('input', updateServiceCost);
 
+    document.getElementById('pdfFile').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file && file.type === 'application/pdf') {
+            const fileReader = new FileReader();
+
+            fileReader.onload = function() {
+                const typedarray = new Uint8Array(this.result);
+
+                pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
+                    const pageCount = pdf.numPages;
+                    document.getElementById('pages').value = pageCount;
+                }, function(reason) {
+                    console.error(reason);
+                    alert('Failed to read PDF file!');
+                });
+            };
+
+            fileReader.readAsArrayBuffer(file);
+        } else {
+            document.getElementById('pages').value = '';
+        }
+    });
 
 
     </script>
