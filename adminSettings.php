@@ -113,7 +113,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['addFinishingBtn'])) {
     $addFinishing = "INSERT INTO finishing_list (finishing_id, finishing_desc, finishing_price, finishing_status) 
     VALUE ('$newFinishingId', '$newFinishingDesc', '$newFinishingPrice', '$newFinishingStatus')";
 
-    print_r($_POST);
     if (mysqli_query($conn, $addFinishing)) {
         echo "<script>
             alert(' Finishing Added successfully.');

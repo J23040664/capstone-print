@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
                 $_SESSION['role'] = $user['role'];
 
                 echo "<p style='color:green;'>Login successful. Redirecting in 2 seconds...</p>";
-                header("Refresh: 2; url=adminDashboard.php?id=" . urlencode($user['user_id']));
+                header("Refresh: 2; url=adminDashboard.php?user_id=" . urlencode($user['user_id']));
                 exit;
             } else {
                 echo "<p style='color:red;'>Incorrect password.</p>";

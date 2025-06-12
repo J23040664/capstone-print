@@ -1,6 +1,12 @@
 <?php
 include('dbms.php');
 
+$user_id = $_GET['user_id'];
+// show the user Image
+$showUserInfo = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id WHERE a.user_id = '$user_id'";
+$queryShowUserInfor = mysqli_query($conn, $showUserInfo) or die(mysqli_error($conn));
+$rowShowUserInfo = mysqli_fetch_assoc($queryShowUserInfor);
+
 $currentYear = date("Y");
 $startDate = "$currentYear-01-01";
 $endDate = "$currentYear-12-31";
@@ -210,7 +216,7 @@ $aovYear = $totalOrdersYear > 0 ? round($totalSalesYear / $totalOrdersYear, 2) :
         <hr />
         <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-                <a href="dashboard.html" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
+                <a href="adminDashboard.php?<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
             </li>
             <li class="nav-item">
                 <a href="orderlist.html" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
@@ -228,18 +234,19 @@ $aovYear = $totalOrdersYear > 0 ? round($totalSalesYear / $totalOrdersYear, 2) :
             <!-- User dropdown on the right -->
             <div class="d-flex align-items-center ms-auto">
                 <div class="dropdown">
-                    <button class="btn dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
-                        <img src="./assets/icon/userpicture.png" class="rounded-circle" width="30" height="30"
-                            alt="profile_picture" />
-                        <span>abc</span>
+                    <button class="btn dropdown-toggle d-flex align-items-center gap-2"
+                        data-bs-toggle="dropdown">
+                        <img src="data:<?php echo $rowShowUserInfo['img_type']; ?>;base64,<?php echo base64_encode($rowShowUserInfo['img_data']); ?>"
+                            class="rounded-circle" width="30" height="30" alt="profile" />
+                        <span><?php echo $rowShowUserInfo['name']; ?></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#">My Profile</a></li>
-                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><a class="dropdown-item" href="profile.php">My Profile</a></li>
+                        <li><a class="dropdown-item" href="adminSettings">Settings</a></li>
                         <li>
                             <hr class="dropdown-divider" />
                         </li>
-                        <li><a class="dropdown-item text-danger" href="login.html">Log out</a></li>
+                        <li><a class="dropdown-item text-danger" href="logout.php">Log out</a></li>
                     </ul>
                 </div>
             </div>
@@ -263,16 +270,18 @@ $aovYear = $totalOrdersYear > 0 ? round($totalSalesYear / $totalOrdersYear, 2) :
                         </div>
                     </div>
 
-                    <!-- Current Month Orders -->
+                    <!-- Pending quotations -->
                     <div class="col-md-6 mt-4 d-flex">
                         <div class="card h-100 w-100">
                             <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                                <h5 class="card-title fs-6">Orders in <?php echo date("F"); ?></h5>
-                                <p class="card-text fs-2"><?php echo $todayCount; ?></p>
-                                <a href="orderlist.html" class="btn btn-primary mt-3">View Orders</a>
+                                <h5 class="card-title fs-6">Pending Quotations</h5>
+                                <p class="card-text fs-2" id="pendingQuotations">Loading...</p>
+                                <a href="quotationlist.php" class="btn btn-primary mt-3">Manage Quotations</a>
                             </div>
                         </div>
                     </div>
+
+
                 </div>
 
                 <div class="row">
@@ -474,20 +483,20 @@ $aovYear = $totalOrdersYear > 0 ? round($totalSalesYear / $totalOrdersYear, 2) :
             }
         });
 
-        // --- Pending Orders Count Update (example: show orders with 'pending' status in current month) ---
-        async function fetchPendingOrders() {
+        async function fetchPendingCounts() {
             try {
-                const response = await fetch('checkPendingOrder.php');
+                const response = await fetch('checkPendingData.php');
                 const data = await response.json();
-                const pendingOrdersElement = document.getElementById('pendingOrders');
-                pendingOrdersElement.textContent = data.pending_orders ?? 0;
+
+                document.getElementById('pendingOrders').textContent = data.pending_orders ?? 0;
+                document.getElementById('pendingQuotations').textContent = data.pending_quotations ?? 0;
             } catch (error) {
-                console.error('Failed to fetch pending orders:', error);
+                console.error('Failed to fetch pending counts:', error);
             }
         }
 
-        fetchPendingOrders();
-        setInterval(fetchPendingOrders, 5000);
+        fetchPendingCounts();
+        setInterval(fetchPendingCounts, 10000);
     </script>
 </body>
 

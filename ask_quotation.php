@@ -1,10 +1,101 @@
+<?php
+include('dbms.php');
+
+// Generate next quotation id
+function getNextQuotationId($conn)
+{
+    $result = mysqli_query($conn, "SELECT MAX(quotation_id) AS max_id FROM quotation");
+    $row = mysqli_fetch_assoc($result);
+    $max_id = $row['max_id'];
+    if ($max_id) {
+        $num = (int)substr($max_id, 1) + 1;
+    } else {
+        $num = 1;
+    }
+    return 'Q' . str_pad($num, 7, '0', STR_PAD_LEFT);
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submitQuotationBtn'])) {
+    $newQuotationId     = getNextQuotationId($conn);
+    $newReqName         = mysqli_real_escape_string($conn, $_POST['newReqName']);
+    $newReqEmail        = mysqli_real_escape_string($conn, $_POST['newReqEmail']);
+    $newReqPhoneNumber  = mysqli_real_escape_string($conn, $_POST['newReqPhoneNumber']);
+    $newReqRequest      = mysqli_real_escape_string($conn, $_POST['newReqRequest']);
+    $newReqQuantity     = intval($_POST['newReqQuantity']);
+    $newReqPaperSize    = mysqli_real_escape_string($conn, $_POST['newReqPaperSize']);
+    $newReqPaperType    = mysqli_real_escape_string($conn, $_POST['newReqPaperType']);
+    $newReqFinishing    = mysqli_real_escape_string($conn, $_POST['newReqFinishing']);
+    $newReqRemarks      = mysqli_real_escape_string($conn, $_POST['newReqRemarks']);
+    $newReqQuotationStatus = "Pending";
+    $newReqCreateDate   = date('Y-m-d');
+
+    // Handle file upload safely
+    if (isset($_FILES['newReqFileData']) && $_FILES['newReqFileData']['error'] === UPLOAD_ERR_OK) {
+        $fileTmpPath = $_FILES['newReqFileData']['tmp_name'];
+        $fileType = mime_content_type($fileTmpPath);
+        $fileContent = file_get_contents($fileTmpPath);
+
+        // Encode binary content for safe SQL insert
+        $fileContentEncoded = mysqli_real_escape_string($conn, base64_encode($fileContent));
+        $fileTypeEscaped = mysqli_real_escape_string($conn, $fileType);
+    } else {
+        $fileContentEncoded = null;
+        $fileTypeEscaped = null;
+    }
+
+    $addQuotation = "INSERT INTO quotation (
+            quotation_id,
+            requester_name,
+            requester_email,
+            requester_phone_number,
+            request_type,
+            quantity,
+            paper_size,
+            paper_type,
+            finishing,
+            file_type,
+            file_data,
+            remark,
+            quotation_status,
+            create_date
+        ) VALUES (
+            '$newQuotationId',
+            '$newReqName',
+            '$newReqEmail',
+            '$newReqPhoneNumber',
+            '$newReqRequest',
+            $newReqQuantity,
+            '$newReqPaperSize',
+            '$newReqPaperType',
+            '$newReqFinishing',
+            " . ($fileTypeEscaped ? "'$fileTypeEscaped'" : "NULL") . ",
+            " . ($fileContentEncoded ? "'$fileContentEncoded'" : "NULL") . ",
+            '$newReqRemarks',
+            '$newReqQuotationStatus',
+            '$newReqCreateDate'
+        )
+    ";
+
+    if (mysqli_query($conn, $addQuotation)) {
+        echo "<script>
+            alert('Quotation submitted successfully.');
+            window.location.href = 'ask_quotation.php';
+        </script>";
+        exit;
+    } else {
+        echo "Database error: " . mysqli_error($conn);
+    }
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Quotation Details</title>
+    <title>Ask Quotation</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -117,8 +208,7 @@
                 <a href="orderlist.html" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
             </li>
             <li class="nav-item">
-                <a href="ask_quotation.html" class="nav-link"><i class="bi bi-question-circle"></i><span>Ask
-                        Quotation</span></a>
+                <a href="ask_quotation.html" class="nav-link"><i class="bi bi-question-circle"></i><span>Ask Quotation</span></a>
             </li>
         </ul>
     </div>
@@ -150,37 +240,37 @@
             </div>
         </div>
     </nav>
+
     <!-- Main Content -->
     <main id="mainContent" class="main-content">
         <div class="container mt-5 mb-5">
-            <h2 class="mb-4">Quotation Details</h2>
-            <form action="submit_quotation.php" method="POST" enctype="multipart/form-data"
-                class="bg-white p-4 rounded shadow-sm">
+            <h2 class="mb-4">Ask for Quotation</h2>
+            <form method="POST" enctype="multipart/form-data" class="bg-white p-4 rounded shadow-sm">
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label class="form-label">Full Name</label>
-                        <input type="text" name="name" class="form-control" disabled>
+                        <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                        <input type="text" name="newReqName" class="form-control" required>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Email Address</label>
-                        <input type="email" name="email" class="form-control" disabled>
+                        <label class="form-label">Email Address <span class="text-danger">*</span></label>
+                        <input type="email" name="newReqEmail" class="form-control" required>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Phone Number</label>
-                        <input type="text" name="phone" class="form-control" disabled>
+                        <input type="text" name="newReqPhoneNumber" class="form-control">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Type of Request</label>
-                        <select name="request_type" class="form-select" disabled>
-                            <option value="">-- Select --</option>
-                            <option>Poster</option>
-                            <option>Booklet</option>
-                            <option>Business Card</option>
-                            <option>Others</option>
+                        <select name="newReqRequest" class="form-select">
+                            <option value="None">-- Select --</option>
+                            <option value="Poster">Poster</option>
+                            <option value="Booklet">Booklet</option>
+                            <option value="Business Card">Business Card</option>
+                            <option value="Others">Others</option>
                         </select>
                     </div>
                 </div>
@@ -188,45 +278,45 @@
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label class="form-label">Quantity</label>
-                        <input type="number" name="quantity" class="form-control" disabled>
+                        <input type="number" name="newReqQuantity" class="form-control">
                     </div>
+
                     <div class="col-md-4">
                         <label class="form-label">Paper Size</label>
-                        <select name="paper_size" class="form-select" disabled>
-                            <option value="">-- Select --</option>
-                            <option>A4</option>
-                            <option>A3</option>
-                            <option>Custom</option>
+                        <select name="newReqPaperSize" class="form-select">
+                            <option value="None">-- Select --</option>
+                            <option value="A4">A4</option>
+                            <option value="A3">A3</option>
+                            <option value="Custom">Custom</option>
                         </select>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Paper Type</label>
-                        <select name="paper_type" class="form-select" disabled>
-                            <option value="">-- Select --</option>
-                            <option>Glossy</option>
-                            <option>Matte</option>
-                            <option>Art Paper</option>
+                        <select name="newReqPaperType" class="form-select">
+                            <option value="None">-- Select --</option>
+                            <option value="Glossy">Glossy</option>
+                            <option value="Matte">Matte</option>
+                            <option value="Art Paper">Art Paper</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Finishing (optional)</label>
-                    <input type="text" name="finishing" class="form-control" placeholder="e.g. Lamination, Binding" disabled>
+                    <input type="text" name="newReqFinishing" class="form-control" placeholder="e.g. Lamination, Binding">
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Upload Reference File (optional)</label>
-                    <input type="file" name="reference_file" class="form-control" disabled>
+                    <input type="file" name="newReqFileData" class="form-control">
                 </div>
 
                 <div class="mb-4">
                     <label class="form-label">Additional Notes</label>
-                    <textarea name="notes" class="form-control" rows="4"
-                        placeholder="Any specific requirements..." disabled></textarea>
+                    <textarea name="newReqRemarks" class="form-control" rows="4" placeholder="Any specific requirements..."></textarea>
                 </div>
 
-                <a href="quotationlist.html" class="btn btn-primary w-100">Back</a>
+                <button type="submit" class="btn btn-primary w-100" name="submitQuotationBtn">Send Quotation Request</button>
             </form>
         </div>
     </main>
