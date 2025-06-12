@@ -1,3 +1,29 @@
+<?php
+include('dbms.php'); // your DB connection
+
+// Get customer_id from session
+$customer_id = $_GET['id'];
+
+// Fetch orders for this customer
+$sql = "SELECT 
+            o.order_id,
+            o.created_at AS order_date,
+            o.order_status,
+            o.payment_status,
+            s.service_desc
+        FROM `order` o
+        JOIN `order_detail` od ON o.item_id = od.item_id
+        JOIN `service_list` s ON od.service_id = s.service_id
+        WHERE o.customer_id = ?
+        ORDER BY o.created_at DESC";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $customer_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -180,51 +206,69 @@
         <div class="container-fluid">
             <h3 class="fw-bold mb-4">My Orders</h3>
 
-            <div class="bg-white p-4 rounded shadow-sm table-responsive">
-                <table id="example" class="table table-hover align-middle">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Service Type</th>
-                            <th>Order Date</th>
-                            <th>Order Status</th>
-                            <th>Payment Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Sample row - unpaid -->
-                        <tr>
-                            <td>#20250601</td>
-                            <td>Business Card</td>
-                            <td>2025-06-09</td>
-                            <td><span class="badge bg-warning text-dark">Pending</span></td>
-                            <td><span class="badge bg-warning text-dark">Pending</span></td>
-                            <td>
-                                <a href="orderdetails.html?order_id=20250601" class="btn btn-outline-primary btn-sm me-2">
-                                    <i class="bi bi-eye"></i> View
-                                </a>
-                                <a href="payment.html?order_id=20250601" class="btn btn-success btn-sm">
-                                    <i class="bi bi-credit-card"></i> Pay Now
-                                </a>
-                            </td>
-                        </tr>
-                        <!-- Sample row - paid -->
-                        <tr>
-                            <td>#20250521</td>
-                            <td>Poster Print</td>
-                            <td>2025-06-05</td>
-                            <td><span class="badge bg-success">Completed</span></td>
-                            <td><span class="badge bg-success">Paid</span></td>
-                            <td>
-                                <a href="orderdetails.html?order_id=20250521" class="btn btn-outline-primary btn-sm">
-                                    <i class="bi bi-eye"></i> View
-                                </a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="bg-white p-4 rounded shadow-sm">
+
+
+
+                <?php if ($result->num_rows > 0): ?>
+                    <!-- Order Table -->
+                    <div class="table-responsive">
+                        <table id="example" class="table table-hover align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Service Type</th>
+                                    <th>Order Date</th>
+                                    <th>Order Status</th>
+                                    <th>Payment Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while ($row = $result->fetch_assoc()): ?>
+                                    <tr>
+                                        <td>#<?php echo htmlspecialchars($row['order_id']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['service_desc']); ?></td>
+                                        <td><?php echo date('Y-m-d', strtotime($row['order_date'])); ?></td>
+                                        <td>
+                                            <?php
+                                                $order_status = $row['order_status'];
+                                                $order_badge_class = ($order_status == 'Completed') ? 'bg-success' : (($order_status == 'Pending') ? 'bg-warning text-dark' : 'bg-info text-dark');
+                                            ?>
+                                            <span class="badge <?php echo $order_badge_class; ?>"><?php echo htmlspecialchars($order_status); ?></span>
+                                        </td>
+                                        <td>
+                                            <?php
+                                                $payment_status = $row['payment_status'];
+                                                $payment_badge_class = ($payment_status == 'Paid') ? 'bg-success' : 'bg-warning text-dark';
+                                            ?>
+                                            <span class="badge <?php echo $payment_badge_class; ?>"><?php echo htmlspecialchars($payment_status); ?></span>
+                                        </td>
+                                        <td>
+                                            <a href="http://localhost/capstone-print/orderdetails.php?order_id=<?php echo urlencode($row['order_id']); ?>&id=<?php echo urlencode($customer_id); ?>" class="btn btn-outline-primary btn-sm me-2">
+                                                <i class="bi bi-eye"></i> View
+                                            </a>
+
+                                            <?php if ($payment_status == 'Pending'): ?>
+                                                <a href="payment.php?order_id=<?php echo urlencode($row['order_id']); ?>" class="btn btn-success btn-sm">
+                                                    <i class="bi bi-credit-card"></i> Pay Now
+                                                </a>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php else: ?>
+                    <!-- No order history message -->
+                    <div class="text-center py-5">
+                        <i class="bi bi-folder-x" style="font-size: 3rem; color: #ccc;"></i>
+                        <p class="mt-3 fs-5 text-muted">You have no order history yet.</p>
+                    </div>
+                <?php endif; ?>
             </div>
+
         </div>
     </main>
 
@@ -244,21 +288,19 @@
         $('#example').DataTable({
             lengthChange: false,
             ordering: false,
-            layout: {
-                topStart: {
-                    buttons: [
-                        {
-                            text: 'Place New Order',
-                            className: 'btn btn-primary',
-                            action: function () {
-                                window.location.href = 'createorder.html';
-                            }
-                        }
-                    ]
+            dom: '<"d-flex justify-content-between align-items-center mb-3"fB>t<"d-flex justify-content-between mt-2"ip>',
+            buttons: [
+                {
+                    text: '<i class="bi bi-plus-circle"></i> Create New Order',
+                    className: 'btn btn-primary',
+                    action: function () {
+                        window.location.href = 'http://localhost/capstone-print/createorder.php?id=<?php echo urlencode($customer_id); ?>';
+                    }
                 }
-            }
+            ]
         });
-    </script>
-</body>
 
+    </script>
+
+    </body>
 </html>
