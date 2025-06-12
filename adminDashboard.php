@@ -1,11 +1,17 @@
 <?php
+session_start();
 include('dbms.php');
 
-$user_id = $_GET['user_id'];
-// show the user Image
-$showUserInfo = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id WHERE a.user_id = '$user_id'";
-$queryShowUserInfor = mysqli_query($conn, $showUserInfo) or die(mysqli_error($conn));
-$rowShowUserInfo = mysqli_fetch_assoc($queryShowUserInfor);
+if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['user_id'] == $_GET['user_id']) {
+    $user_id = $_GET['user_id'];
+    // show the user info
+    $showUserInfo = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id WHERE a.user_id = '$user_id'";
+    $queryShowUserInfo = mysqli_query($conn, $showUserInfo) or die(mysqli_error($conn));
+    $rowShowUserInfo = mysqli_fetch_assoc($queryShowUserInfo);
+} else {
+    header("Location: login.php");
+    exit;
+}
 
 $currentYear = date("Y");
 $startDate = "$currentYear-01-01";
@@ -24,21 +30,19 @@ for ($i = 1; $i <= 12; $i++) {
 }
 
 // === Query Order Count and Order Cost (combined) ===
-$sqlOrders = "SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, 
-                     COUNT(*) AS order_count, 
-                     SUM(total_price) AS total_cost
-              FROM `order`
-              WHERE created_at BETWEEN '$startDate' AND '$endDate'
-              GROUP BY month
-              ORDER BY month ASC";
+$sqlSales = "SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, COUNT(*) AS order_count, SUM(total_price) AS total_cost
+            FROM `order`
+            WHERE created_at BETWEEN '$startDate' AND '$endDate'
+            GROUP BY month
+            ORDER BY month ASC";
 
-$resultOrders = $conn->query($sqlOrders);
-if ($resultOrders) {
-    while ($row = $resultOrders->fetch_assoc()) {
-        $month = $row['month'];
+$resultSales = $conn->query($sqlSales);
+if ($resultSales) {
+    while ($rowSales = $resultSales->fetch_assoc()) {
+        $month = $rowSales['month'];
         if (isset($orderCounts[$month])) {
-            $orderCounts[$month] = (int)$row['order_count'];
-            $orderCosts[$month] = (float)$row['total_cost'];
+            $orderCounts[$month] = (int)$rowSales['order_count'];
+            $orderCosts[$month] = (float)$rowSales['total_cost'];
         }
     }
 }
@@ -241,8 +245,8 @@ $aovYear = $totalOrdersYear > 0 ? round($totalSalesYear / $totalOrdersYear, 2) :
                         <span><?php echo $rowShowUserInfo['name']; ?></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="profile.php">My Profile</a></li>
-                        <li><a class="dropdown-item" href="adminSettings">Settings</a></li>
+                        <li><a class="dropdown-item" href="profile.php?user_id=<?php echo $user_id; ?>">My Profile</a></li>
+                        <li><a class="dropdown-item" href="adminSettings.php?user_id=<?php echo $user_id; ?>">Settings</a></li>
                         <li>
                             <hr class="dropdown-divider" />
                         </li>

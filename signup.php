@@ -82,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signupbtn'])) {
 
         <h3 class="text-center mb-3">Create an account</h3>
 
-        <form method="POST">
+        <form method="POST" id="signUpCode">
             <div class="mb-3">
                 <label for="fullname" class="form-label">Full Name <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="fullname" name="fullname" required>
@@ -122,13 +122,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signupbtn'])) {
                 </div>
             </div>
 
-            <!-- <div class="mb-5">
+            <div class="mb-4">
                 <label for="code">Verification Code:</label>
                 <div class="input-group">
                     <input type="text" class="form-control" id="code" name="code" required />
-                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="verifyCode()" id="send_code_btn">Send code</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="verifyCode(document.getElementById('email').value)" id="send_code_btn">
+                        Send code
+                    </button>
                 </div>
-            </div> -->
+            </div>
 
             <div class="d-grid mb-3">
                 <button type="submit" class="btn btn-primary" name="signupbtn">Sign Up</button>
@@ -145,6 +147,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signupbtn'])) {
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="./email.js"></script>
+
+    <script>
+        document.getElementById('signUpCode').addEventListener('submit', function(e) {
+            const inputCode = document.getElementById('code').value;
+            const storedCode = sessionStorage.getItem('verificationCode');
+            if (inputCode !== storedCode) {
+                e.preventDefault(); // stop submit
+                alert("Invalid verification code.");
+            } else {
+                // Code is correct, so remove it from sessionStorage
+                sessionStorage.removeItem('verificationCode');
+            }
+        });
+    </script>
 
     <script>
         // Toggle for password field
@@ -152,7 +170,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signupbtn'])) {
         const password = document.getElementById('password');
         const passwordIcon = togglePasswordBtn.querySelector('i');
 
-        togglePasswordBtn.addEventListener('click', function () {
+        togglePasswordBtn.addEventListener('click', function() {
             const type = password.type === 'password' ? 'text' : 'password';
             password.type = type;
             passwordIcon.classList.toggle('bi-eye');
@@ -164,7 +182,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signupbtn'])) {
         const confirmpassword = document.getElementById('confirmpassword');
         const confirmIcon = toggleConfirmPasswordBtn.querySelector('i');
 
-        toggleConfirmPasswordBtn.addEventListener('click', function () {
+        toggleConfirmPasswordBtn.addEventListener('click', function() {
             const type = confirmpassword.type === 'password' ? 'text' : 'password';
             confirmpassword.type = type;
             confirmIcon.classList.toggle('bi-eye');

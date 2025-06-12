@@ -24,15 +24,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
                 header("Refresh: 2; url=adminDashboard.php?user_id=" . urlencode($user['user_id']));
                 exit;
             } else {
-                echo "<p style='color:red;'>Incorrect password.</p>";
+                $errorMessage = '<div class="alert alert-danger" role="alert">
+                                    Password is invalid
+                                </div>';
             }
         } else {
-            echo "<p style='color:red;'>Incorrect Email.</p>";
+            $errorMessage = '<div class="alert alert-danger" role="alert">
+                                Account does not exist
+                            </div>';
         }
 
         $stmt->close();
     } else {
-        echo "<p style='color:red;'>Please fill in all fields.</p>";
+        $errorMessage = '<div class="alert alert-danger" role="alert">
+                            All fields is required.
+                        </div>';
     }
 }
 ?>
@@ -67,6 +73,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
     <div class="login-box">
 
         <h3 class="text-center mb-3">Sign In</h3>
+        
+        <?php echo $errorMessage; ?>
 
         <form method="POST">
             <div class="mb-3">
@@ -106,7 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
         const passwordInput = document.getElementById('password');
         const icon = togglePasswordBtn.querySelector('i');
 
-        togglePasswordBtn.addEventListener('click', function () {
+        togglePasswordBtn.addEventListener('click', function() {
             const type = passwordInput.type === 'password' ? 'text' : 'password';
             passwordInput.type = type;
             icon.classList.toggle('bi-eye');

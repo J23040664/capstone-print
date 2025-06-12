@@ -1,8 +1,15 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['id']) || $_SESSION['id'] != $_GET['id']) {
+
+if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $_GET['user_id']) {
     header("Location: login.php");
+    exit; // stop further execution after redirect
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submitCode'])) {
+    header("Location: reset_pass3.php?user_id=" . $_SESSION['user_id']);
+    exit();
 }
 
 ?>
@@ -38,7 +45,7 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] != $_GET['id']) {
 
         <p class="text-center me-2 mt-3 mb-3">Please enter your verification code to reset your password.</p>
 
-        <form id="verification_form">
+        <form method="POST" id="verificationCode">
             <label for="code">Verification Code:</label>
             <div class="input-group">
                 <input type="text" class="form-control" id="code" name="code" required />
@@ -46,15 +53,29 @@ if (!isset($_SESSION['id']) || $_SESSION['id'] != $_GET['id']) {
             </div>
 
             <div class="d-grid mb-3 mt-3">
-                <button type="submit" class="btn btn-primary">Submit Code</button>
+                <button type="submit" class="btn btn-primary" name="submitCode">Submit Code</button>
             </div>
         </form>
     </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script> -->
-    <!-- <script src="email.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="email.js"></script>
+
+    <script>
+        document.getElementById('verificationCode').addEventListener('submit', function(e) {
+            const inputCode = document.getElementById('code').value;
+            const storedCode = sessionStorage.getItem('verificationCode');
+            if (inputCode !== storedCode) {
+                e.preventDefault(); // stop submit
+                alert("Invalid verification code.");
+            } else {
+                // Code is correct, so remove it from sessionStorage
+                sessionStorage.removeItem('verificationCode');
+            }
+        });
+    </script>
 
 </body>
 

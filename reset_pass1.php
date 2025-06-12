@@ -13,9 +13,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['checkAccount'])) {
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        $_SESSION['id'] = $row['user_id'];
+        $_SESSION['user_id'] = $row['user_id'];
         $_SESSION['email'] = $row['email'];
-        header("Location: reset_pass2.php");
+        header("Location: reset_pass2.php?user_id=" . $row['user_id']);
         exit();
     } else {
         echo "This account doesn't exist";

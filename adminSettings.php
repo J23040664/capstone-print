@@ -2,8 +2,13 @@
 session_start();
 include('dbms.php');
 
-if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin") {
-    $user_id = $_SESSION['user_id'];
+// must include at each page, to prevent change user id from url
+if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['user_id'] == $_GET['user_id']) {
+    $user_id = $_GET['user_id'];
+    // show the user info
+    $showUserInfo = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id WHERE a.user_id = '$user_id'";
+    $queryShowUserInfo = mysqli_query($conn, $showUserInfo) or die(mysqli_error($conn));
+    $rowShowUserInfo = mysqli_fetch_assoc($queryShowUserInfo);
 } else {
     header("Location: login.php");
     exit;
@@ -173,31 +178,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['addUserBtn'])) {
     $newRole = htmlspecialchars(trim($_POST["newRole"]));
     $newCreateDate = date("Y-m-d");
     $newImg = 1;
-    
+
     // Check if email already exists
     $checkEmail = "SELECT * FROM user WHERE email = '$newEmail'";
     $queryCheckEmail = mysqli_query($conn, $checkEmail);
-    
+
     if (mysqli_num_rows($queryCheckEmail) > 0) {
         echo "<p style='color:red;'>Email already exists.</p>";
     } else {
         // Hash password and insert user
         $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-        
+
         $addUser = "INSERT INTO user (name, email, phone_number, password, role, create_date, img_id)
         VALUES ('$newName', '$newEmail', '$newPhoneNumber', '$hashedPassword', '$newRole', '$newCreateDate', $newImg)";
-        
+
         if (mysqli_query($conn, $addUser)) {
-        echo "<script>
+            echo "<script>
             alert(' Add User successfully.');
             window.location.href = 'adminSettings.php';
         </script>";
         } else {
-        echo "Error updating record: " . mysqli_error($conn);
+            echo "Error updating record: " . mysqli_error($conn);
         }
     }
 }
-    
+
 // edit user
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editUserBtn'])) {
     $updateUserId = $_POST['updateUserId'];
@@ -205,14 +210,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editUserBtn'])) {
     $updateEmail = $_POST['updateEmail'];
     $updatePhoneNumber = $_POST['updatePhoneNumber'];
     $updateRole = $_POST['updateRole'];
-    
-    
+
+
     $updateUser = "UPDATE user
     SET name = '$updateName', email = '$updateEmail', phone_number = '$updatePhoneNumber', role = '$updateRole'
     WHERE user_id = '$updateUserId'";
-    
+
     if (mysqli_query($conn, $updateUser)) {
-    echo "<script>
+        echo "<script>
         alert('User updated successfully.');
         window.location.href = 'adminSettings.php';
         </script>";
@@ -221,22 +226,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editUserBtn'])) {
         echo "Error updating record: " . mysqli_error($conn);
     }
 }
-    
+
 // delete user
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
 
     $deleteUserId = $_POST['deleteUserId'];
-    
+
     $deleteUser = "DELETE FROM user WHERE user_id = '$deleteUserId'";
-    
+
     if (mysqli_query($conn, $deleteUser)) {
-    echo "<script>
+        echo "<script>
         alert(' User Deleted successfully.');
         window.location.href = 'adminSettings.php';
     </script>";
-    exit;
+        exit;
     } else {
-    echo "Error updating record: " . mysqli_error($conn);
+        echo "Error updating record: " . mysqli_error($conn);
     }
 }
 
@@ -380,28 +385,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
         </ul>
     </div>
 
-    <!-- top Navbar -->
+    <!-- Top Navbar -->
     <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3 top-navbar">
         <div class="container-fluid">
             <button class="btn btn-outline-secondary me-2" id="toggleSidebar">
                 <i class="bi bi-list"></i>
             </button>
 
+            <!-- User dropdown on the right -->
             <div class="d-flex align-items-center ms-auto">
                 <div class="dropdown">
-                    <button class="btn dropdown-toggle d-flex align-items-center gap-2" type="button"
+                    <button class="btn dropdown-toggle d-flex align-items-center gap-2"
                         data-bs-toggle="dropdown">
-                        <img src="./assets/icon/userpicture.png" class="rounded-circle" width="30" height="30"
-                            alt="profile_picture">
-                        <span>abc</span>
+                        <img src="data:<?php echo $rowShowUserInfo['img_type']; ?>;base64,<?php echo base64_encode($rowShowUserInfo['img_data']); ?>"
+                            class="rounded-circle" width="30" height="30" alt="profile" />
+                        <span><?php echo $rowShowUserInfo['name']; ?></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#">My Profile</a></li>
-                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><a class="dropdown-item" href="profile.php?user_id=<?php echo $user_id; ?>">My Profile</a></li>
+                        <li><a class="dropdown-item" href="adminSettings.php?user_id=<?php echo $user_id; ?>">Settings</a></li>
                         <li>
                             <hr class="dropdown-divider" />
                         </li>
-                        <li><a class="dropdown-item text-danger" href="login.html">Log out</a></li>
+                        <li><a class="dropdown-item text-danger" href="logout.php">Log out</a></li>
                     </ul>
                 </div>
             </div>

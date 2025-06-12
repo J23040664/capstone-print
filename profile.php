@@ -1,10 +1,17 @@
 <?php
+session_start();
 include 'dbms.php';
 
-// show the image
-$showImg = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id WHERE a.user_id = 10000001";
-$queryShowImg = mysqli_query($conn, $showImg) or die(mysqli_error($conn));
-$rowShowImg = mysqli_fetch_assoc($queryShowImg);
+if (isset($_SESSION['role']) && $_SESSION['user_id'] == $_GET['user_id']) {
+    $user_id = $_GET['user_id'];
+    // show the user info
+    $showUserInfo = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id WHERE a.user_id = '$user_id'";
+    $queryShowUserInfo = mysqli_query($conn, $showUserInfo) or die(mysqli_error($conn));
+    $rowShowUserInfo = mysqli_fetch_assoc($queryShowUserInfo);
+} else {
+    header("Location: login.php");
+    exit;
+}
 
 // list all the image
 $showImgList = "SELECT * FROM profile_images";
@@ -12,7 +19,6 @@ $queryShowImgList = mysqli_query($conn, $showImgList) or die(mysqli_error($conn)
 
 // Update profile picture
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateProfileBtn'])) {
-    $user_id = 10000001;
     $newImgid = $_POST['updatePic'];
 
     $updateImg = "UPDATE user SET img_id = '$newImgid' WHERE user_id = '$user_id'";
@@ -20,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateProfileBtn'])) 
     if (mysqli_query($conn, $updateImg)) {
         echo "<script>
             alert('Profile image updated successfully.');
-            window.location.href = 'profile.php';
+            window.location.href = 'profile.php?user_id={$user_id}';
           </script>";
         exit;
     } else {
@@ -30,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateProfileBtn'])) 
 
 // Update name
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateNameBtn'])) {
-    $user_id = 10000001;
     $newName = $_POST['updateName'];
 
     $updateName = "UPDATE user SET name = '$newName' WHERE user_id = '$user_id'";
@@ -38,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateNameBtn'])) {
     if (mysqli_query($conn, $updateName)) {
         echo "<script>
             alert('Name updated successfully.');
-            window.location.href = 'profile.php';
+            window.location.href = 'profile.php?user_id={$user_id}';
           </script>";
         exit;
     } else {
@@ -59,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
     if (!$queryOldPassword || mysqli_num_rows($queryOldPassword) == 0) {
         echo "<script>
         alert('Error: User not found');
-        window.location.href = 'profile.php';
+        window.location.href = 'profile.php?user_id={$user_id}';
         </script>";
         exit;
     }
@@ -77,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
     if ($new_password !== $confirm_password) {
         echo "<script>
         alert('New Password and Confirm Password is not match.');
-        window.location.href = 'profile.php';
+        window.location.href = 'profile.php?user_id={$user_id}';
         </script>";
         exit;
     }
@@ -89,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
     if (mysqli_query($conn, $updatePassword)) {
         echo "<script>
         alert('Password updated successfully.');
-        window.location.href = 'profile.php';
+        window.location.href = 'profile.php?user_id={$user_id}';
         </script>";
         exit;
     } else {
@@ -222,28 +227,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
         </ul>
     </div>
 
-    <!-- top Navbar -->
+    <!-- Top Navbar -->
     <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3 top-navbar">
         <div class="container-fluid">
             <button class="btn btn-outline-secondary me-2" id="toggleSidebar">
                 <i class="bi bi-list"></i>
             </button>
 
+            <!-- User dropdown on the right -->
             <div class="d-flex align-items-center ms-auto">
                 <div class="dropdown">
-                    <button class="btn dropdown-toggle d-flex align-items-center gap-2" type="button"
+                    <button class="btn dropdown-toggle d-flex align-items-center gap-2"
                         data-bs-toggle="dropdown">
-                        <img src="data:<?php echo $rowShowImg['img_type']; ?>;base64,<?php echo base64_encode($rowShowImg['img_data']); ?>"
-                            class="rounded-circle" width="30" height="30" alt="profile_picture">
-                        <span>abc</span>
+                        <img src="data:<?php echo $rowShowUserInfo['img_type']; ?>;base64,<?php echo base64_encode($rowShowUserInfo['img_data']); ?>"
+                            class="rounded-circle" width="30" height="30" alt="profile" />
+                        <span><?php echo $rowShowUserInfo['name']; ?></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#">My Profile</a></li>
-                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><a class="dropdown-item" href="profile.php?user_id=<?php echo $user_id; ?>">My Profile</a></li>
+                        <li><a class="dropdown-item" href="adminSettings.php?user_id=<?php echo $user_id; ?>">Settings</a></li>
                         <li>
                             <hr class="dropdown-divider" />
                         </li>
-                        <li><a class="dropdown-item text-danger" href="login.html">Log out</a></li>
+                        <li><a class="dropdown-item text-danger" href="logout.php">Log out</a></li>
                     </ul>
                 </div>
             </div>
@@ -257,7 +263,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
         </div>
 
         <div class="container mt-4 bg-white p-4 rounded shadow-sm">
-            <img src="data:<?php echo $rowShowImg['img_type']; ?>;base64,<?php echo base64_encode($rowShowImg['img_data']); ?>" class=" rounded-circle" width="120" height="120" alt="profile" />
+            <img src="data:<?php echo $rowShowUserInfo['img_type']; ?>;base64,<?php echo base64_encode($rowShowUserInfo['img_data']); ?>" class=" rounded-circle" width="120" height="120" alt="profile" />
             <br>
             <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#changeProfileModal">Edit Picture</button>
 
@@ -293,7 +299,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
 
             <form method="post">
                 <label for="updateName">Name:</label>
-                <input type="text" class="form-control" name="updateName" value="<?php echo $rowShowImg['name']; ?>">
+                <input type="text" class="form-control" name="updateName" value="<?php echo $rowShowUserInfo['name']; ?>">
                 <button type="submit" class="btn btn-primary mt-3" name="updateNameBtn">Save & Changes</button>
             </form>
 

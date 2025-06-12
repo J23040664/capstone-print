@@ -2,12 +2,12 @@
 include ("./dbms.php");
 session_start();
 
-if (!isset($_SESSION['id']) || $_SESSION['id'] != $_GET['id']) {
+if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $_GET['user_id']) {
     header("Location: login.php");
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['resetpassbtn'])) {
-    $id = $_GET['id'];
+    $user_id = $_GET['user_id'];
     $new_password = $_POST['password'];
     $confirm_password = $_POST['confirmpassword'];
 
@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['resetpassbtn'])) {
     }
 
     $checkPassword = $conn->prepare("SELECT password FROM user WHERE user_id = ?");
-    $checkPassword->bind_param("i", $id);
+    $checkPassword->bind_param("i", $user_id);
     $checkPassword->execute();
     $result = $checkPassword->get_result();
 
@@ -37,9 +37,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['resetpassbtn'])) {
         $updatePassword->bind_param("si", $hashed_password, $id);
 
         if ($updatePassword->execute()) {
-            echo "Password has been reset successfully.";
+            echo "<p style='color:green;'>Password has been reset successfully. Redirecting to login...</p>";
+            header("refresh:2; url=login.php");
             session_unset();
             session_destroy();
+            exit;
         } else {
             echo "Error updating password: " . $updatePassword->error;
         }
