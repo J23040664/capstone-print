@@ -9,6 +9,7 @@ if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin") {
     exit;
 }
 
+// function get next service id
 function getNextIServiceId($conn)
 {
     $result = mysqli_query($conn, "SELECT MAX(service_id) AS max_id FROM service_list");
@@ -22,6 +23,7 @@ function getNextIServiceId($conn)
     return 'S' . str_pad($num, 3, '0', STR_PAD_LEFT);
 }
 
+// function get next finishing id
 function getNextIFinishingId($conn)
 {
     $result = mysqli_query($conn, "SELECT MAX(finishing_id) AS max_id FROM finishing_list");
@@ -35,6 +37,7 @@ function getNextIFinishingId($conn)
     return 'S' . str_pad($num, 3, '0', STR_PAD_LEFT);
 }
 
+// add service
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['addServiceBtn'])) {
     $newServiceId = getNextIServiceId($conn);
     $newServiceType1 = $_POST['newServiceType'];
@@ -59,6 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['addServiceBtn'])) {
     }
 }
 
+// edit service
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editServiceBtn'])) {
     $updateServiceId = $_POST['updateServiceId'];
     $updateServiceType = $_POST['updateServiceType'];
@@ -81,6 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editServiceBtn'])) {
     }
 }
 
+// delete service
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteServiceBtn'])) {
 
     $deleteServiceId = $_POST['deleteServiceId'];
@@ -98,6 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteServiceBtn'])) {
     }
 }
 
+// add finishing
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['addFinishingBtn'])) {
     $newFinishingId = getNextIFinishingId($conn);
     $newFinishingDesc = $_POST['newFinishingDesc'];
@@ -119,6 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['addFinishingBtn'])) {
     }
 }
 
+// edit finishing
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editFinishingBtn'])) {
     $updateFinishingId = $_POST['updateFinishingId'];
     $updateFinishingDesc = $_POST['updateFinishingDesc'];
@@ -140,6 +147,99 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editFinishingBtn'])) {
     }
 }
 
+// delete finishing
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteFinishingBtn'])) {
+
+    $deleteFinishingId = $_POST['deleteFinishingId'];
+
+    $deleteFinishing = "DELETE FROM finishing_list WHERE finishing = '$deleteFinishingId'";
+
+    if (mysqli_query($conn, $deleteFinishing)) {
+        echo "<script>
+            alert(' Finishing Deleted successfully.');
+            window.location.href = 'adminSettings.php';
+          </script>";
+        exit;
+    } else {
+        echo "Error updating record: " . mysqli_error($conn);
+    }
+}
+
+// add user
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['addUserBtn'])) {
+    $newName = htmlspecialchars(trim($_POST["newName"]));
+    $newEmail = htmlspecialchars(trim($_POST["newEmail"]));
+    $newPhoneNumber = htmlspecialchars(trim($_POST["newPhoneNumber"]));
+    $newPassword = htmlspecialchars(trim($_POST["newPassword"]));
+    $newRole = htmlspecialchars(trim($_POST["newRole"]));
+    $newCreateDate = date("Y-m-d");
+    $newImg = 1;
+    
+    // Check if email already exists
+    $checkEmail = "SELECT * FROM user WHERE email = '$newEmail'";
+    $queryCheckEmail = mysqli_query($conn, $checkEmail);
+    
+    if (mysqli_num_rows($queryCheckEmail) > 0) {
+        echo "<p style='color:red;'>Email already exists.</p>";
+    } else {
+        // Hash password and insert user
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        
+        $addUser = "INSERT INTO user (name, email, phone_number, password, role, create_date, img_id)
+        VALUES ('$newName', '$newEmail', '$newPhoneNumber', '$hashedPassword', '$newRole', '$newCreateDate', $newImg)";
+        
+        if (mysqli_query($conn, $addUser)) {
+        echo "<script>
+            alert(' Add User successfully.');
+            window.location.href = 'adminSettings.php';
+        </script>";
+        } else {
+        echo "Error updating record: " . mysqli_error($conn);
+        }
+    }
+}
+    
+// edit user
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editUserBtn'])) {
+    $updateUserId = $_POST['updateUserId'];
+    $updateName = $_POST['updateName'];
+    $updateEmail = $_POST['updateEmail'];
+    $updatePhoneNumber = $_POST['updatePhoneNumber'];
+    $updateRole = $_POST['updateRole'];
+    
+    
+    $updateUser = "UPDATE user
+    SET name = '$updateName', email = '$updateEmail', phone_number = '$updatePhoneNumber', role = '$updateRole'
+    WHERE user_id = '$updateUserId'";
+    
+    if (mysqli_query($conn, $updateUser)) {
+    echo "<script>
+        alert('User updated successfully.');
+        window.location.href = 'adminSettings.php';
+        </script>";
+        exit;
+    } else {
+        echo "Error updating record: " . mysqli_error($conn);
+    }
+}
+    
+// delete user
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
+
+    $deleteUserId = $_POST['deleteUserId'];
+    
+    $deleteUser = "DELETE FROM user WHERE user_id = '$deleteUserId'";
+    
+    if (mysqli_query($conn, $deleteUser)) {
+    echo "<script>
+        alert(' User Deleted successfully.');
+        window.location.href = 'adminSettings.php';
+    </script>";
+    exit;
+    } else {
+    echo "Error updating record: " . mysqli_error($conn);
+    }
+}
 
 ?>
 
@@ -339,9 +439,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editFinishingBtn'])) {
 
                     <div class="container mt-4 bg-white p-4 rounded shadow-lg">
                         <h5>Service List</h5>
-                        <div class="d-flex justify-content-end">
-                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addServiceModal">Add Service</button>
-                        </div>
 
                         <!-- add service modal -->
                         <div class="modal fade" id="addServiceModal">
@@ -517,9 +614,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editFinishingBtn'])) {
 
 
                         <h5>Finishing List</h5>
-                        <div class="d-flex justify-content-end">
-                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addFinishingModal">Add Finishing</button>
-                        </div>
 
                         <!-- add finishing modal -->
                         <div class="modal fade" id="addFinishingModal">
@@ -685,39 +779,186 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editFinishingBtn'])) {
 
                 <!-- user management -->
                 <div class="tab-pane fade" id="userTab" role="tabpanel" aria-labelledby="userTab-tab">
+                    <!-- add user modal -->
+                    <div class="modal fade" id="addUserModal">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="addUserModalLabel">Add User</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form method="post">
 
-                    <div class="container mt-4" style="background-color: gray; min-height: 500px;">
-                        <br>
+                                        <div class="mb-3">
+                                            <label for="newName">Full Name:</label>
+                                            <input type="text" class="form-control" name="newName" required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="newEmail">Email:</label>
+                                            <input type="text" class="form-control" name="newEmail" required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="newPhoneNumber">Phone Number:</label>
+                                            <input type="text" class="form-control" name="newPhoneNumber" required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="newPassword">Password:</label>
+                                            <input type="text" class="form-control" name="newPassword" required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="newRole">Role:</label>
+                                            <select class="form-select" name="newRole" required>
+                                                <option value="Admin">Admin</option>
+                                                <option value="Staff">Staff</option>
+                                                <option value="Customer">Customer</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary" name="addUserBtn">Add User</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container mt-4 bg-white p-4 rounded shadow-lg">
+                        <?php
+                        $showUserList = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id";
+                        $queryShowUserList = mysqli_query($conn, $showUserList) or die("Error: " . mysqli_error($conn));
+                        ?>
                         <table id="user_management" class="table table-striped mt-3 mb-3">
                             <thead>
                                 <tr>
                                     <th>User ID</th>
+                                    <th>Profile Image</th>
                                     <th>Full Name</th>
+                                    <th>Email</th>
+                                    <th>Phone Number</th>
                                     <th>Role</th>
                                     <th>Create Date</th>
-                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td><a href="#">123</a></td>
-                                    <td>Admin1</td>
-                                    <td>Admin</td>
-                                    <td>14-5-2025</td>
-                                    <td><span class="badge bg-success text-white">Active</span></td>
-                                    <td>
-                                        <a href="#" class="btn btn-primary"><i class="bi bi-pencil-square"></i></a>
-                                        <a href="#" class="btn btn-danger"><i class="bi bi-trash"></i></a>
-                                    </td>
-                                </tr>
+                                <?php while ($rowShowUserList = $queryShowUserList->fetch_assoc()) { ?>
+                                    <tr>
+                                        <td><?php echo $rowShowUserList['user_id']; ?></td>
+                                        <td><img src="data:<?php echo $rowShowUserList['img_type']; ?>;base64,<?php echo base64_encode($rowShowUserList['img_data']); ?>"
+                                                class="rounded-circle" width="30" height="30" alt="profile" />
+                                        </td>
+                                        <td><?php echo $rowShowUserList['name']; ?></td>
+                                        <td><?php echo $rowShowUserList['email']; ?></td>
+                                        <td><?php echo $rowShowUserList['phone_number']; ?></td>
+                                        <td>
+                                            <?php if ($rowShowUserList['role'] == "Admin") { ?>
+                                                <span class="badge bg-success text-white"><?php echo $rowShowUserList['role']; ?></span>
+                                            <?php } else if ($rowShowUserList['role'] == "Staff") { ?>
+                                                <span class="badge bg-danger text-white"><?php echo $rowShowUserList['role']; ?></span>
+                                            <?php } else if ($rowShowUserList['role'] == "Customer") { ?>
+                                                <span class="badge bg-warning text-white"><?php echo $rowShowUserList['role']; ?></span>
+                                            <?php } ?>
+                                        </td>
+                                        <td><?php echo $rowShowUserList['create_date']; ?></td>
+                                        <td>
+                                            <button class="btn btn-primary" data-bs-toggle="modal"
+                                                data-bs-target="#editUser<?php echo $rowShowUserList['user_id']; ?>"><i class="bi bi-pencil-square"></i>
+                                            </button>
+
+                                            <!-- Edit user modal -->
+                                            <div class="modal fade" id="editUser<?php echo $rowShowUserList['user_id']; ?>">
+                                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5"><?php echo $rowShowUserList['user_id']; ?></h1>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form method="post">
+
+                                                                <input type="hidden" class="form-control" name="updateUserId" value="<?php echo $rowShowUserList['user_id']; ?>" readonly>
+
+                                                                <div class="mb-3">
+                                                                    <label for="updateName">Full Name:</label>
+                                                                    <input type="text" class="form-control" name="updateName" value="<?php echo $rowShowUserList['name']; ?>" required>
+                                                                </div>
+
+                                                                <div class="mb-3">
+                                                                    <label for="updateEmail">Email:</label>
+                                                                    <input type="text" class="form-control" name="updateEmail" value="<?php echo $rowShowUserList['email']; ?>" required>
+                                                                </div>
+
+                                                                <div class="mb-3">
+                                                                    <label for="updatePhoneNumber">Phone Number:</label>
+                                                                    <input type="text" class="form-control" name="updatePhoneNumber" value="<?php echo $rowShowUserList['phone_number']; ?>" required>
+                                                                </div>
+
+                                                                <div class="mb-3">
+                                                                    <label for="updateRole">Role:</label>
+                                                                    <select class="form-select" name="updateRole" required>
+                                                                        <option value="Admin" <?php if ($rowShowUserList['role'] === 'Admin') echo 'selected'; ?>>Admin</option>
+                                                                        <option value="Staff" <?php if ($rowShowUserList['role'] === 'Staff') echo 'selected'; ?>>Staff</option>
+                                                                        <option value="Customer" <?php if ($rowShowUserList['role'] === 'Customer') echo 'selected'; ?>>Customer</option>
+                                                                    </select>
+                                                                </div>
+
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                                    <button type="submit" class="btn btn-success" name="editUserBtn">Save Changes</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <button class="btn btn-danger" data-bs-toggle="modal"
+                                                data-bs-target="#deleteUser<?php echo $rowShowUserList['user_id']; ?>"><i class="bi bi-trash"></i>
+                                            </button>
+
+                                            <!-- User delete modal -->
+                                            <div class="modal fade" id="deleteUser<?php echo $rowShowUserList['user_id']; ?>">
+                                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5"><?php echo $rowShowUserList['user_id']; ?></h1>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form method="POST">
+
+                                                                <p>Do you really want to delete?</p>
+                                                                <input type="hidden" name="deleteUserId" value="<?php echo $rowShowUserList['user_id']; ?>" readonly>
+
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                                    <button type="submit" class="btn btn-danger" name="deleteUserBtn">Confirm Delete</button>
+                                                                </div>
+
+                                                            </form>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </td>
+                                    </tr>
+                                <?php } ?>
                             </tbody>
                         </table>
                         <br>
                     </div>
                 </div>
-            </div>
 
+            </div>
         </div>
     </main>
 
@@ -733,15 +974,72 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editFinishingBtn'])) {
             mainContent.classList.toggle('collapsed');
         });
 
+        $('#serviceList').DataTable({
+            lengthChange: false,
+            pageLength: 10, // Show 10 entries per page
+            scrollY: '400px', // Set vertical scroll height
+            scrollCollapse: true, // Collapse table height when fewer rows
+            paging: true, // Enable pagination
+            columnDefs: [{
+                    targets: '_all',
+                    className: 'text-start'
+                } // Bootstrap's left-align class
+            ],
+            layout: {
+                topStart: {
+                    buttons: [{
+                        text: 'Add New Service',
+                        className: 'btn btn-primary btn-sm',
+                        action: function(e, dt, node, config) {
+                            $('#addServiceModal').modal('show');
+                        }
+                    }]
+                }
+            }
+        });
+
+        $('#finishingList').DataTable({
+            lengthChange: false,
+            pageLength: 10, // Show 10 entries per page
+            scrollY: '400px', // Set vertical scroll height
+            scrollCollapse: true, // Collapse table height when fewer rows
+            paging: true, // Enable pagination
+            columnDefs: [{
+                    targets: '_all',
+                    className: 'text-start'
+                } // Bootstrap's left-align class
+            ],
+            layout: {
+                topStart: {
+                    buttons: [{
+                        text: 'Add New Finishing',
+                        className: 'btn btn-primary btn-sm',
+                        action: function(e, dt, node, config) {
+                            $('#addFinishingModal').modal('show');
+                        }
+                    }]
+                }
+            }
+        });
+
         $('#user_management').DataTable({
             lengthChange: false,
+            pageLength: 10, // Show 10 entries per page
+            scrollY: '400px', // Set vertical scroll height
+            scrollCollapse: true, // Collapse table height when fewer rows
+            paging: true, // Enable pagination
+            columnDefs: [{
+                    targets: '_all',
+                    className: 'text-start'
+                } // Bootstrap's left-align class
+            ],
             layout: {
                 topStart: {
                     buttons: [{
                         text: 'Add New User',
-                        className: 'btn btn-primary',
+                        className: 'btn btn-primary btn-sm',
                         action: function(e, dt, node, config) {
-                            window.location.href = 'addnewuser.html';
+                            $('#addUserModal').modal('show');
                         }
                     }]
                 }
