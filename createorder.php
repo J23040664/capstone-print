@@ -206,12 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($finishing2 !== 'None') $finishing_quantity++;
     if ($finishing3 !== 'None') $finishing_quantity++;
 
-    // Insert into payment
-    mysqli_query($conn, "INSERT INTO `payment` (
-        payment_id, order_id, total_price, payment_status
-    ) VALUES (
-        '$payment_id', '$order_id', $totalCost, '$payment_status'
-    )");
+
 
 
     // Insert into order table
@@ -219,6 +214,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         order_id, created_at, item_id, service_total_price, finishing_total_price, total_price, finishing_quantity, customer_id, customer_name, order_status, payment_id, payment_status
     ) VALUES (
         '$order_id', NOW(), '$item_id', '$serviceCost', '$finishing_total_price', '$totalCost', '$finishing_quantity', '$user_id', '$customerName', '$orderStatus', '$payment_id', '$payment_status'
+    )");
+
+        // Insert into payment
+    mysqli_query($conn, "INSERT INTO `payment` (
+        payment_id, order_id, total_price, payment_status
+    ) VALUES (
+        '$payment_id', '$order_id', $totalCost, '$payment_status'
     )");
 
     // Insert into order_detail
