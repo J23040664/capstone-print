@@ -67,6 +67,19 @@ function getNextFileId($conn)
     }
     return 'F' . str_pad($num, 7, '0', STR_PAD_LEFT);
 }
+// Generate next payment_id
+function getNextPaymentId($conn)
+{
+    $result = mysqli_query($conn, "SELECT MAX(payment_id) AS max_id FROM payment");
+    $row = mysqli_fetch_assoc($result);
+    $max_id = $row['max_id'];
+    if ($max_id) {
+        $num = (int)substr($max_id, 1) + 1;
+    } else {
+        $num = 1;
+    }
+    return 'P' . str_pad($num, 7, '0', STR_PAD_LEFT);
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get form data
@@ -170,6 +183,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $item_id = getNextItemId($conn);
     $order_id = getNextOrderId($conn);
     $file_id = getNextFileId($conn);
+    $payment_id = getNextPaymentId($conn);
+
+    // payment status set to pending, and will update during payment page
+    $payment_status = 'Pending';
 
     $file_name = $_FILES['pdfFile']['name'];
     $file_type = pathinfo($file_name, PATHINFO_EXTENSION); // eg: pdf
@@ -189,11 +206,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($finishing2 !== 'None') $finishing_quantity++;
     if ($finishing3 !== 'None') $finishing_quantity++;
 
+        // Insert into payment
+    mysqli_query($conn, "INSERT INTO `payment` (
+        payment_id, order_id, total_price, payment_status
+    ) VALUES (
+        '$payment_id', '$order_id', $totalCost, '$payment_status'
+    )");
+
+
     // Insert into order table
     mysqli_query($conn, "INSERT INTO `order` (
-        order_id, created_at, item_id, service_total_price, finishing_total_price, total_price, finishing_quantity, customer_id, customer_name, order_status
+        order_id, created_at, item_id, service_total_price, finishing_total_price, total_price, finishing_quantity, customer_id, customer_name, order_status, payment_id, payment_status
     ) VALUES (
-        '$order_id', NOW(), '$item_id', '$serviceCost', '$finishing_total_price', '$totalCost', '$finishing_quantity', '$user_id', '$customerName', '$orderStatus'
+        '$order_id', NOW(), '$item_id', '$serviceCost', '$finishing_total_price', '$totalCost', '$finishing_quantity', '$user_id', '$customerName', '$orderStatus', '$payment_id', '$payment_status'
     )");
 
     // Insert into order_detail
@@ -215,6 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "Order Detail Insert Error: " . mysqli_error($conn);
         exit;
     }
+
 
     // Insert into file
     $sql_file_insert = "INSERT INTO file (

@@ -4,12 +4,14 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Order List</title>
+    <title>My Orders</title>
 
+    <!-- Bootstrap & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- jQuery & DataTables -->
     <script src="./assets/jquery-3.7.1.js"></script>
     <script src="https://cdn.datatables.net/2.3.0/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.3.0/js/dataTables.bootstrap5.js"></script>
@@ -21,7 +23,7 @@
     <style>
         body {
             overflow-x: hidden;
-            background-color: #ffff;
+            background-color: #f8f9fa;
         }
 
         /* Sidebar */
@@ -29,13 +31,13 @@
             width: 240px;
             background-color: #343a40;
             color: white;
-            transition: all 0.3s ease;
             height: 100vh;
             position: fixed;
             top: 0;
             left: 0;
             overflow-y: auto;
             z-index: 1030;
+            transition: all 0.3s ease;
         }
 
         .sidebar.collapsed {
@@ -70,7 +72,7 @@
             display: none;
         }
 
-        /* top navbar */
+        /* Top Navbar */
         .top-navbar {
             margin-left: 240px;
             transition: margin-left 0.3s ease;
@@ -80,7 +82,7 @@
             margin-left: 80px;
         }
 
-        /* Main content */
+        /* Main Content */
         .main-content {
             margin-left: 240px;
             transition: margin-left 0.3s ease;
@@ -91,12 +93,11 @@
             margin-left: 80px;
         }
 
-        /* mobile adjustments */
+        /* Responsive Adjustments */
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(0);
                 left: 0;
-                transition: transform 0.3s ease;
             }
 
             .sidebar.collapsed {
@@ -109,21 +110,33 @@
             }
         }
 
-        /* table */
-        #example th, 
+        /* Table Enhancements */
+        #example th,
         #example td {
             text-align: center;
-            width: 16.66%
+            vertical-align: middle;
+        }
+
+        .badge {
+            font-size: 0.85rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .btn-sm i {
+            margin-right: 5px;
         }
     </style>
 </head>
 
 <body>
 
-    <!-- sidebar -->
+    <!-- Sidebar -->
     <div id="sidebar" class="sidebar d-flex flex-column p-3">
         <div class="s_logo fs-5">
-            <span>System Name</span>
+            <span>PrintEase</span>
         </div>
         <hr />
         <ul class="nav nav-pills flex-column">
@@ -131,12 +144,12 @@
                 <a href="dashboard.html" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
             </li>
             <li class="nav-item">
-                <a href="orderlist.html" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
+                <a href="orderlist.html" class="nav-link active"><i class="bi bi-card-list"></i><span>My Orders</span></a>
             </li>
         </ul>
     </div>
 
-    <!-- top Navbar -->
+    <!-- Top Navbar -->
     <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3 top-navbar">
         <div class="container-fluid">
             <button class="btn btn-outline-secondary me-2" id="toggleSidebar">
@@ -145,11 +158,9 @@
 
             <div class="d-flex align-items-center ms-auto">
                 <div class="dropdown">
-                    <button class="btn dropdown-toggle d-flex align-items-center gap-2" type="button"
-                        data-bs-toggle="dropdown">
-                        <img src="./assets/icon/userpicture.png" class="rounded-circle" width="30" height="30"
-                            alt="profile_picture" />
-                        <span>abc</span>
+                    <button class="btn dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+                        <img src="./assets/icon/userpicture.png" class="rounded-circle" width="30" height="30" alt="profile_picture" />
+                        <span>Customer</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="profile.html">My Profile</a></li>
@@ -167,61 +178,57 @@
     <!-- Main Content -->
     <main id="mainContent" class="main-content">
         <div class="container-fluid">
-            <div class="mt-3 fw-bold">
-                <span>Order List</span>
-            </div>
+            <h3 class="fw-bold mb-4">My Orders</h3>
 
-            <div class="container mt-4 bg-white p-4 rounded shadow-sm" style="min-height: 80vh;">
-                <br>
-                <table id="example" class="table table-hover mt-3 mb-3">
+            <div class="bg-white p-4 rounded shadow-sm table-responsive">
+                <table id="example" class="table table-hover align-middle">
                     <thead class="table-dark">
                         <tr>
                             <th>Order ID</th>
-                            <th>Title</th>
-                            <th>Date Order</th>
+                            <th>Service Type</th>
+                            <th>Order Date</th>
                             <th>Order Status</th>
-                            <th>Action</th>
+                            <th>Payment Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <!-- Sample row - unpaid -->
                         <tr>
-                            <td><a href="orderdetails.html">123</a></td>
-                            <td>System Architect</td>
-                            <td>14-5-2025</td>
+                            <td>#20250601</td>
+                            <td>Business Card</td>
+                            <td>2025-06-09</td>
+                            <td><span class="badge bg-warning text-dark">Pending</span></td>
                             <td><span class="badge bg-warning text-dark">Pending</span></td>
                             <td>
-                                <a href="editorder.html" class="btn btn-primary"><i class="bi bi-pencil-square"></i></a>
-                                <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirm-delete-modal"><i class="bi bi-trash"></i></a>
-                                
-                                <!-- Modal -->
-                                <div class="modal fade" id="confirm-delete-modal" tabindex="-1" aria-labelledby="confirm-delete-modal" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h1 class="modal-title fs-5" id="confirm-delete-modal">Confirm delete?</h1>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <span>Do you really want to delete these records? This process cannot be undone.</span>
-                                            </div>
-                                            <div class="modal-footer d-flex justify-content-center gap-3">
-                                                <button type="button" class="btn btn-secondary flex-fill" style="max-width: 200px;" data-bs-dismiss="modal">Close</button>
-                                                <a href="#" class="btn btn-danger flex-fill" style="max-width: 200px;">Confirm Delete</a>                                       
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
+                                <a href="orderdetails.html?order_id=20250601" class="btn btn-outline-primary btn-sm me-2">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
+                                <a href="payment.html?order_id=20250601" class="btn btn-success btn-sm">
+                                    <i class="bi bi-credit-card"></i> Pay Now
+                                </a>
+                            </td>
+                        </tr>
+                        <!-- Sample row - paid -->
+                        <tr>
+                            <td>#20250521</td>
+                            <td>Poster Print</td>
+                            <td>2025-06-05</td>
+                            <td><span class="badge bg-success">Completed</span></td>
+                            <td><span class="badge bg-success">Paid</span></td>
+                            <td>
+                                <a href="orderdetails.html?order_id=20250521" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                <br>
             </div>
         </div>
     </main>
 
-    <!-- JS Toggle Logic -->
+    <!-- JS Toggle + DataTable Init -->
     <script>
         const toggleBtn = document.getElementById('toggleSidebar');
         const sidebar = document.getElementById('sidebar');
@@ -234,21 +241,22 @@
             mainContent.classList.toggle('collapsed');
         });
 
-       $('#example').DataTable({
+        $('#example').DataTable({
             lengthChange: false,
+            ordering: false,
             layout: {
-               topStart: {
-                   buttons: [
-                       {
-                           text: 'Create New Order',
-                           className: 'btn btn-primary',
-                           action: function (e, dt, node, config) {
-                               window.location.href = 'createorder.html';
-                           }
-                       }
-                   ]
-               }
-           }
+                topStart: {
+                    buttons: [
+                        {
+                            text: 'Place New Order',
+                            className: 'btn btn-primary',
+                            action: function () {
+                                window.location.href = 'createorder.html';
+                            }
+                        }
+                    ]
+                }
+            }
         });
     </script>
 </body>
