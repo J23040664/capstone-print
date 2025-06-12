@@ -15,3 +15,18 @@ if ($result) {
 $conn->close();
 exit;
 ?>
+
+<!-- // Update pending orders count every 5 seconds
+async function fetchPendingOrders() {
+try {
+const response = await fetch('checkPendingOrder.php');
+const data = await response.json();
+const pendingOrdersElement = document.getElementById('pendingOrders');
+pendingOrdersElement.textContent = data.pending_orders ?? 0;
+} catch (error) {
+console.error('Failed to fetch pending orders:', error);
+}
+}
+
+fetchPendingOrders();
+setInterval(fetchPendingOrders, 5000); -->

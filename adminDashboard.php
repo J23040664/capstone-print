@@ -17,41 +17,27 @@ for ($i = 1; $i <= 12; $i++) {
     $newUserCounts[$monthKey] = 0;
 }
 
-// === Query Order Count ===
-$sqlCount = "SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, COUNT(*) AS total
-             FROM `order`
-             WHERE created_at BETWEEN '$startDate' AND '$endDate'
-             GROUP BY month
-             ORDER BY month ASC";
+// === Query Order Count and Order Cost (combined) ===
+$sqlOrders = "SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, 
+                     COUNT(*) AS order_count, 
+                     SUM(total_price) AS total_cost
+              FROM `order`
+              WHERE created_at BETWEEN '$startDate' AND '$endDate'
+              GROUP BY month
+              ORDER BY month ASC";
 
-$resultCount = $conn->query($sqlCount);
-if ($resultCount) {
-    while ($row = $resultCount->fetch_assoc()) {
+$resultOrders = $conn->query($sqlOrders);
+if ($resultOrders) {
+    while ($row = $resultOrders->fetch_assoc()) {
         $month = $row['month'];
         if (isset($orderCounts[$month])) {
-            $orderCounts[$month] = (int)$row['total'];
-        }
-    }
-}
-
-// === Query Order Cost ===
-$sqlCost = "SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, SUM(total_price) AS total_cost
-            FROM `order`
-            WHERE created_at BETWEEN '$startDate' AND '$endDate'
-            GROUP BY month
-            ORDER BY month ASC";
-
-$resultCost = $conn->query($sqlCost);
-if ($resultCost) {
-    while ($row = $resultCost->fetch_assoc()) {
-        $month = $row['month'];
-        if (isset($orderCosts[$month])) {
+            $orderCounts[$month] = (int)$row['order_count'];
             $orderCosts[$month] = (float)$row['total_cost'];
         }
     }
 }
 
-// === Query New Users Per Month (Fix: Full Year) ===
+// === Query New Users Per Month ===
 $sqlNewUsers = "SELECT DATE_FORMAT(create_date, '%Y-%m') AS month, COUNT(*) AS total
                 FROM user
                 WHERE create_date BETWEEN '$startDate' AND '$endDate'
@@ -103,6 +89,11 @@ $currentMonth = date("Y-m");
 $todayCount = $orderCounts[$currentMonth] ?? 0;
 $todayCost = $orderCosts[$currentMonth] ?? 0.0;
 $todayNewUsers = $newUserCounts[$currentMonth] ?? 0;
+
+// Calculate Average Order Value (AOV) for the year (total sales / total orders)
+$totalOrdersYear = array_sum($orderCounts);
+$totalSalesYear = array_sum($orderCosts);
+$aovYear = $totalOrdersYear > 0 ? round($totalSalesYear / $totalOrdersYear, 2) : 0;
 ?>
 
 <!DOCTYPE html>
@@ -112,13 +103,12 @@ $todayNewUsers = $newUserCounts[$currentMonth] ?? 0;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
 
     <style>
-        /* Your CSS unchanged */
         body {
             overflow-x: hidden;
             background-color: #fff;
@@ -266,83 +256,70 @@ $todayNewUsers = $newUserCounts[$currentMonth] ?? 0;
                     <div class="col-md-6 mt-4 d-flex">
                         <div class="card h-100 w-100">
                             <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                                <h5 class="card-title fs-6">Pending Order</h5>
+                                <h5 class="card-title fs-6">Pending Orders</h5>
                                 <p class="card-text fs-2" id="pendingOrders">Loading...</p>
                                 <a href="orderlist.html" class="btn btn-primary mt-3">Manage Orders</a>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Pending Orders -->
+                    <!-- Current Month Orders -->
                     <div class="col-md-6 mt-4 d-flex">
                         <div class="card h-100 w-100">
                             <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                                <h5 class="card-title fs-6">Pending Order</h5>
-                                <p class="card-text fs-2" id="">Loading...</p>
-                                <a href="orderlist.html" class="btn btn-primary mt-3">Manage Orders</a>
+                                <h5 class="card-title fs-6">Orders in <?php echo date("F"); ?></h5>
+                                <p class="card-text fs-2"><?php echo $todayCount; ?></p>
+                                <a href="orderlist.html" class="btn btn-primary mt-3">View Orders</a>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Order Cost -->
-                <div class="col-12 mt-4 d-flex">
-                    <div class="card h-100 w-100">
-                        <div class="card-body">
-                            <h5 class="card-title fs-6">Sales of <?php echo $currentYear; ?></h5>
-                            <p class="card-text fs-2"><?php echo $todayCost; ?></p>
-                            <canvas id="orderCostChart" height="100" class="mt-4 w-100"></canvas>
                         </div>
                     </div>
                 </div>
 
                 <div class="row">
-                    <!-- Order Count -->
-                    <div class="col-md-6 mt-4 d-flex">
+                    <!-- Sales and Orders Chart -->
+                    <div class="col-8 mt-4 d-flex">
                         <div class="card h-100 w-100">
                             <div class="card-body">
-                                <h5 class="card-title fs-6">Order of <?php echo $currentYear; ?></h5>
-                                <p class="card-text fs-2"><?php echo $todayCount; ?></p>
-                                <canvas id="orderCountChart" height="100"></canvas>
+                                <h5 class="card-title fs-6">Sales & Orders in <?php echo $currentYear; ?></h5>
+                                <p class="card-text fs-2">RM <?php echo number_format($todayCost, 2); ?></p>
+                                <canvas id="orderCountSales" height="100" class="mt-4 w-100"></canvas>
                             </div>
                         </div>
                     </div>
 
-                    <!-- New User Count -->
+                    <!-- Average Order Value -->
+                    <div class="col-md-4 mt-4 d-flex">
+                        <div class="card h-100 w-100 d-flex flex-column justify-content-center align-items-center">
+                            <div class="card-body text-center">
+                                <h5 class="card-title fs-6">Average Order Value (AOV) in <?php echo $currentYear; ?></h5>
+                                <p class="card-text fs-2">RM <?php echo number_format($aovYear, 2); ?></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- New User Count Chart -->
                     <div class="col-md-6 mt-4 d-flex">
                         <div class="card h-100 w-100">
                             <div class="card-body">
-                                <h5 class="card-title fs-6">New User of <?php echo date('M'); ?></h5>
+                                <h5 class="card-title fs-6">New Users in <?php echo date('F'); ?></h5>
                                 <p class="card-text fs-2"><?php echo $todayNewUsers; ?></p>
                                 <canvas id="newUserChart" height="100"></canvas>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
                     <!-- Service Type Pie Chart -->
                     <div class="col-md-6 mt-4 d-flex">
                         <div class="card h-100 w-100">
                             <div class="card-body">
-                                <h5 class="card-title fs-6">Service Type</h5>
+                                <h5 class="card-title fs-6">Service Types Distribution</h5>
                                 <canvas id="serviceTypeChart" height="100"></canvas>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- New User Count -->
-                    <div class="col-md-6 mt-4 d-flex">
-                        <div class="card h-100 w-100">
-                            <div class="card-body">
-                                <h5 class="card-title fs-6">New User of <?php echo date('M'); ?></h5>
-                                <p class="card-text fs-2"><?php echo $todayNewUsers; ?></p>
-                                <canvas id="newUserChart" height="100"></canvas>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-
 
             </div>
         </div>
@@ -372,63 +349,85 @@ $todayNewUsers = $newUserCounts[$currentMonth] ?? 0;
         const serviceLabels = <?php echo json_encode($serviceLabels); ?>;
         const serviceCounts = <?php echo json_encode($serviceCounts); ?>;
 
-        // Order Count Chart
-        const ctxOrderCount = document.getElementById('orderCountChart').getContext('2d');
-        new Chart(ctxOrderCount, {
+        // --- Sales & Orders Combined Chart ---
+        const ctxSalesOrders = document.getElementById('orderCountSales').getContext('2d');
+        new Chart(ctxSalesOrders, {
             type: 'bar',
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Orders',
-                    data: orderCounts,
-                    backgroundColor: '#42a5f5',
-                }]
+                        label: 'Order Count',
+                        data: orderCounts,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        yAxisID: 'y1'
+                    },
+                    {
+                        label: 'Sales (RM)',
+                        data: orderCosts,
+                        type: 'line',
+                        borderColor: 'rgba(255, 99, 132, 0.8)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.4)',
+                        yAxisID: 'y2',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    }
+                ]
             },
             options: {
                 responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                stacked: false,
                 scales: {
-                    y: {
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Orders'
+                        },
                         beginAtZero: true,
-                        precision: 0
+                    },
+                    y2: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Sales (RM)'
+                        },
+                        beginAtZero: true,
+                        grid: {
+                            drawOnChartArea: false,
+                        },
+                    },
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            boxWidth: 15,
+                            padding: 10
+                        }
                     }
                 }
             }
         });
 
-        // Order Cost Chart
-        const ctxOrderCost = document.getElementById('orderCostChart').getContext('2d');
-        new Chart(ctxOrderCost, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Sales (RM)',
-                    data: orderCosts,
-                    fill: false,
-                    borderColor: '#66bb6a',
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
-        // New User Chart
-        const ctxNewUser = document.getElementById('newUserChart').getContext('2d');
-        new Chart(ctxNewUser, {
+        // --- New User Chart ---
+        const ctxNewUsers = document.getElementById('newUserChart').getContext('2d');
+        new Chart(ctxNewUsers, {
             type: 'bar',
             data: {
                 labels: labels,
                 datasets: [{
                     label: 'New Users',
                     data: newUsers,
-                    backgroundColor: '#ffa726',
+                    backgroundColor: 'rgba(75, 192, 192, 0.7)',
                 }]
             },
             options: {
@@ -436,38 +435,46 @@ $todayNewUsers = $newUserCounts[$currentMonth] ?? 0;
                 scales: {
                     y: {
                         beginAtZero: true,
-                        precision: 0
+                        title: {
+                            display: true,
+                            text: 'Users'
+                        }
                     }
                 }
             }
         });
 
-        // Service Type Pie Chart
-        const ctxService = document.getElementById('serviceTypeChart').getContext('2d');
-        const colors = [
-            '#EF476F', '#FFD166', '#06D6A0', '#118AB2', '#073B4C', '#FF9F1C',
-            '#6A4C93', '#8F3985', '#D81159', '#218380'
-        ];
-        new Chart(ctxService, {
+        // --- Service Type Pie Chart ---
+        const ctxServiceType = document.getElementById('serviceTypeChart').getContext('2d');
+        new Chart(ctxServiceType, {
             type: 'pie',
             data: {
                 labels: serviceLabels,
                 datasets: [{
                     data: serviceCounts,
-                    backgroundColor: colors.slice(0, serviceLabels.length)
+                    backgroundColor: [
+                        '#007bff',
+                        '#dc3545',
+                        '#ffc107',
+                        '#28a745',
+                        '#6f42c1',
+                        '#fd7e14',
+                        '#20c997',
+                        '#17a2b8'
+                    ],
                 }]
             },
             options: {
                 responsive: true,
                 plugins: {
                     legend: {
-                        position: 'right'
+                        position: 'right',
                     }
                 }
             }
         });
 
-        // Update pending orders count every 5 seconds
+        // --- Pending Orders Count Update (example: show orders with 'pending' status in current month) ---
         async function fetchPendingOrders() {
             try {
                 const response = await fetch('checkPendingOrder.php');
