@@ -13,7 +13,7 @@ if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['user_
     exit;
 }
 
-$showOrderList = "SELECT * FROM `order`";
+$showOrderList = "SELECT * FROM `order` ORDER BY created_at desc";
 $queryShowOrderList = mysqli_query($conn, $showOrderList) or die(mysqli_error($conn));
 
 if (!$queryShowOrderList) {
@@ -189,7 +189,7 @@ if (mysqli_num_rows($queryShowOrderList) === 0) {
     <main id="mainContent" class="main-content">
         <div class="container-fluid">
             <div class="mt-3 fw-bold">
-                <span>User List</span>
+                <span>Order List</span>
             </div>
 
             <div class="container mt-4 bg-white p-4 rounded shadow-sm" style="min-height: 80vh;">
@@ -209,7 +209,11 @@ if (mysqli_num_rows($queryShowOrderList) === 0) {
                     <tbody>
                         <?php while ($rowShowOrderList = mysqli_fetch_assoc($queryShowOrderList)) { ?>
                             <tr>
-                                <td><a href="orderdetails.php?order_id=<?php echo $rowShowOrderList['order_id']; ?>"><?php echo $rowShowOrderList['order_id']; ?></a></td>
+                                <td>
+                                    <a href="editOrder.php?order_id=<?php echo urlencode($rowShowOrderList['order_id']); ?>&user_id=<?php echo urlencode($user_id); ?>">
+                                        <?php echo htmlspecialchars($rowShowOrderList['order_id']); ?>
+                                    </a>
+                                </td>
                                 <td><?php echo $rowShowOrderList['total_price']; ?></td>
                                 <td><?php echo $rowShowOrderList['customer_name']; ?></td>
                                 <td>
