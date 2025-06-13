@@ -1,8 +1,27 @@
 <?php
+session_start();
 include('dbms.php');
 
-$showQuotation = "SELECT * FROM quotation";
-$queryShowQuotation = mysqli_query($conn, $showQuotation);
+if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['user_id'] == $_GET['user_id']) {
+    $user_id = $_GET['user_id'];
+    // show the user info
+    $showUserInfo = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id WHERE a.user_id = '$user_id'";
+    $queryShowUserInfo = mysqli_query($conn, $showUserInfo) or die(mysqli_error($conn));
+    $rowShowUserInfo = mysqli_fetch_assoc($queryShowUserInfo);
+} else {
+    header("Location: login.php");
+    exit;
+}
+
+$showOrderList = "SELECT * FROM `order`";
+$queryShowOrderList = mysqli_query($conn, $showOrderList) or die(mysqli_error($conn));
+
+if (!$queryShowOrderList) {
+    die("Query Failed: " . mysqli_error($conn));
+}
+if (mysqli_num_rows($queryShowOrderList) === 0) {
+    echo "<tr><td colspan='7'>No orders found.</td></tr>";
+}
 
 ?>
 
@@ -12,7 +31,7 @@ $queryShowQuotation = mysqli_query($conn, $showQuotation);
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Order List</title>
+    <title>Responsive Sidebar Layout</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -113,22 +132,15 @@ $queryShowQuotation = mysqli_query($conn, $showQuotation);
 
             .top-navbar,
             .main-content {
-                margin-left: 0;
+                margin-left: 0 !important;
             }
-        }
-
-        /* table */
-        #example th,
-        #example td {
-            text-align: center;
-            width: 16.66%
         }
     </style>
 </head>
 
 <body>
 
-    <!-- sidebar -->
+    <!-- Sidebar Navigation -->
     <div id="sidebar" class="sidebar d-flex flex-column p-3">
         <div class="s_logo fs-5">
             <span>System Name</span>
@@ -136,7 +148,7 @@ $queryShowQuotation = mysqli_query($conn, $showQuotation);
         <hr />
         <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-                <a href="dashboard.html" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
+                <a href="adminDashboard.php?user_id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
             </li>
             <li class="nav-item">
                 <a href="orderlist.html" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
@@ -144,28 +156,29 @@ $queryShowQuotation = mysqli_query($conn, $showQuotation);
         </ul>
     </div>
 
-    <!-- top Navbar -->
+    <!-- Top Navbar -->
     <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3 top-navbar">
         <div class="container-fluid">
             <button class="btn btn-outline-secondary me-2" id="toggleSidebar">
                 <i class="bi bi-list"></i>
             </button>
 
+            <!-- User dropdown on the right -->
             <div class="d-flex align-items-center ms-auto">
                 <div class="dropdown">
-                    <button class="btn dropdown-toggle d-flex align-items-center gap-2" type="button"
+                    <button class="btn dropdown-toggle d-flex align-items-center gap-2"
                         data-bs-toggle="dropdown">
-                        <img src="./assets/icon/userpicture.png" class="rounded-circle" width="30" height="30"
-                            alt="profile_picture" />
-                        <span>abc</span>
+                        <img src="data:<?php echo $rowShowUserInfo['img_type']; ?>;base64,<?php echo base64_encode($rowShowUserInfo['img_data']); ?>"
+                            class="rounded-circle" width="30" height="30" alt="profile" />
+                        <span><?php echo $rowShowUserInfo['name']; ?></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="profile.html">My Profile</a></li>
-                        <li><a class="dropdown-item" href="settings.html">Settings</a></li>
+                        <li><a class="dropdown-item" href="profile.php?user_id=<?php echo $user_id; ?>">My Profile</a></li>
+                        <li><a class="dropdown-item" href="adminSettings.php?user_id=<?php echo $user_id; ?>">Settings</a></li>
                         <li>
                             <hr class="dropdown-divider" />
                         </li>
-                        <li><a class="dropdown-item text-danger" href="login.html">Log out</a></li>
+                        <li><a class="dropdown-item text-danger" href="logout.php">Log out</a></li>
                     </ul>
                 </div>
             </div>
@@ -176,37 +189,54 @@ $queryShowQuotation = mysqli_query($conn, $showQuotation);
     <main id="mainContent" class="main-content">
         <div class="container-fluid">
             <div class="mt-3 fw-bold">
-                <span>Quotation List</span>
+                <span>User List</span>
             </div>
 
             <div class="container mt-4 bg-white p-4 rounded shadow-sm" style="min-height: 80vh;">
                 <br>
-                <table id="example" class="table table-hover mt-3 mb-3">
+                <table id="orderList" class="table table-hover mt-3 mb-3">
                     <thead class="table-dark">
                         <tr>
-                            <th>Quotation ID</th>
+                            <th>Order ID</th>
+                            <th>Total Price</th>
                             <th>Customer Name</th>
-                            <th>Customer Email</th>
-                            <th>Customer Phone Number</th>
-                            <th>Status</th>
-                            <th>Received Date</th>
+                            <th>Order Status</th>
+                            <th>Payment Status</th>
+                            <th>Order Date</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while ($rowShowQuotation = mysqli_fetch_assoc($queryShowQuotation)) { ?>
+                        <?php while ($rowShowOrderList = mysqli_fetch_assoc($queryShowOrderList)) { ?>
                             <tr>
-                                <td><a href="quotationdetails.php?quotation_id=<?php echo $rowShowQuotation['quotation_id']; ?>"><?php echo $rowShowQuotation['quotation_id']; ?></a></td>
-                                <td><?php echo $rowShowQuotation['requester_name']; ?></td>
-                                <td><?php echo $rowShowQuotation['requester_email']; ?></td>
-                                <td><?php echo $rowShowQuotation['requester_phone_number']; ?></td>
+                                <td><a href="orderdetails.php?order_id=<?php echo $rowShowOrderList['order_id']; ?>"><?php echo $rowShowOrderList['order_id']; ?></a></td>
+                                <td><?php echo $rowShowOrderList['total_price']; ?></td>
+                                <td><?php echo $rowShowOrderList['customer_name']; ?></td>
                                 <td>
-                                    <?php if ($rowShowQuotation['quotation_status'] == "Pending") { ?>
-                                        <span class="badge bg-warning text-white"><?php echo $rowShowQuotation['quotation_status']; ?></span>
-                                    <?php } else if ($rowShowQuotation['quotation_status'] == "Done") { ?>
-                                        <span class="badge bg-success text-white"><?php echo $rowShowQuotation['quotation_status']; ?></span>
+                                    <?php if ($rowShowOrderList['order_status'] == "Pending") { ?>
+                                        <span class="badge bg-warning text-white"><?php echo $rowShowOrderList['order_status']; ?></span>
+                                    <?php } else if ($rowShowOrderList['order_status'] == "Completed") { ?>
+                                        <span class="badge bg-success text-white"><?php echo $rowShowOrderList['order_status']; ?></span>
                                     <?php } ?>
                                 </td>
-                                <td><?php echo $rowShowQuotation['create_date']; ?></td>
+                                <td>
+                                    <?php if ($rowShowOrderList['payment_status'] == "Pending") { ?>
+                                        <span class="badge bg-warning text-white"><?php echo $rowShowOrderList['payment_status']; ?></span>
+                                    <?php } else if ($rowShowOrderList['payment_status'] == "Paid") { ?>
+                                        <span class="badge bg-success text-white"><?php echo $rowShowOrderList['payment_status']; ?></span>
+                                    <?php } ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    $date = new DateTime($rowShowOrderList['created_at']);
+                                    echo $date->format('Y-m-d');
+                                    ?>
+                                </td>
+                                <td>
+                                    <a href="editOrder.php?order_id=<?php echo $rowShowOrderList['order_id']; ?>&user_id=<?php echo $_SESSION['user_id']; ?>" class="btn btn-primary btn-sm me-2">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </td>
                             </tr>
                         <?php } ?>
                     </tbody>
@@ -229,8 +259,27 @@ $queryShowQuotation = mysqli_query($conn, $showQuotation);
             mainContent.classList.toggle('collapsed');
         });
 
-        $('#example').DataTable({
-            lengthChange: false
+        $('#orderList').DataTable({
+            lengthChange: false,
+            pageLength: 10, // Show 10 entries per page
+            scrollY: '400px', // Set vertical scroll height
+            scrollCollapse: true, // Collapse table height when fewer rows
+            paging: true, // Enable pagination
+            columnDefs: [{
+                targets: '_all',
+                className: 'text-center'
+            }],
+            layout: {
+                topStart: {
+                    buttons: [{
+                        text: 'Add New Order',
+                        className: 'btn btn-primary btn-sm',
+                        action: function(e, dt, node, config) {
+                            window.location.href = 'createorder.php?user_id=<?php echo $user_id; ?>';
+                        }
+                    }]
+                }
+            }
         });
     </script>
 </body>

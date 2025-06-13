@@ -269,7 +269,7 @@ $aovYear = $totalOrdersYear > 0 ? round($totalSalesYear / $totalOrdersYear, 2) :
                             <div class="card-body d-flex flex-column justify-content-center align-items-center">
                                 <h5 class="card-title fs-6">Pending Orders</h5>
                                 <p class="card-text fs-2" id="pendingOrders">Loading...</p>
-                                <a href="orderlist.html" class="btn btn-primary mt-3">Manage Orders</a>
+                                <a href="adminOrderlist.php?user_id=<?php echo $rowShowUserInfo['user_id']; ?>" class=" btn btn-primary mt-3">Manage Orders</a>
                             </div>
                         </div>
                     </div>
@@ -280,7 +280,7 @@ $aovYear = $totalOrdersYear > 0 ? round($totalSalesYear / $totalOrdersYear, 2) :
                             <div class="card-body d-flex flex-column justify-content-center align-items-center">
                                 <h5 class="card-title fs-6">Pending Quotations</h5>
                                 <p class="card-text fs-2" id="pendingQuotations">Loading...</p>
-                                <a href="quotationlist.php" class="btn btn-primary mt-3">Manage Quotations</a>
+                                <a href="adminQuotationlist.php?user_id=<?php echo $rowShowUserInfo['user_id']; ?>" class="btn btn-primary mt-3">Manage Quotations</a>
                             </div>
                         </div>
                     </div>
