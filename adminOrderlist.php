@@ -279,7 +279,7 @@ if (mysqli_num_rows($queryShowOrderList) === 0) {
                         text: 'Add New Order',
                         className: 'btn btn-primary btn-sm',
                         action: function(e, dt, node, config) {
-                            window.location.href = 'createorder.php?user_id=<?php echo $user_id; ?>';
+                            window.location.href = 'createorder.php?id=<?php echo $user_id; ?>';
                         }
                     }]
                 }

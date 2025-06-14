@@ -23,27 +23,19 @@ ON b.file_id = c.file_id
 WHERE a.order_id = '$order_id'";
 $queryShowOrderDetails = mysqli_query($conn, $showOrderDetails) or die(mysqli_error($conn));
 
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['viewFile'])) {
-    $quotation_id = "F0000004";
-    $viewFile = "SELECT file_path, file_type FROM `file` WHERE file_id = '$quotation_id'";
-    $queryViewFile = mysqli_query($conn, $viewFile);
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['viewFileBtn'])) {
+    $file_id = $_POST['viewFileId'];
+    $query = "SELECT file_name, file_type, file_path FROM `file` WHERE file_id = '$file_id'";
+    $result = mysqli_query($conn, $query);
 
-    if ($rowViewFile = mysqli_fetch_assoc($queryViewFile)) {
-        if (!empty($rowViewFile['file_path'])) {
-            $fileDataEncoded = $rowViewFile['file_path'];  // base64 encoded string from DB
-            $fileType = $rowViewFile['file_type'] ?? 'application/octet-stream'; // fallback
-
-            $fileData = base64_decode($fileDataEncoded);  // decode before output
-
-            header("Content-Type: $fileType");
-            header("Content-Disposition: inline; filename=\"reference_file\"");
-            echo $fileData;
-            exit;
-        }
+    if ($row = mysqli_fetch_assoc($result)) {
+        header("Content-Type: application/{$row['file_type']}");
+        header("Content-Disposition: inline; filename=\"" . $row['file_name'] . "\"");
+        echo $row['file_path'];
+        exit;
+    } else {
+        echo "File not found.";
     }
-
-    echo "<script>alert('File not found.'); window.close();</script>";
-    exit;
 }
 
 
@@ -243,7 +235,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editOrderBtn'])) {
                         <label class="form-label">Upload Reference File (optional)</label>
                         <?php if (!empty($rowShowOrderDetails['file_type'])): ?>
                             <form method="post" target="_blank">
-                                <button type="submit" class="btn btn-success w-20" name="viewFile">View File</button>
+                                <input type="hidden" class="form-control" name="viewFileId" value="<?php echo htmlspecialchars($rowShowOrderDetails['file_id']); ?>">
+                                <button type="submit" class="btn btn-success w-20" name="viewFileBtn">View File</button>
                             </form>
                         <?php else: ?>
                             <input type="text" class="form-control" value="No file uploaded" disabled>

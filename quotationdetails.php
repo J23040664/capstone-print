@@ -13,18 +13,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['viewFile'])) {
         if (!empty($rowViewFile['file_data'])) {
             $fileDataEncoded = $rowViewFile['file_data'];  // base64 encoded string from DB
             $fileType = $rowViewFile['file_type'] ?? 'application/octet-stream'; // fallback
-
             $fileData = base64_decode($fileDataEncoded);  // decode before output
-
             header("Content-Type: $fileType");
             header("Content-Disposition: inline; filename=\"reference_file\"");
             echo $fileData;
             exit;
         }
     }
-
-    echo "<script>alert('File not found.'); window.close();</script>";
-    exit;
 }
 
 
