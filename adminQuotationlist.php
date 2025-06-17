@@ -2,8 +2,8 @@
 session_start();
 include('dbms.php');
 
-if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['user_id'] == $_GET['user_id']) {
-    $user_id = $_GET['user_id'];
+if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['id'] == $_GET['id']) {
+    $user_id = $_GET['id'];
     // show the user info
     $showUserInfo = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id WHERE a.user_id = '$user_id'";
     $queryShowUserInfo = mysqli_query($conn, $showUserInfo) or die(mysqli_error($conn));
@@ -38,146 +38,53 @@ $queryShowQuotation = mysqli_query($conn, $showQuotation) or die(mysqli_error($c
     <script src="https://cdn.datatables.net/buttons/3.2.3/js/dataTables.buttons.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.dataTables.js"></script>
 
-    <style>
-        body {
-            overflow-x: hidden;
-            background-color: #ffff;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 240px;
-            background-color: #343a40;
-            color: white;
-            transition: all 0.3s ease;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            overflow-y: auto;
-            z-index: 1030;
-        }
-
-        .sidebar.collapsed {
-            width: 80px;
-        }
-
-        .s_logo {
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 10px 0;
-        }
-
-        .sidebar .nav-link {
-            color: #ccc;
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            white-space: nowrap;
-        }
-
-        .sidebar .nav-link:hover {
-            background-color: #495057;
-            color: white;
-            text-decoration: none;
-        }
-
-        .sidebar.collapsed .nav-link span,
-        .sidebar.collapsed .s_logo span {
-            display: none;
-        }
-
-        /* top navbar */
-        .top-navbar {
-            margin-left: 240px;
-            transition: margin-left 0.3s ease;
-        }
-
-        .top-navbar.collapsed {
-            margin-left: 80px;
-        }
-
-        /* Main content */
-        .main-content {
-            margin-left: 240px;
-            transition: margin-left 0.3s ease;
-            padding: 1rem;
-        }
-
-        .main-content.collapsed {
-            margin-left: 80px;
-        }
-
-        /* mobile adjustments */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(0);
-                left: 0;
-                transition: transform 0.3s ease;
-            }
-
-            .sidebar.collapsed {
-                transform: translateX(-100%);
-            }
-
-            .top-navbar,
-            .main-content {
-                margin-left: 0;
-            }
-        }
-
-        /* table */
-        #example th,
-        #example td {
-            text-align: center;
-            width: 16.66%
-        }
-    </style>
+    <link rel="stylesheet" href="./adminStyle.css">
 </head>
 
 <body>
 
-    <!-- sidebar -->
-    <div id="sidebar" class="sidebar d-flex flex-column p-3">
+    <!-- Sidebar Navigation -->
+    <div id="sidebar" class="d-flex flex-column p-3 sidebar">
         <div class="s_logo fs-5">
-            <span>System Name</span>
+            <span>Art & Print</span>
         </div>
-        <hr />
+        <hr style="height: 4px; background-color: #FAFAFA; border: none;">
         <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-                <a href="dashboard.html" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
+                <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
             </li>
             <li class="nav-item">
-                <a href="orderlist.html" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
+                <a href="adminOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
+            </li>
+            <li class="nav-item">
+                <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i><span>Manage Quotations</span></a>
             </li>
         </ul>
     </div>
 
-    <!-- top Navbar -->
-    <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3 top-navbar">
+    <!-- Top Navbar -->
+    <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light shadow-sm px-3 top-navbar fixed-top">
         <div class="container-fluid">
-            <button class="btn btn-outline-secondary me-2" id="toggleSidebar">
+            <button class="btn toggle-btn" id="toggleSidebar">
                 <i class="bi bi-list"></i>
             </button>
 
+            <!-- User dropdown on the right -->
             <div class="d-flex align-items-center ms-auto">
                 <div class="dropdown">
-                    <button class="btn dropdown-toggle d-flex align-items-center gap-2" type="button"
+                    <button class="btn dropdown-toggle d-flex align-items-center gap-2"
                         data-bs-toggle="dropdown">
-                        <img src="./assets/icon/userpicture.png" class="rounded-circle" width="30" height="30"
-                            alt="profile_picture" />
-                        <span>abc</span>
+                        <img src="data:<?php echo $rowShowUserInfo['img_type']; ?>;base64,<?php echo base64_encode($rowShowUserInfo['img_data']); ?>"
+                            class="rounded-circle" width="30" height="30" alt="profile" />
+                        <span style="color: #FAFAFA;"><?php echo $rowShowUserInfo['name']; ?></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="profile.html">My Profile</a></li>
-                        <li><a class="dropdown-item" href="settings.html">Settings</a></li>
+                        <li><a class="dropdown-item" href="profile.php?id=<?php echo $user_id; ?>">My Profile</a></li>
+                        <li><a class="dropdown-item" href="adminSettings.php?id=<?php echo $user_id; ?>">Settings</a></li>
                         <li>
                             <hr class="dropdown-divider" />
                         </li>
-                        <li><a class="dropdown-item text-danger" href="login.html">Log out</a></li>
+                        <li><a class="dropdown-item text-danger" href="logout.php">Log out</a></li>
                     </ul>
                 </div>
             </div>
@@ -207,13 +114,13 @@ $queryShowQuotation = mysqli_query($conn, $showQuotation) or die(mysqli_error($c
                     <tbody>
                         <?php while ($rowShowQuotation = mysqli_fetch_assoc($queryShowQuotation)) { ?>
                             <tr>
-                                <td><a href="quotationdetails.php?quotation_id=<?php echo $rowShowQuotation['quotation_id']; ?>"><?php echo $rowShowQuotation['quotation_id']; ?></a></td>
+                                <td><a class="text-decoration-none link" href="quotationdetails.php?id=<?php echo $user_id; ?>&quotation_id=<?php echo $rowShowQuotation['quotation_id']; ?>"><?php echo $rowShowQuotation['quotation_id']; ?></a></td>
                                 <td><?php echo $rowShowQuotation['requester_name']; ?></td>
                                 <td><?php echo $rowShowQuotation['requester_email']; ?></td>
                                 <td><?php echo $rowShowQuotation['requester_phone_number']; ?></td>
                                 <td>
                                     <?php if ($rowShowQuotation['quotation_status'] == "Pending") { ?>
-                                        <span class="badge bg-warning text-white"><?php echo $rowShowQuotation['quotation_status']; ?></span>
+                                        <span class="badge bg-warning text-black"><?php echo $rowShowQuotation['quotation_status']; ?></span>
                                     <?php } else if ($rowShowQuotation['quotation_status'] == "Done") { ?>
                                         <span class="badge bg-success text-white"><?php echo $rowShowQuotation['quotation_status']; ?></span>
                                     <?php } ?>
@@ -242,7 +149,15 @@ $queryShowQuotation = mysqli_query($conn, $showQuotation) or die(mysqli_error($c
         });
 
         $('#quotationList').DataTable({
-            lengthChange: false
+            lengthChange: false,
+            pageLength: 10, // Show 10 entries per page
+            scrollY: '400px', // Set vertical scroll height
+            scrollCollapse: true, // Collapse table height when fewer rows
+            paging: true, // Enable pagination
+            columnDefs: [{
+                targets: '_all',
+                className: 'text-center'
+            }],
         });
     </script>
 </body>

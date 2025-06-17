@@ -1,6 +1,6 @@
 <?php
-include "./dbms.php";
 session_start();
+include "./dbms.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
     $email = htmlspecialchars(trim($_POST["email"]));
@@ -17,11 +17,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
 
             if (password_verify($password, $user['password'])) {
                 // Login success: store user info in session
-                $_SESSION['user_id'] = $user['user_id'];
+                $_SESSION['id'] = $user['user_id'];
                 $_SESSION['role'] = $user['role'];
 
                 echo "<p style='color:green;'>Login successful. Redirecting in 2 seconds...</p>";
-                header("Refresh: 2; url=adminDashboard.php?user_id=" . urlencode($user['user_id']));
+                header("Refresh: 2; url=adminDashboard.php?id=" . urlencode($user['user_id']));
                 exit;
             } else {
                 $errorMessage = '<div class="alert alert-danger" role="alert">
@@ -53,27 +53,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login - Art & Print</title>
 
-    <link rel="stylesheet" href="./style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.12.1/font/bootstrap-icons.min.css">
-
-    <style>
-        body {
-            background-color: #f2f2f5;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-    </style>
+    <link rel="stylesheet" href="./adminStyle.css">
 </head>
 
-<body>
+<body class="login-body">
 
     <div class="login-box">
 
         <h3 class="text-center mb-3">Sign In</h3>
-        
+
         <?php echo $errorMessage; ?>
 
         <form method="POST">
@@ -90,15 +80,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
                         <i class="bi bi-eye-slash"></i>
                     </button>
                 </div>
-                <a href="reset_pass1.php" class="d-inline-block mt-2">Forgot your password?</a>
+                <a href="reset_pass1.php" class="d-inline-block text-decoration-none mt-2 link">Forgot your password?</a>
             </div>
 
             <div class="d-grid mb-3">
-                <button type="submit" class="btn btn-primary" name="signinbtn">Log in</button>
+                <button type="submit" class="btn login-btn" name="signinbtn">Log in</button>
             </div>
 
             <div>
-                <span>Don't have an account? <a href="signup.php">Sign Up</a></span>
+                <span>Don't have an account? <a class="text-decoration-none link" href="signup.php">Sign Up</a></span>
             </div>
         </form>
 

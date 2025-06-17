@@ -1,5 +1,18 @@
 <?php
+session_start();
 include('dbms.php');
+
+// must include at each page, to prevent change user id from url
+if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['id'] == $_GET['id']) {
+    $user_id = $_GET['id'];
+    // show the user info
+    $showUserInfo = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id WHERE a.user_id = '$user_id'";
+    $queryShowUserInfo = mysqli_query($conn, $showUserInfo) or die(mysqli_error($conn));
+    $rowShowUserInfo = mysqli_fetch_assoc($queryShowUserInfo);
+} else {
+    header("Location: login.php");
+    exit;
+}
 
 $quotation_id = $_GET['quotation_id'];
 $showQuotation = "SELECT * FROM quotation WHERE quotation_id = '$quotation_id'";
@@ -57,145 +70,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editQuotationBtn'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
 
-    <style>
-        body {
-            overflow-x: hidden;
-            background-color: #ffff;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 240px;
-            background-color: #343a40;
-            color: white;
-            transition: all 0.3s ease;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            overflow-y: auto;
-            z-index: 1030;
-        }
-
-        .sidebar.collapsed {
-            width: 80px;
-        }
-
-        .s_logo {
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 10px 0;
-        }
-
-        .sidebar .nav-link {
-            color: #ccc;
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            white-space: nowrap;
-        }
-
-        .sidebar .nav-link:hover {
-            background-color: #495057;
-            color: white;
-            text-decoration: none;
-        }
-
-        .sidebar.collapsed .nav-link span,
-        .sidebar.collapsed .s_logo span {
-            display: none;
-        }
-
-        /* top navbar */
-        .top-navbar {
-            margin-left: 240px;
-            transition: margin-left 0.3s ease;
-        }
-
-        .top-navbar.collapsed {
-            margin-left: 80px;
-        }
-
-        /* Main content */
-        .main-content {
-            margin-left: 240px;
-            transition: margin-left 0.3s ease;
-            padding: 1rem;
-        }
-
-        .main-content.collapsed {
-            margin-left: 80px;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                position: absolute;
-                left: -240px;
-                transition: left 0.3s ease;
-            }
-
-            .sidebar.show {
-                left: 0;
-            }
-
-            .top-navbar,
-            .main-content {
-                margin-left: 0 !important;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="./adminStyle.css">
 </head>
 
-<body class="bg-light">
-    <!-- sidebar -->
-    <div id="sidebar" class="sidebar d-flex flex-column p-3">
+<body class="adminDash-body">
+
+    <!-- Sidebar Navigation -->
+    <div id="sidebar" class="d-flex flex-column p-3 sidebar">
         <div class="s_logo fs-5">
-            <span>System Name</span>
+            <span>Art & Print</span>
         </div>
-        <hr />
+        <hr style="height: 4px; background-color: #FAFAFA; border: none;">
         <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-                <a href="dashboard.html" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
+                <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
             </li>
             <li class="nav-item">
-                <a href="orderlist.html" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
+                <a href="adminOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
             </li>
             <li class="nav-item">
-                <a href="ask_quotation.html" class="nav-link"><i class="bi bi-question-circle"></i><span>Ask Quotation</span></a>
+                <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i><span>Manage Quotations</span></a>
             </li>
         </ul>
     </div>
 
-    <!-- top Navbar -->
-    <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3 top-navbar">
+    <!-- Top Navbar -->
+    <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light shadow-sm px-3 top-navbar fixed-top">
         <div class="container-fluid">
-            <button class="btn btn-outline-secondary me-2" id="toggleSidebar">
+            <button class="btn toggle-btn" id="toggleSidebar">
                 <i class="bi bi-list"></i>
             </button>
 
+            <!-- User dropdown on the right -->
             <div class="d-flex align-items-center ms-auto">
                 <div class="dropdown">
-                    <button class="btn dropdown-toggle d-flex align-items-center gap-2" type="button"
+                    <button class="btn dropdown-toggle d-flex align-items-center gap-2"
                         data-bs-toggle="dropdown">
-                        <img src="./assets/icon/userpicture.png" class="rounded-circle" width="30" height="30"
-                            alt="profile_picture" />
-                        <span>abc</span>
+                        <img src="data:<?php echo $rowShowUserInfo['img_type']; ?>;base64,<?php echo base64_encode($rowShowUserInfo['img_data']); ?>"
+                            class="rounded-circle" width="30" height="30" alt="profile" />
+                        <span style="color: #FAFAFA;"><?php echo $rowShowUserInfo['name']; ?></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="profile.html">My Profile</a></li>
-                        <li><a class="dropdown-item" href="settings.html">Settings</a></li>
+                        <li><a class="dropdown-item" href="profile.php?id=<?php echo $user_id; ?>">My Profile</a></li>
+                        <li><a class="dropdown-item" href="adminSettings.php?id=<?php echo $user_id; ?>">Settings</a></li>
                         <li>
                             <hr class="dropdown-divider" />
                         </li>
-                        <li><a class="dropdown-item text-danger" href="login.html">Log out</a></li>
+                        <li><a class="dropdown-item text-danger" href="logout.php">Log out</a></li>
                     </ul>
                 </div>
             </div>
         </div>
     </nav>
+
     <!-- Main Content -->
     <main id="mainContent" class="main-content">
         <div class="container mt-5 mb-5">
@@ -266,7 +193,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editQuotationBtn'])) {
                         <label class="form-label">Upload Reference File (optional)</label>
                         <?php if (!empty($rowShowQuotation['file_type'])): ?>
                             <form method="post" target="_blank">
-                                <button type="submit" class="btn btn-success w-20" name="viewFile">View File</button>
+                                <button type="submit" class="btn login-btn w-20" name="viewFile">View File</button>
                             </form>
                         <?php else: ?>
                             <input type="text" class="form-control" value="No file uploaded" disabled>
@@ -296,7 +223,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editQuotationBtn'])) {
 
                         <div class="row">
                             <a href="quotationlist.php" class="btn btn-secondary mb-3">Back</a>
-                            <button type="submit" class="btn btn-primary" name="editQuotationBtn">Save & Changes</button>
+                            <button type="submit" class="btn login-btn" name="editQuotationBtn">Save & Changes</button>
                         </div>
 
                     </form>

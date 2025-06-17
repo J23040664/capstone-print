@@ -1,0 +1,206 @@
+/* Login Page */
+.login-body {
+    background-color: #FAFAFA;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-box {
+    background-color: #FAFAFA;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-btn {
+    background: #ee5351;
+    border: solid;
+    outline-color: #000000;
+    color: white;
+}
+
+.login-btn:hover {
+    background-color: #FAFAFA;
+    border: solid;
+    outline-color: #000000;
+    color: #000000;
+}
+
+.link {
+    color: #ee5351;
+}
+
+.link:hover {
+    color: #000000;
+}
+
+/* sign up page */
+.sendcode-btn {
+    border: solid;
+    outline-color: #ee5351;
+    color: #ee5351;
+}
+
+.sendcode-btn:hover {
+    background-color: #ee5351;
+    border: solid;
+    outline-color: #ee5351;
+    color: #FAFAFA;
+}
+
+/* reset password page */
+/* reuse login and sign in style */
+
+/* admin dashboard page */
+.adminDash-body {
+    overflow-x: hidden;
+    background-color: #FAFAFA;
+}
+
+/* Top navbar styling */
+.top-navbar {
+    background-color: #ee5351;
+    margin-left: 240px;
+    transition: margin-left 0.3s ease;
+}
+
+.top-navbar.collapsed {
+    margin-left: 80px;
+}
+
+.toggle-btn {
+    color: #FAFAFA;
+    outline: solid 1px;
+    outline-color: #FAFAFA;
+}
+
+.toggle-btn:hover {
+    background-color: #FAFAFA;
+    color: #212121;
+    outline-color: #212121;
+}
+
+button.dropdown-toggle {
+    color: #FAFAFA;
+    outline: 1px solid #FAFAFA;
+    border: none;
+    background-color: transparent;
+}
+
+button.dropdown-toggle:focus,
+button.dropdown-toggle:hover,
+button.dropdown-toggle:active {
+    outline: 1px solid #FAFAFA;
+    outline-offset: 2px;
+    border: none;
+    color: #FAFAFA;
+    box-shadow: none;
+}
+
+/* Sidebar styling */
+.sidebar {
+    width: 240px;
+    background-color: #ee5351;
+    color: #FAFAFA;
+    transition: all 0.3s ease;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    z-index: 1030;
+}
+
+.sidebar.collapsed {
+    width: 80px;
+}
+
+.sidebar .nav-link {
+    color: #FAFAFA;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #C62828;
+    color: white;
+    text-decoration: none;
+}
+
+.sidebar.collapsed .nav-link span,
+.sidebar.collapsed .s_logo span {
+    display: none;
+}
+
+.s_logo {
+    color: #FAFAFA;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0;
+}
+
+/* Main content positioning */
+.main-content {
+    margin-left: 240px;
+    transition: margin-left 0.3s ease;
+    padding: 1rem;
+    padding-top: 70px;
+}
+
+.main-content.collapsed {
+    margin-left: 80px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(0);
+        left: 0;
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.collapsed {
+        transform: translateX(-100%);
+    }
+
+    .top-navbar,
+    .main-content {
+        margin-left: 0 !important;
+    }
+}
+
+.custom-card {
+    border-left: 5px solid #E53935;
+    background-color: #FFF8E1;
+    color: black;
+}
+
+/* order list page */
+.dt-paging-button.page-item.active .page-link {
+    background-color: #ee5351 !important;
+    color: #FAFAFA !important;
+    border-color: #ee5351 !important;
+}
+
+/* admin setting page */
+.navtab-btn {
+    border: 2px solid #ee5351;
+    color: #ee5351;
+    background-color: #FAFAFA;
+}
+
+.navtab-btn:hover,
+.navtab-btn.active,
+.navtab-btn:focus {
+    background-color: #ee5351;
+    color: #FAFAFA;
+    border-color: #FAFAFA;
+}

@@ -35,22 +35,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['checkAccount'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login - Art & Print</title>
 
-    <link rel="stylesheet" href="./style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.12.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="./adminStyle.css">
 
-    <style>
-        body {
-            background-color: #f2f2f5;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-    </style>
 </head>
 
-<body>
+<body class="login-body">
 
     <div class="login-box">
 
@@ -62,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['checkAccount'])) {
             <label for="username" class="form-label">Email: </label>
             <div class="text-center mb-3">
                 <input type="email" class="form-control" id="email" name="email" required>
-                <button type="submit" class="btn btn-primary w-100 mt-3 mb-3" name="checkAccount">Next</button>
+                <button type="submit" class="btn w-100 mt-3 mb-3 login-btn" name="checkAccount">Next</button>
                 <a class="text-black text-decoration-none" href="login.php"><i class="bi bi-arrow-left me-2"></i>Back to login</a>
             </div>
         </form>

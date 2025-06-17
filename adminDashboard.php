@@ -2,8 +2,8 @@
 session_start();
 include('dbms.php');
 
-if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['user_id'] == $_GET['user_id']) {
-    $user_id = $_GET['user_id'];
+if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['id'] == $_GET['id']) {
+    $user_id = $_GET['id'];
     // show the user info
     $showUserInfo = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id WHERE a.user_id = '$user_id'";
     $queryShowUserInfo = mysqli_query($conn, $showUserInfo) or die(mysqli_error($conn));
@@ -99,11 +99,6 @@ $currentMonth = date("Y-m");
 $todayCount = $orderCounts[$currentMonth] ?? 0;
 $todayCost = $orderCosts[$currentMonth] ?? 0.0;
 $todayNewUsers = $newUserCounts[$currentMonth] ?? 0;
-
-// Calculate Average Order Value (AOV) for the year (total sales / total orders)
-$totalOrdersYear = array_sum($orderCounts);
-$totalSalesYear = array_sum($orderCosts);
-$aovYear = $totalOrdersYear > 0 ? round($totalSalesYear / $totalOrdersYear, 2) : 0;
 ?>
 
 <!DOCTYPE html>
@@ -113,125 +108,39 @@ $aovYear = $totalOrdersYear > 0 ? round($totalSalesYear / $totalOrdersYear, 2) :
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Dashboard</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
 
-    <style>
-        body {
-            overflow-x: hidden;
-            background-color: #fff;
-        }
-
-        /* Sidebar styling */
-        .sidebar {
-            width: 240px;
-            background-color: #343a40;
-            color: white;
-            transition: all 0.3s ease;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            overflow-y: auto;
-            z-index: 1030;
-        }
-
-        .sidebar.collapsed {
-            width: 80px;
-        }
-
-        .s_logo {
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 10px 0;
-        }
-
-        .sidebar .nav-link {
-            color: #ccc;
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            white-space: nowrap;
-        }
-
-        .sidebar .nav-link:hover {
-            background-color: #495057;
-            color: white;
-            text-decoration: none;
-        }
-
-        .sidebar.collapsed .nav-link span,
-        .sidebar.collapsed .s_logo span {
-            display: none;
-        }
-
-        /* Top navbar positioning */
-        .top-navbar {
-            margin-left: 240px;
-            transition: margin-left 0.3s ease;
-        }
-
-        .top-navbar.collapsed {
-            margin-left: 80px;
-        }
-
-        /* Main content positioning */
-        .main-content {
-            margin-left: 240px;
-            transition: margin-left 0.3s ease;
-            padding: 1rem;
-        }
-
-        .main-content.collapsed {
-            margin-left: 80px;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(0);
-                left: 0;
-                transition: transform 0.3s ease;
-            }
-
-            .sidebar.collapsed {
-                transform: translateX(-100%);
-            }
-
-            .top-navbar,
-            .main-content {
-                margin-left: 0 !important;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="./adminStyle.css">
 </head>
 
-<body>
+<body class="adminDash-body">
+
     <!-- Sidebar Navigation -->
-    <div id="sidebar" class="sidebar d-flex flex-column p-3">
+    <div id="sidebar" class="d-flex flex-column p-3 sidebar">
         <div class="s_logo fs-5">
-            <span>System Name</span>
+            <span>Art & Print</span>
         </div>
-        <hr />
+        <hr style="height: 4px; background-color: #FAFAFA; border: none;">
         <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-                <a href="adminDashboard.php?<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
+                <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
             </li>
             <li class="nav-item">
-                <a href="orderlist.html" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
+                <a href="adminOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
+            </li>
+            <li class="nav-item">
+                <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i><span>Manage Quotations</span></a>
             </li>
         </ul>
     </div>
 
     <!-- Top Navbar -->
-    <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3 top-navbar">
+    <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light shadow-sm px-3 top-navbar fixed-top">
         <div class="container-fluid">
-            <button class="btn btn-outline-secondary me-2" id="toggleSidebar">
+            <button class="btn toggle-btn" id="toggleSidebar">
                 <i class="bi bi-list"></i>
             </button>
 
@@ -242,11 +151,11 @@ $aovYear = $totalOrdersYear > 0 ? round($totalSalesYear / $totalOrdersYear, 2) :
                         data-bs-toggle="dropdown">
                         <img src="data:<?php echo $rowShowUserInfo['img_type']; ?>;base64,<?php echo base64_encode($rowShowUserInfo['img_data']); ?>"
                             class="rounded-circle" width="30" height="30" alt="profile" />
-                        <span><?php echo $rowShowUserInfo['name']; ?></span>
+                        <span style="color: #FAFAFA;"><?php echo $rowShowUserInfo['name']; ?></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="profile.php?user_id=<?php echo $user_id; ?>">My Profile</a></li>
-                        <li><a class="dropdown-item" href="adminSettings.php?user_id=<?php echo $user_id; ?>">Settings</a></li>
+                        <li><a class="dropdown-item" href="profile.php?id=<?php echo $user_id; ?>">My Profile</a></li>
+                        <li><a class="dropdown-item" href="adminSettings.php?id=<?php echo $user_id; ?>">Settings</a></li>
                         <li>
                             <hr class="dropdown-divider" />
                         </li>
@@ -263,52 +172,63 @@ $aovYear = $totalOrdersYear > 0 ? round($totalSalesYear / $totalOrdersYear, 2) :
                 <span>Dashboard</span>
 
                 <div class="row">
+
+                    <!-- Today Sales -->
+                    <div class="col-md-3 mt-4 d-flex">
+                        <div class="card h-100 w-100 custom-card">
+                            <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                                <h5 class="card-title fs-6">Today Sales</h5>
+                                <p class="card-text fs-2" id="todaySales">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Today Order -->
+                    <div class="col-md-3 mt-4 d-flex">
+                        <div class="card h-100 w-100 custom-card">
+                            <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                                <h5 class="card-title fs-6">Today Orders</h5>
+                                <p class="card-text fs-2" id="todayOrders">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Pending Orders -->
-                    <div class="col-md-6 mt-4 d-flex">
-                        <div class="card h-100 w-100">
+                    <div class="col-md-3 mt-4 d-flex">
+                        <div class="card h-100 w-100 custom-card">
                             <div class="card-body d-flex flex-column justify-content-center align-items-center">
                                 <h5 class="card-title fs-6">Pending Orders</h5>
-                                <p class="card-text fs-2" id="pendingOrders">Loading...</p>
-                                <a href="adminOrderlist.php?user_id=<?php echo $rowShowUserInfo['user_id']; ?>" class=" btn btn-primary mt-3">Manage Orders</a>
+                                <p class="card-text fs-2" style="color: #FFC107;" id="pendingOrders">Loading...</p>
+                                <a href="adminOrderlist.php?id=<?php echo $rowShowUserInfo['user_id']; ?>" class=" btn login-btn mt-3">Manage Orders</a>
                             </div>
                         </div>
                     </div>
 
                     <!-- Pending quotations -->
-                    <div class="col-md-6 mt-4 d-flex">
-                        <div class="card h-100 w-100">
+                    <div class="col-md-3 mt-4 d-flex">
+                        <div class="card h-100 w-100 custom-card">
                             <div class="card-body d-flex flex-column justify-content-center align-items-center">
                                 <h5 class="card-title fs-6">Pending Quotations</h5>
-                                <p class="card-text fs-2" id="pendingQuotations">Loading...</p>
-                                <a href="adminQuotationlist.php?user_id=<?php echo $rowShowUserInfo['user_id']; ?>" class="btn btn-primary mt-3">Manage Quotations</a>
+                                <p class="card-text fs-2" style="color: #FFC107;" id="pendingQuotations">Loading...</p>
+                                <a href="adminQuotationlist.php?id=<?php echo $rowShowUserInfo['user_id']; ?>" class="btn login-btn mt-3">Manage Quotations</a>
                             </div>
                         </div>
                     </div>
-
 
                 </div>
 
                 <div class="row">
                     <!-- Sales and Orders Chart -->
-                    <div class="col-8 mt-4 d-flex">
+                    <div class="col-md-12 mt-4 d-flex">
                         <div class="card h-100 w-100">
                             <div class="card-body">
                                 <h5 class="card-title fs-6">Sales & Orders in <?php echo $currentYear; ?></h5>
                                 <p class="card-text fs-2">RM <?php echo number_format($todayCost, 2); ?></p>
-                                <canvas id="orderCountSales" height="100" class="mt-4 w-100"></canvas>
+                                <canvas id="orderCountSales" height="90"></canvas>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Average Order Value -->
-                    <div class="col-md-4 mt-4 d-flex">
-                        <div class="card h-100 w-100 d-flex flex-column justify-content-center align-items-center">
-                            <div class="card-body text-center">
-                                <h5 class="card-title fs-6">Average Order Value (AOV) in <?php echo $currentYear; ?></h5>
-                                <p class="card-text fs-2">RM <?php echo number_format($aovYear, 2); ?></p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="row">
@@ -492,6 +412,8 @@ $aovYear = $totalOrdersYear > 0 ? round($totalSalesYear / $totalOrdersYear, 2) :
                 const response = await fetch('checkPendingData.php');
                 const data = await response.json();
 
+                document.getElementById('todaySales').textContent = data.today_sales ?? 0;
+                document.getElementById('todayOrders').textContent = data.today_orders ?? 0;
                 document.getElementById('pendingOrders').textContent = data.pending_orders ?? 0;
                 document.getElementById('pendingQuotations').textContent = data.pending_quotations ?? 0;
             } catch (error) {
@@ -500,7 +422,7 @@ $aovYear = $totalOrdersYear > 0 ? round($totalSalesYear / $totalOrdersYear, 2) :
         }
 
         fetchPendingCounts();
-        setInterval(fetchPendingCounts, 10000);
+        setInterval(fetchPendingCounts, 10000); // 1000 = 1 second
     </script>
 </body>
 

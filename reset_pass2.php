@@ -22,22 +22,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submitCode'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login - Art & Print</title>
 
-    <link rel="stylesheet" href="./style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.12.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="./adminStyle.css">
 
-    <style>
-        body {
-            background-color: #f2f2f5;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-    </style>
 </head>
 
-<body>
+<body class="login-body">
 
     <div class="login-box">
 
@@ -49,11 +40,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submitCode'])) {
             <label for="code">Verification Code:</label>
             <div class="input-group">
                 <input type="text" class="form-control" id="code" name="code" required />
-                <button type="button" class="btn btn-sm btn-outline-primary" onclick="verifyCode('<?php echo $_SESSION['email']; ?>')" id="send_code_btn">Send code</button>
+                <button type="button" class="btn btn-sm sendcode-btn" onclick="verifyCode('<?php echo $_SESSION['email']; ?>')" id="send_code_btn">Send code</button>
             </div>
 
             <div class="d-grid mb-3 mt-3">
-                <button type="submit" class="btn btn-primary" name="submitCode">Submit Code</button>
+                <button type="submit" class="btn login-btn" name="submitCode">Submit Code</button>
             </div>
         </form>
     </div>

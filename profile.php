@@ -2,8 +2,8 @@
 session_start();
 include 'dbms.php';
 
-if (isset($_SESSION['role']) && $_SESSION['user_id'] == $_GET['user_id']) {
-    $user_id = $_GET['user_id'];
+if (isset($_SESSION['role']) && $_SESSION['id'] == $_GET['id']) {
+    $user_id = $_GET['id'];
     // show the user info
     $showUserInfo = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id WHERE a.user_id = '$user_id'";
     $queryShowUserInfo = mysqli_query($conn, $showUserInfo) or die(mysqli_error($conn));
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateProfileBtn'])) 
     if (mysqli_query($conn, $updateImg)) {
         echo "<script>
             alert('Profile image updated successfully.');
-            window.location.href = 'profile.php?user_id={$user_id}';
+            window.location.href = 'profile.php?id={$user_id}';
           </script>";
         exit;
     } else {
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateNameBtn'])) {
     if (mysqli_query($conn, $updateName)) {
         echo "<script>
             alert('Name updated successfully.');
-            window.location.href = 'profile.php?user_id={$user_id}';
+            window.location.href = 'profile.php?id={$user_id}';
           </script>";
         exit;
     } else {
@@ -53,7 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateNameBtn'])) {
 
 // Update Password
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn'])) {
-    $user_id = 10000001;
     $old_password = $_POST['oldPassword'];
     $new_password = $_POST['newPassword'];
     $confirm_password = $_POST['confirmPassword'];
@@ -64,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
     if (!$queryOldPassword || mysqli_num_rows($queryOldPassword) == 0) {
         echo "<script>
         alert('Error: User not found');
-        window.location.href = 'profile.php?user_id={$user_id}';
+        window.location.href = 'profile.php?id={$user_id}';
         </script>";
         exit;
     }
@@ -82,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
     if ($new_password !== $confirm_password) {
         echo "<script>
         alert('New Password and Confirm Password is not match.');
-        window.location.href = 'profile.php?user_id={$user_id}';
+        window.location.href = 'profile.php?id={$user_id}';
         </script>";
         exit;
     }
@@ -94,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
     if (mysqli_query($conn, $updatePassword)) {
         echo "<script>
         alert('Password updated successfully.');
-        window.location.href = 'profile.php?user_id={$user_id}';
+        window.location.href = 'profile.php?id={$user_id}';
         </script>";
         exit;
     } else {
@@ -110,127 +109,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Responsive Sidebar Layout</title>
+    <title>Profile Settings</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
 
-    <style>
-        body {
-            overflow-x: hidden;
-            background-color: #ffff;
-        }
+    <link rel="stylesheet" href="./adminStyle.css">
 
-        /* Sidebar */
-        .sidebar {
-            width: 240px;
-            background-color: #343a40;
-            color: white;
-            transition: all 0.3s ease;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            overflow-y: auto;
-            z-index: 1030;
-        }
-
-        .sidebar.collapsed {
-            width: 80px;
-        }
-
-        .s_logo {
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 10px 0;
-        }
-
-        .sidebar .nav-link {
-            color: #ccc;
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            white-space: nowrap;
-        }
-
-        .sidebar .nav-link:hover {
-            background-color: #495057;
-            color: white;
-            text-decoration: none;
-        }
-
-        .sidebar.collapsed .nav-link span,
-        .sidebar.collapsed .s_logo span {
-            display: none;
-        }
-
-        /* top navbar */
-        .top-navbar {
-            margin-left: 240px;
-            transition: margin-left 0.3s ease;
-        }
-
-        .top-navbar.collapsed {
-            margin-left: 80px;
-        }
-
-        /* Main content */
-        .main-content {
-            margin-left: 240px;
-            transition: margin-left 0.3s ease;
-            padding: 1rem;
-        }
-
-        .main-content.collapsed {
-            margin-left: 80px;
-        }
-
-        /* mobile adjustments */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(0);
-                left: 0;
-                transition: transform 0.3s ease;
-            }
-
-            .sidebar.collapsed {
-                transform: translateX(-100%);
-            }
-
-            .top-navbar,
-            .main-content {
-                margin-left: 0 !important;
-            }
-        }
-    </style>
 </head>
 
-<body>
+<body class="adminDash-body">
 
-    <!-- sidebar -->
-    <div id="sidebar" class="sidebar d-flex flex-column p-3">
+    <!-- Sidebar Navigation -->
+    <div id="sidebar" class="d-flex flex-column p-3 sidebar">
         <div class="s_logo fs-5">
-            <span>System Name</span>
+            <span>Art & Print</span>
         </div>
-        <hr />
+        <hr style="height: 4px; background-color: #FAFAFA; border: none;">
         <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-                <a href="dashboard.html" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
+                <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
             </li>
             <li class="nav-item">
-                <a href="orderlist.html" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
+                <a href="adminOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
+            </li>
+            <li class="nav-item">
+                <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i><span>Manage Quotations</span></a>
             </li>
         </ul>
     </div>
 
     <!-- Top Navbar -->
-    <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3 top-navbar">
+    <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light shadow-sm px-3 top-navbar">
         <div class="container-fluid">
-            <button class="btn btn-outline-secondary me-2" id="toggleSidebar">
+            <button class="btn toggle-btn" id="toggleSidebar">
                 <i class="bi bi-list"></i>
             </button>
 
@@ -241,11 +154,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
                         data-bs-toggle="dropdown">
                         <img src="data:<?php echo $rowShowUserInfo['img_type']; ?>;base64,<?php echo base64_encode($rowShowUserInfo['img_data']); ?>"
                             class="rounded-circle" width="30" height="30" alt="profile" />
-                        <span><?php echo $rowShowUserInfo['name']; ?></span>
+                        <span style="color: #FAFAFA;"><?php echo $rowShowUserInfo['name']; ?></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="profile.php?user_id=<?php echo $user_id; ?>">My Profile</a></li>
-                        <li><a class="dropdown-item" href="adminSettings.php?user_id=<?php echo $user_id; ?>">Settings</a></li>
+                        <li><a class="dropdown-item" href="profile.php?id=<?php echo $user_id; ?>">My Profile</a></li>
+                        <li><a class="dropdown-item" href="adminSettings.php?id=<?php echo $user_id; ?>">Settings</a></li>
                         <li>
                             <hr class="dropdown-divider" />
                         </li>
@@ -265,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
         <div class="container mt-4 bg-white p-4 rounded shadow-sm">
             <img src="data:<?php echo $rowShowUserInfo['img_type']; ?>;base64,<?php echo base64_encode($rowShowUserInfo['img_data']); ?>" class=" rounded-circle" width="120" height="120" alt="profile" />
             <br>
-            <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#changeProfileModal">Edit Picture</button>
+            <button class="btn login-btn mt-3" data-bs-toggle="modal" data-bs-target="#changeProfileModal">Edit Picture</button>
 
             <!-- change profile picture modal -->
             <div class=" modal fade" id="changeProfileModal">
@@ -275,22 +188,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
                             <h1 class="modal-title fs-5" id="changeProfileModalLabel">Change Profile Picture</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
+
                         <div class="modal-body">
                             <form method="post">
                                 <?php while ($rowShowImgList = mysqli_fetch_assoc($queryShowImgList)) { ?>
                                     <div class="mb-3">
                                         <input type="radio" name="updatePic" value="<?php echo $rowShowImgList['img_id']; ?>">
                                         <label for="<?php echo $rowShowImgList['img_name']; ?>"><?php echo $rowShowImgList['img_name']; ?></label>
-                                        <img src="data:<?php echo $rowShowImgList['img_type']; ?>;base64,<?php echo base64_encode($rowShowImgList['img_data']); ?>" class=" rounded-circle me-2" width="120" height="120" alt="profile" />
+                                        <img src="data:<?php echo $rowShowImgList['img_type']; ?>;base64,<?php echo base64_encode($rowShowImgList['img_data']); ?>"
+                                            class="rounded-circle me-2" width="120" height="120" alt="profile" />
                                     </div>
                                 <?php } ?>
-                        </div>
 
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary" name="updateProfileBtn">Save & Changes</button>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn login-btn" name="updateProfileBtn">Save & Changes</button>
+                                </div>
+                            </form>
                         </div>
-                        </form>
                     </div>
                 </div>
             </div>
@@ -300,13 +215,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
             <form method="post">
                 <label for="updateName">Name:</label>
                 <input type="text" class="form-control" name="updateName" value="<?php echo $rowShowUserInfo['name']; ?>">
-                <button type="submit" class="btn btn-primary mt-3" name="updateNameBtn">Save & Changes</button>
+                <button type="submit" class="btn login-btn mt-3" name="updateNameBtn">Save & Changes</button>
             </form>
 
             <hr>
 
             <h6>Password</h6>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#changePassModal">Change Password</button>
+            <button class="btn login-btn" data-bs-toggle="modal" data-bs-target="#changePassModal">Change Password</button>
 
             <!-- change password modal -->
             <div class="modal fade" id="changePassModal">
@@ -345,7 +260,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
 
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-primary" name="updatePasswordBtn">Save & Changes</button>
+                                    <button type="submit" class="btn login-btn" name="updatePasswordBtn">Save & Changes</button>
                                 </div>
 
                             </form>

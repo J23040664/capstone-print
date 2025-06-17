@@ -67,9 +67,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['resetpassbtn'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login - Art & Print</title>
 
-    <link rel="stylesheet" href="./style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.12.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="./adminStyle.css">
 
     <style>
         body {
@@ -82,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['resetpassbtn'])) {
     </style>
 </head>
 
-<body>
+<body class="login-body">
 
     <div class="login-box">
 
@@ -114,7 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['resetpassbtn'])) {
             </div>
 
             <div class="d-grid mb-3 mt-3">
-                <button type="submit" class="btn btn-primary" name="resetpassbtn">Continue</button>
+                <button type="submit" class="btn login-btn" name="resetpassbtn">Continue</button>
             </div>
         </form>
             

@@ -3,8 +3,8 @@ session_start();
 include('dbms.php');
 
 // must include at each page, to prevent change user id from url
-if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['user_id'] == $_GET['user_id']) {
-    $user_id = $_GET['user_id'];
+if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['id'] == $_GET['id']) {
+    $user_id = $_GET['id'];
     // show the user info
     $showUserInfo = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id WHERE a.user_id = '$user_id'";
     $queryShowUserInfo = mysqli_query($conn, $showUserInfo) or die(mysqli_error($conn));
@@ -56,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['addServiceBtn'])) {
     if (mysqli_query($conn, $addService)) {
         echo "<script>
             alert(' Service Added successfully.');
-            window.location.href = 'adminSettings.php';
+            window.location.href = 'adminSettings.php?id=" . $user_id . "';
           </script>";
         echo "<pre>";
         var_dump($_POST);
@@ -82,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editServiceBtn'])) {
     if (mysqli_query($conn, $updateService)) {
         echo "<script>
             alert(' Service updated successfully.');
-            window.location.href = 'adminSettings.php';
+            window.location.href = 'adminSettings.php?id=" . $user_id . "';
           </script>";
         exit;
     } else {
@@ -100,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteServiceBtn'])) {
     if (mysqli_query($conn, $deleteService)) {
         echo "<script>
             alert(' Service Deleted successfully.');
-            window.location.href = 'adminSettings.php';
+            window.location.href = 'adminSettings.php?id=" . $user_id . "';
           </script>";
         exit;
     } else {
@@ -121,7 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['addFinishingBtn'])) {
     if (mysqli_query($conn, $addFinishing)) {
         echo "<script>
             alert(' Finishing Added successfully.');
-            window.location.href = 'adminSettings.php';
+            window.location.href = 'adminSettings.php?id=" . $user_id . "';
           </script>";
         exit;
     } else {
@@ -143,7 +143,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editFinishingBtn'])) {
     if (mysqli_query($conn, $updateFinishing)) {
         echo "<script>
             alert(' Finishing updated successfully.');
-            window.location.href = 'adminSettings.php';
+            window.location.href = 'adminSettings.php?id=" . $user_id . "';
           </script>";
         exit;
     } else {
@@ -161,7 +161,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteFinishingBtn']))
     if (mysqli_query($conn, $deleteFinishing)) {
         echo "<script>
             alert(' Finishing Deleted successfully.');
-            window.location.href = 'adminSettings.php';
+            window.location.href = 'adminSettings.php?id=" . $user_id . "';
           </script>";
         exit;
     } else {
@@ -195,7 +195,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['addUserBtn'])) {
         if (mysqli_query($conn, $addUser)) {
             echo "<script>
             alert(' Add User successfully.');
-            window.location.href = 'adminSettings.php';
+            window.location.href = 'adminSettings.php?id=" . $user_id . "';
         </script>";
         } else {
             echo "Error updating record: " . mysqli_error($conn);
@@ -219,7 +219,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editUserBtn'])) {
     if (mysqli_query($conn, $updateUser)) {
         echo "<script>
         alert('User updated successfully.');
-        window.location.href = 'adminSettings.php';
+        window.location.href = 'adminSettings.php?id=" . $user_id . "';
         </script>";
         exit;
     } else {
@@ -237,7 +237,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
     if (mysqli_query($conn, $deleteUser)) {
         echo "<script>
         alert(' User Deleted successfully.');
-        window.location.href = 'adminSettings.php';
+        window.location.href = 'adminSettings.php?id=" . $user_id . "';
     </script>";
         exit;
     } else {
@@ -267,128 +267,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
     <script src="https://cdn.datatables.net/buttons/3.2.3/js/dataTables.buttons.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.dataTables.js"></script>
 
-    <style>
-        body {
-            overflow-x: hidden;
-            background-color: #ffff;
-        }
+    <link rel="stylesheet" href="./adminStyle.css">
 
-        /* Sidebar */
-        .sidebar {
-            width: 240px;
-            background-color: #343a40;
-            color: white;
-            transition: all 0.3s ease;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            overflow-y: auto;
-            z-index: 1030;
-        }
-
-        .sidebar.collapsed {
-            width: 80px;
-        }
-
-        .s_logo {
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 10px 0;
-        }
-
-        .sidebar .nav-link {
-            color: #ccc;
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            white-space: nowrap;
-        }
-
-        .sidebar .nav-link:hover {
-            background-color: #495057;
-            color: white;
-            text-decoration: none;
-        }
-
-        .sidebar.collapsed .nav-link span,
-        .sidebar.collapsed .s_logo span {
-            display: none;
-        }
-
-        /* top navbar */
-        .top-navbar {
-            margin-left: 240px;
-            transition: margin-left 0.3s ease;
-        }
-
-        .top-navbar.collapsed {
-            margin-left: 80px;
-        }
-
-        /* Main content */
-        .main-content {
-            margin-left: 240px;
-            transition: margin-left 0.3s ease;
-            padding: 1rem;
-        }
-
-        .main-content.collapsed {
-            margin-left: 80px;
-        }
-
-        /* mobile adjustments */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(0);
-                left: 0;
-                transition: transform 0.3s ease;
-            }
-
-            .sidebar.collapsed {
-                transform: translateX(-100%);
-            }
-
-            .top-navbar,
-            .main-content {
-                margin-left: 0 !important;
-            }
-        }
-
-        /* table */
-        #example th,
-        #example td {
-            text-align: center;
-            width: 16.66%
-        }
-    </style>
 </head>
 
 <body>
 
-    <!-- sidebar -->
-    <div id="sidebar" class="sidebar d-flex flex-column p-3">
+    <!-- Sidebar Navigation -->
+    <div id="sidebar" class="d-flex flex-column p-3 sidebar">
         <div class="s_logo fs-5">
-            <span>System Name</span>
+            <span>Art & Print</span>
         </div>
-        <hr />
+        <hr style="height: 4px; background-color: #FAFAFA; border: none;">
         <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-                <a href="dashboard.html" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
+                <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
             </li>
             <li class="nav-item">
-                <a href="orderlist.html" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
+                <a href="adminOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
+            </li>
+            <li class="nav-item">
+                <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i><span>Manage Quotations</span></a>
             </li>
         </ul>
     </div>
 
     <!-- Top Navbar -->
-    <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3 top-navbar">
+    <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light shadow-sm px-3 top-navbar fixed-top">
         <div class="container-fluid">
-            <button class="btn btn-outline-secondary me-2" id="toggleSidebar">
+            <button class="btn toggle-btn" id="toggleSidebar">
                 <i class="bi bi-list"></i>
             </button>
 
@@ -399,11 +306,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
                         data-bs-toggle="dropdown">
                         <img src="data:<?php echo $rowShowUserInfo['img_type']; ?>;base64,<?php echo base64_encode($rowShowUserInfo['img_data']); ?>"
                             class="rounded-circle" width="30" height="30" alt="profile" />
-                        <span><?php echo $rowShowUserInfo['name']; ?></span>
+                        <span style="color: #FAFAFA;"><?php echo $rowShowUserInfo['name']; ?></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="profile.php?user_id=<?php echo $user_id; ?>">My Profile</a></li>
-                        <li><a class="dropdown-item" href="adminSettings.php?user_id=<?php echo $user_id; ?>">Settings</a></li>
+                        <li><a class="dropdown-item" href="profile.php?id=<?php echo $user_id; ?>">My Profile</a></li>
+                        <li><a class="dropdown-item" href="adminSettings.php?id=<?php echo $user_id; ?>">Settings</a></li>
                         <li>
                             <hr class="dropdown-divider" />
                         </li>
@@ -423,14 +330,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
 
             <!-- Navigation Buttons -->
             <div class="mb-3 mt-3" id="myTab" role="tablist">
-                <button class="btn btn-outline-primary me-2 btn-sm active" id="priceTab-tab" data-bs-toggle="tab"
+                <button class="btn navtab-btn me-2 btn-sm active" id="priceTab-tab" data-bs-toggle="tab"
                     data-bs-target="#priceTab" type="button" role="tab" aria-controls="priceTab"
                     aria-selected="true">
                     <i class="bi bi-currency-dollar me-2"></i>
                     <span>Price Settings</span>
                 </button>
 
-                <button class="btn btn-outline-primary btn-sm" id="userTab-tab" data-bs-toggle="tab"
+                <button class="btn navtab-btn btn-sm" id="userTab-tab" data-bs-toggle="tab"
                     data-bs-target="#userTab" type="button" role="tab" aria-controls="userTab"
                     aria-selected="false">
                     <i class="bi bi-people me-2"></i>
@@ -481,7 +388,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
 
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <button type="submit" class="btn btn-primary" name="addServiceBtn">Add Service</button>
+                                                <button type="submit" class="btn login-btn" name="addServiceBtn">Add Service</button>
                                             </div>
                                         </form>
                                     </div>
@@ -496,7 +403,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
 
                         <div>
                             <table id="serviceList" class="table table-striped mt-3 mb-3">
-                                <thead>
+                                <thead class="table-dark">
                                     <tr>
                                         <th>Service ID</th>
                                         <th>Service Type</th>
@@ -567,7 +474,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                                        <button type="submit" class="btn btn-primary" name="editServiceBtn">Save changes</button>
+                                                                        <button type="submit" class="btn login-btn" name="editServiceBtn">Save changes</button>
                                                                     </div>
                                                                 </form>
                                                             </div>
@@ -651,7 +558,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
 
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <button type="submit" class="btn btn-primary" name="addFinishingBtn">Add Finishing</button>
+                                                <button type="submit" class="btn login-btn" name="addFinishingBtn">Add Finishing</button>
                                             </div>
                                         </form>
                                     </div>
@@ -666,7 +573,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
 
                         <div>
                             <table id="finishingList" class="table table-striped mt-3 mb-3">
-                                <thead>
+                                <thead class="table-dark">
                                     <tr>
                                         <th>Finishing ID</th>
                                         <th>Finishing Description</th>
@@ -731,7 +638,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
 
                                                                     <div class="modal-footer">
                                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                                        <button type="submit" class="btn btn-primary" name="editFinishingBtn">Save changes</button>
+                                                                        <button type="submit" class="btn login-btn" name="editFinishingBtn">Save changes</button>
                                                                     </div>
                                                                 </form>
                                                             </div>
@@ -826,7 +733,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
 
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="btn btn-primary" name="addUserBtn">Add User</button>
+                                            <button type="submit" class="btn login-btn" name="addUserBtn">Add User</button>
                                         </div>
                                     </form>
                                 </div>
@@ -840,7 +747,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
                         $queryShowUserList = mysqli_query($conn, $showUserList) or die("Error: " . mysqli_error($conn));
                         ?>
                         <table id="user_management" class="table table-striped mt-3 mb-3">
-                            <thead>
+                            <thead class="table-dark">
                                 <tr>
                                     <th>User ID</th>
                                     <th>Profile Image</th>
@@ -916,7 +823,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
 
                                                                 <div class="modal-footer">
                                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                                    <button type="submit" class="btn btn-success" name="editUserBtn">Save Changes</button>
+                                                                    <button type="submit" class="btn login-btn" name="editUserBtn">Save Changes</button>
                                                                 </div>
                                                             </form>
                                                         </div>
@@ -994,7 +901,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
                 topStart: {
                     buttons: [{
                         text: 'Add New Service',
-                        className: 'btn btn-primary btn-sm',
+                        className: 'btn login-btn btn-sm',
                         action: function(e, dt, node, config) {
                             $('#addServiceModal').modal('show');
                         }
@@ -1018,7 +925,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
                 topStart: {
                     buttons: [{
                         text: 'Add New Finishing',
-                        className: 'btn btn-primary btn-sm',
+                        className: 'btn login-btn btn-sm',
                         action: function(e, dt, node, config) {
                             $('#addFinishingModal').modal('show');
                         }
@@ -1042,7 +949,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
                 topStart: {
                     buttons: [{
                         text: 'Add New User',
-                        className: 'btn btn-primary btn-sm',
+                        className: 'btn login-btn btn-sm',
                         action: function(e, dt, node, config) {
                             $('#addUserModal').modal('show');
                         }

@@ -2,8 +2,9 @@
 session_start();
 include('dbms.php');
 
-if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['user_id'] == $_GET['user_id']) {
-    $user_id = $_GET['user_id'];
+if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['id'] == $_GET['id']) {
+
+    $user_id = $_GET['id'];
     // show the user info
     $showUserInfo = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id WHERE a.user_id = '$user_id'";
     $queryShowUserInfo = mysqli_query($conn, $showUserInfo) or die(mysqli_error($conn));
@@ -45,121 +46,34 @@ if (mysqli_num_rows($queryShowOrderList) === 0) {
     <script src="https://cdn.datatables.net/buttons/3.2.3/js/dataTables.buttons.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.dataTables.js"></script>
 
-    <style>
-        body {
-            overflow-x: hidden;
-            background-color: #ffff;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 240px;
-            background-color: #343a40;
-            color: white;
-            transition: all 0.3s ease;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            overflow-y: auto;
-            z-index: 1030;
-        }
-
-        .sidebar.collapsed {
-            width: 80px;
-        }
-
-        .s_logo {
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 10px 0;
-        }
-
-        .sidebar .nav-link {
-            color: #ccc;
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            white-space: nowrap;
-        }
-
-        .sidebar .nav-link:hover {
-            background-color: #495057;
-            color: white;
-            text-decoration: none;
-        }
-
-        .sidebar.collapsed .nav-link span,
-        .sidebar.collapsed .s_logo span {
-            display: none;
-        }
-
-        /* top navbar */
-        .top-navbar {
-            margin-left: 240px;
-            transition: margin-left 0.3s ease;
-        }
-
-        .top-navbar.collapsed {
-            margin-left: 80px;
-        }
-
-        /* Main content */
-        .main-content {
-            margin-left: 240px;
-            transition: margin-left 0.3s ease;
-            padding: 1rem;
-        }
-
-        .main-content.collapsed {
-            margin-left: 80px;
-        }
-
-        /* mobile adjustments */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(0);
-                left: 0;
-                transition: transform 0.3s ease;
-            }
-
-            .sidebar.collapsed {
-                transform: translateX(-100%);
-            }
-
-            .top-navbar,
-            .main-content {
-                margin-left: 0 !important;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="./adminStyle.css">
 </head>
 
-<body>
+<body class="adminDash-body">
 
     <!-- Sidebar Navigation -->
-    <div id="sidebar" class="sidebar d-flex flex-column p-3">
+    <div id="sidebar" class="d-flex flex-column p-3 sidebar">
         <div class="s_logo fs-5">
-            <span>System Name</span>
+            <span>Art & Print</span>
         </div>
-        <hr />
+        <hr style="height: 4px; background-color: #FAFAFA; border: none;">
         <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-                <a href="adminDashboard.php?user_id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
+                <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
             </li>
             <li class="nav-item">
-                <a href="orderlist.html" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
+                <a href="adminOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
+            </li>
+            <li class="nav-item">
+                <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i><span>Manage Quotations</span></a>
             </li>
         </ul>
     </div>
 
     <!-- Top Navbar -->
-    <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3 top-navbar">
+    <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light shadow-sm px-3 top-navbar fixed-top">
         <div class="container-fluid">
-            <button class="btn btn-outline-secondary me-2" id="toggleSidebar">
+            <button class="btn toggle-btn" id="toggleSidebar">
                 <i class="bi bi-list"></i>
             </button>
 
@@ -170,11 +84,11 @@ if (mysqli_num_rows($queryShowOrderList) === 0) {
                         data-bs-toggle="dropdown">
                         <img src="data:<?php echo $rowShowUserInfo['img_type']; ?>;base64,<?php echo base64_encode($rowShowUserInfo['img_data']); ?>"
                             class="rounded-circle" width="30" height="30" alt="profile" />
-                        <span><?php echo $rowShowUserInfo['name']; ?></span>
+                        <span style="color: #FAFAFA;"><?php echo $rowShowUserInfo['name']; ?></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="profile.php?user_id=<?php echo $user_id; ?>">My Profile</a></li>
-                        <li><a class="dropdown-item" href="adminSettings.php?user_id=<?php echo $user_id; ?>">Settings</a></li>
+                        <li><a class="dropdown-item" href="profile.php?id=<?php echo $user_id; ?>">My Profile</a></li>
+                        <li><a class="dropdown-item" href="adminSettings.php?id=<?php echo $user_id; ?>">Settings</a></li>
                         <li>
                             <hr class="dropdown-divider" />
                         </li>
@@ -210,7 +124,7 @@ if (mysqli_num_rows($queryShowOrderList) === 0) {
                         <?php while ($rowShowOrderList = mysqli_fetch_assoc($queryShowOrderList)) { ?>
                             <tr>
                                 <td>
-                                    <a href="editOrder.php?order_id=<?php echo urlencode($rowShowOrderList['order_id']); ?>&user_id=<?php echo urlencode($user_id); ?>">
+                                    <a class="text-decoration-none link" href="editOrder.php?order_id=<?php echo urlencode($rowShowOrderList['order_id']); ?>&id=<?php echo urlencode($user_id); ?>">
                                         <?php echo htmlspecialchars($rowShowOrderList['order_id']); ?>
                                     </a>
                                 </td>
@@ -218,14 +132,14 @@ if (mysqli_num_rows($queryShowOrderList) === 0) {
                                 <td><?php echo $rowShowOrderList['customer_name']; ?></td>
                                 <td>
                                     <?php if ($rowShowOrderList['order_status'] == "Pending") { ?>
-                                        <span class="badge bg-warning text-white"><?php echo $rowShowOrderList['order_status']; ?></span>
+                                        <span class="badge bg-warning text-black"><?php echo $rowShowOrderList['order_status']; ?></span>
                                     <?php } else if ($rowShowOrderList['order_status'] == "Completed") { ?>
                                         <span class="badge bg-success text-white"><?php echo $rowShowOrderList['order_status']; ?></span>
                                     <?php } ?>
                                 </td>
                                 <td>
                                     <?php if ($rowShowOrderList['payment_status'] == "Pending") { ?>
-                                        <span class="badge bg-warning text-white"><?php echo $rowShowOrderList['payment_status']; ?></span>
+                                        <span class="badge bg-warning text-black"><?php echo $rowShowOrderList['payment_status']; ?></span>
                                     <?php } else if ($rowShowOrderList['payment_status'] == "Paid") { ?>
                                         <span class="badge bg-success text-white"><?php echo $rowShowOrderList['payment_status']; ?></span>
                                     <?php } ?>
@@ -237,7 +151,7 @@ if (mysqli_num_rows($queryShowOrderList) === 0) {
                                     ?>
                                 </td>
                                 <td>
-                                    <a href="editOrder.php?order_id=<?php echo $rowShowOrderList['order_id']; ?>&user_id=<?php echo $_SESSION['user_id']; ?>" class="btn btn-primary btn-sm me-2">
+                                    <a class="btn btn-sm login-btn" href="editOrder.php?order_id=<?php echo $rowShowOrderList['order_id']; ?>&id=<?php echo $user_id; ?>" class="btn btn-primary btn-sm me-2">
                                         <i class="bi bi-pencil"></i>
                                     </a>
                                 </td>
@@ -277,7 +191,7 @@ if (mysqli_num_rows($queryShowOrderList) === 0) {
                 topStart: {
                     buttons: [{
                         text: 'Add New Order',
-                        className: 'btn btn-primary btn-sm',
+                        className: 'btn login-btn btn-sm',
                         action: function(e, dt, node, config) {
                             window.location.href = 'createorder.php?id=<?php echo $user_id; ?>';
                         }
