@@ -52,6 +52,16 @@
     color: #FAFAFA;
 }
 
+/* logout page */
+.logout-box {
+    background-color: #FAFAFA;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
 /* reset password page */
 /* reuse login and sign in style */
 
