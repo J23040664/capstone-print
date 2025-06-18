@@ -250,7 +250,7 @@ $result = $stmt->get_result();
                                             </a>
 
                                             <?php if ($payment_status == 'Pending'): ?>
-                                                <a href="payment.php?order_id=<?php echo urlencode($row['order_id']); ?>" class="btn btn-success btn-sm">
+                                            <a href="payment.php?order_id=<?php echo urlencode($row['order_id']); ?>&user_id=<?php echo urlencode($customer_id); ?>" class="btn btn-success btn-sm">
                                                     <i class="bi bi-credit-card"></i> Pay Now
                                                 </a>
                                             <?php endif; ?>
@@ -265,8 +265,12 @@ $result = $stmt->get_result();
                     <div class="text-center py-5">
                         <i class="bi bi-folder-x" style="font-size: 3rem; color: #ccc;"></i>
                         <p class="mt-3 fs-5 text-muted">You have no order history yet.</p>
+                        <a href="http://localhost/capstone-print/createorder.php?id=<?php echo urlencode($customer_id); ?>" class="btn btn-primary mt-3">
+                            <i class="bi bi-plus-circle"></i> Create New Order
+                        </a>
                     </div>
                 <?php endif; ?>
+
             </div>
 
         </div>
