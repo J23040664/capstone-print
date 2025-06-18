@@ -12,11 +12,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $order_id = $_POST['order_id'];
     $payment_type = $_POST['payment_method'] === 'Online' ? 'Online' : 'Walk-in';
 
-    $sql_update = "UPDATE `payment` SET payment_status = 'Paid', payment_type = ? WHERE order_id = ?";
-    $stmt_update = $conn->prepare($sql_update);
-    $stmt_update->bind_param("ss", $payment_type, $order_id);
+    // Update payment table
+    $sql_update_payment = "UPDATE `payment` SET payment_status = 'Paid', payment_type = ?, payment_date = NOW() WHERE order_id = ?";
+    $stmt_update_payment = $conn->prepare($sql_update_payment);
+    $stmt_update_payment->bind_param("ss", $payment_type, $order_id);
+    $stmt_update_payment->execute();
 
-    if ($stmt_update->execute()) {
+    // Update order table
+    $sql_update_order = "UPDATE `order` SET payment_status = 'Paid' WHERE order_id = ?";
+    $stmt_update_order = $conn->prepare($sql_update_order);
+    $stmt_update_order->bind_param("s", $order_id);
+    $stmt_update_order->execute();
+
+    if ($stmt_update_payment->affected_rows > 0 && $stmt_update_order->affected_rows > 0) {
         echo "<script>alert('Payment successful!'); window.location.href = 'orderlist_customer.php?id=" . $_POST['user_id'] . "';</script>";
         exit;
     } else {
