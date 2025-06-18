@@ -203,9 +203,14 @@ $result_detail = $stmt_detail->get_result();
               <input class="form-check-input" type="radio" name="payment_method" id="walkin" value="Walk-in" checked>
               <label class="form-check-label" for="walkin">
                 Walk-in Payment (Pay at Counter)
-                <button type="button" class="btn btn-sm btn-link p-0" data-bs-toggle="popover" title="How Walk-in Payment Works" data-bs-content="Walk-in orders are not processed or printed until payment is made at the store. This helps avoid uncollected or fake orders.">
-                  <i class="bi bi-question-circle"></i>
-                </button>
+              <button type="button" tabindex="0" class="btn btn-sm btn-link p-0" 
+                data-bs-toggle="popover" 
+                data-bs-trigger="focus"
+                title="How Walk-in Payment Works" 
+                data-bs-content="Walk-in orders are not processed or printed until payment is made at the store. This helps avoid uncollected or fake orders. Pay at counter using order ID.">
+                <i class="bi bi-question-circle"></i>
+              </button>
+
               </label>
             </div>
             <div class="alert alert-warning mt-2" id="walkinNotice" style="display: block;">
@@ -271,8 +276,10 @@ $result_detail = $stmt_detail->get_result();
   walkinRadio.addEventListener('change', togglePortal);
   onlineRadio.addEventListener('change', togglePortal);
 
-  const popoverTriggerList = document.querySelectorAll('[data-bs-toggle=\"popover\"]');
+  const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
   popoverTriggerList.forEach(el => new bootstrap.Popover(el));
+
+
 </script>
 
 </body>
