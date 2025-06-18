@@ -250,7 +250,7 @@ while ($row = mysqli_fetch_assoc($result_finishing)) {
 
                     <!-- Back button -->
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="orderlist_customer.php?id=<?php echo urlencode($customer_id); ?>" class="btn btn-primary">Back</a>
+                        <a href="customerOrderlist.php?id=<?php echo urlencode($customer_id); ?>" class="btn btn-primary">Back</a>
                     </div>
                 </form>
             </div>

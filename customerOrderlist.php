@@ -265,7 +265,7 @@ $result = $stmt->get_result();
                     <div class="text-center py-5">
                         <i class="bi bi-folder-x" style="font-size: 3rem; color: #ccc;"></i>
                         <p class="mt-3 fs-5 text-muted">You have no order history yet.</p>
-                        <a href="http://localhost/capstone-print/createorder.php?id=<?php echo urlencode($customer_id); ?>" class="btn btn-primary mt-3">
+                        <a href="http://localhost/capstone-print/createOrder.php?id=<?php echo urlencode($customer_id); ?>" class="btn btn-primary mt-3">
                             <i class="bi bi-plus-circle"></i> Create New Order
                         </a>
                     </div>
@@ -298,7 +298,7 @@ $result = $stmt->get_result();
                     text: '<i class="bi bi-plus-circle"></i> Create New Order',
                     className: 'btn btn-primary',
                     action: function () {
-                        window.location.href = 'http://localhost/capstone-print/createorder.php?id=<?php echo urlencode($customer_id); ?>';
+                        window.location.href = 'http://localhost/capstone-print/createOrder.php?id=<?php echo urlencode($customer_id); ?>';
                     }
                 }
             ]

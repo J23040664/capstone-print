@@ -5,7 +5,7 @@ error_reporting(E_ALL);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['cancel_payment'])) {
-        echo "<script>alert('Payment was not completed. You can complete your payment from the order list page.'); window.location.href = 'orderlist_customer.php?id=" . $_POST['user_id'] . "';</script>";
+        echo "<script>alert('Payment was not completed. You can complete your payment from the order list page.'); window.location.href = 'customerOrderlist.php?id=" . $_POST['user_id'] . "';</script>";
         exit;
     }
 
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt_update_order->execute();
 
     if ($stmt_update_payment->affected_rows > 0 && $stmt_update_order->affected_rows > 0) {
-        echo "<script>alert('Payment successful!'); window.location.href = 'orderlist_customer.php?id=" . $_POST['user_id'] . "';</script>";
+        echo "<script>alert('Payment successful!'); window.location.href = 'customerOrderlist.php?id=" . $_POST['user_id'] . "';</script>";
         exit;
     } else {
         echo "<script>alert('Payment update failed.');</script>";
@@ -149,7 +149,7 @@ $result_detail = $stmt_detail->get_result();
       <a href="dashboard.html" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
     </li>
     <li class="nav-item">
-      <a href="orderlist_customer.php" class="nav-link active"><i class="bi bi-card-list"></i><span>My Orders</span></a>
+      <a href="customerOrderlist.php" class="nav-link active"><i class="bi bi-card-list"></i><span>My Orders</span></a>
     </li>
   </ul>
 </div>
