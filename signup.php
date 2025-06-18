@@ -130,7 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signupbtn'])) {
             </div>
 
             <div>
-                <span>Don't have an account? <a class="link" href="login.php">Sign In</a></span>
+                <span>Already have an account? <a class="text-decoration-none link" href="login.php">Sign In</a></span>
             </div>
         </form>
     </div>
