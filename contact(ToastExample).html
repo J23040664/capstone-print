@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact - Lum Jia Yong</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand" href="index.html">Lum's PortFolio</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="projects.html">Projects</a></li>
+        <li class="nav-item"><a class="nav-link active" href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Contact Section -->
+<section class="py-5 fade-in">
+  <div class="container ">
+    <h2 class="mb-4"><img src="image/icon_contact.png" alt="Contact Icon" class="icon me-2"></i>Contact Me</h2>
+    <form id="contactForm" novalidate>
+      <!-- Name Field - REQUIRED-->
+      <div class="mb-3">
+        <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" id="name" required placeholder="Howard Chris">
+        <div class="invalid-feedback">Please enter your name.</div>
+      </div>
+      <!-- EMAIL Field - REQUIRED-->
+      <div class="mb-3">
+        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+        <input type="email" class="form-control" id="email" required placeholder="howard123@gmail.com">
+        <div class="invalid-feedback">Please enter a valid email.</div>
+      </div>
+      <!-- Title Field - REQUIRED-->
+      <div class="mb-3">
+        <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" id="title" required placeholder="Empty Job Position">
+        <div class="invalid-feedback">Please provide a title.</div>
+      </div>
+      <!-- Message Field - REQUIRED-->
+      <div class="mb-3">
+        <label for="message" class="form-label">Message <span class="text-danger">*</span></label>
+        <textarea class="form-control" id="message" rows="4" required placeholder="Hi, we have an empty position....."></textarea>
+        <div class="invalid-feedback">Please write a message.</div>
+      </div>
+      <!-- Phone Number Field - OPTIONAL-->
+      <div class="mb-3">
+        <label for="phone" class="form-label">Phone Number (Optional)</label>
+        <input type="tel" class="form-control" id="phone" placeholder="0123456789">
+      </div>
+      <!-- Attachement Field - OPTIONAL-->
+      <div class="mb-3">
+        <label for="attachment" class="form-label">Attachment (PDF only)</label>
+        <input type="file" class="form-control" id="attachment" accept=".pdf">
+      </div>
+      <!-- Radio Buttons for Message Type -->
+      <div class="mb-3">
+        <label class="form-label">Message Type</label>
+        <div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="type" id="feedback" value="Feedback" checked>
+            <label class="form-check-label" for="feedback">Feedback</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="type" id="job" value="Job Requirement">
+            <label class="form-check-label" for="job">Job Requirement</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="type" id="others" value="Others">
+            <label class="form-check-label" for="others">Others</label>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal">
+        Submit
+      </button>
+    </form>
+
+    <hr class="my-4">
+    <div class="d-flex flex-column flex-md-row align-items-start mb-3">
+      <div class="d-flex align-items-center me-md-5 mb-2 mb-md-0">
+        <img src="image/icon_email.png" class="contact-icon me-2" alt="Email Icon" style="width:32px; height:32px;">
+        <span>Email: <a href="mailto:lumjiayong@example.com">lumjiayong@example.com</a></span>
+      </div>
+      <div class="d-flex align-items-center">
+        <img src="image/logo_linkedin.png" class="contact-icon me-2" alt="LinkedIn Logo" style="width:32px; height:32px;">
+        <span>LinkedIn: <a href="https://www.linkedin.com/in/lumjiayong/" target="_blank">linkedin.com/in/lumjiayong</a></span>
+      </div>
+    </div></div>
+
+</section>
+
+<!-- Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmModalLabel">Confirm Submission</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to submit this form?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary" form="contactForm">Yes, Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-white text-center py-3 mt-5">
+  <p class="mb-0">&copy; 2025 Lum Jia Yong. All rights reserved.</p>
+</footer>
+
+<!-- Toast Container -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
+  <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">
+        ✅ Your message has been submitted successfully!
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- JavaScript for Form Validation and Toast Display -->
+<script>
+  (() => {
+    const form = document.getElementById('contactForm');
+    const toastElement = document.getElementById('successToast');
+    const toast = new bootstrap.Toast(toastElement);
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+        return;
+      }
+
+      // Simulate successful submission
+      form.reset();
+      form.classList.remove('was-validated');
+      toast.show();
+
+      // Close the modal
+      const modal = bootstrap.Modal.getInstance(document.getElementById('confirmModal'));
+      modal.hide();
+    });
+  })();
+</script>
+
+<script>
+  const faders = document.querySelectorAll('.fade-in');
+
+  const appearOptions = {
+    threshold: 0.3,
+    rootMargin: "0px 0px -50px 0px"
+  };
+
+  const appearOnScroll = new IntersectionObserver(function(entries, observer) {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    });
+  }, appearOptions);
+
+  faders.forEach(fader => {
+    appearOnScroll.observe(fader);
+  });
+</script>
+
+
+</body>
+</html>
