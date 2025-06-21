@@ -2,6 +2,14 @@
 session_start();
 include "./dbms.php";
 
+$showLogoutToast = false;
+if (isset($_SESSION['logout']) && $_SESSION['logout']) {
+    $showLogoutToast = true;
+    $toastLogoutMessage = $_SESSION['logoutMessage'];
+    unset($_SESSION['logout']);
+    unset($_SESSION['logoutMessage']);
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
     $email = htmlspecialchars(trim($_POST["email"]));
     $password = htmlspecialchars(trim($_POST["password"]));
@@ -59,6 +67,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
 </head>
 
 <body class="login-body">
+    <?php if ($showLogoutToast): ?>
+        <!-- Toast Container -->
+        <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+            <div id="logoutToast" class="toast text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <?php echo $toastLogoutMessage; ?>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
 
     <div class="login-box">
 
@@ -98,6 +119,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const toast = new bootstrap.Toast(document.getElementById('logoutToast'));
+        toast.show();
+    </script>
 
     <script>
         const togglePasswordBtn = document.getElementById('togglePassword');

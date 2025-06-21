@@ -85,7 +85,7 @@ $queryShowQuotation = mysqli_query($conn, $showQuotation) or die(mysqli_error($c
     <!-- Main Content -->
     <main id="mainContent" class="main-content">
         <div class="container-fluid">
-            <div class="mt-3 fw-bold">
+            <div class="mt-4 fw-bold">
                 <span>Quotation List</span>
             </div>
 

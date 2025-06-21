@@ -14,6 +14,22 @@ if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['id'] 
     exit;
 }
 
+$showToast = false;
+if (isset($_SESSION['success']) && $_SESSION['success']) {
+    $showToast = true;
+    $showMessage = $_SESSION['toastMessage'];
+    unset($_SESSION['success']); // Show only once
+    unset($_SESSION['toastMessage']);
+}
+
+$showFailedToast = false;
+if (isset($_SESSION['failed']) && $_SESSION['failed']) {
+    $showFailedToast = true;
+    $showFailedMessage = $_SESSION['toastFailedMessage'];
+    unset($_SESSION['failed']); // Show only once
+    unset($_SESSION['toastFailedMessage']);
+}
+
 // function get next service id
 function getNextIServiceId($conn)
 {
@@ -54,16 +70,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['addServiceBtn'])) {
     VALUE ('$newServiceId', '$newServiceType1', '$newServiceDesc', '$newServicePrice', '$newServiceStatus')";
 
     if (mysqli_query($conn, $addService)) {
-        echo "<script>
-            alert(' Service Added successfully.');
-            window.location.href = 'adminSettings.php?id=" . $user_id . "';
-          </script>";
-        echo "<pre>";
-        var_dump($_POST);
-        echo "</pre>";
+        $_SESSION['success'] = true; // Set flag for toast
+        $_SESSION['toastMessage'] = "Service {$newServiceId} added successfully!";
+        header("Location: adminSettings.php?id=" . $user_id);
         exit;
     } else {
-        echo "Error updating record: " . mysqli_error($conn);
+        $_SESSION['failed'] = true; // Set flag for toast
+        $_SESSION['toastFailedMessage'] = "Error service {$newServiceId} record: " . mysqli_error($conn);
+        header("Location: adminSettings.php?id=" . $user_id);
+        exit;
     }
 }
 
@@ -80,13 +95,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editServiceBtn'])) {
     WHERE service_id = '$updateServiceId'";
 
     if (mysqli_query($conn, $updateService)) {
-        echo "<script>
-            alert(' Service updated successfully.');
-            window.location.href = 'adminSettings.php?id=" . $user_id . "';
-          </script>";
+        $_SESSION['success'] = true; // Set flag for toast
+        $_SESSION['toastMessage'] = "Service {$updateServiceId} edited successfully!";
+        header("Location: adminSettings.php?id=" . $user_id);
         exit;
     } else {
-        echo "Error updating record: " . mysqli_error($conn);
+        $_SESSION['failed'] = true; // Set flag for toast
+        $_SESSION['toastFailedMessage'] = "Error service {$updateServiceId} record: " . mysqli_error($conn);
+        header("Location: adminSettings.php?id=" . $user_id);
+        exit;
     }
 }
 
@@ -98,13 +115,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteServiceBtn'])) {
     $deleteService = "DELETE FROM service_list WHERE service_id = '$deleteServiceId'";
 
     if (mysqli_query($conn, $deleteService)) {
-        echo "<script>
-            alert(' Service Deleted successfully.');
-            window.location.href = 'adminSettings.php?id=" . $user_id . "';
-          </script>";
+        $_SESSION['success'] = true; // Set flag for toast
+        $_SESSION['toastMessage'] = "Service {$deleteServiceId} deleted successfully!";
+        header("Location: adminSettings.php?id=" . $user_id);
         exit;
     } else {
-        echo "Error updating record: " . mysqli_error($conn);
+        $_SESSION['failed'] = true; // Set flag for toast
+        $_SESSION['toastFailedMessage'] = "Error service {$deleteServiceId} record: " . mysqli_error($conn);
+        header("Location: adminSettings.php?id=" . $user_id);
+        exit;
     }
 }
 
@@ -119,13 +138,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['addFinishingBtn'])) {
     VALUE ('$newFinishingId', '$newFinishingDesc', '$newFinishingPrice', '$newFinishingStatus')";
 
     if (mysqli_query($conn, $addFinishing)) {
-        echo "<script>
-            alert(' Finishing Added successfully.');
-            window.location.href = 'adminSettings.php?id=" . $user_id . "';
-          </script>";
+        $_SESSION['success'] = true; // Set flag for toast
+        $_SESSION['toastMessage'] = "Finishing {$newFinishingId} added successfully!";
+        header("Location: adminSettings.php?id=" . $user_id);
         exit;
     } else {
-        echo "Error updating record: " . mysqli_error($conn);
+        $_SESSION['failed'] = true; // Set flag for toast
+        $_SESSION['toastFailedMessage'] = "Error Finishing {$newFinishingId} record: " . mysqli_error($conn);
+        header("Location: adminSettings.php?id=" . $user_id);
+        exit;
     }
 }
 
@@ -141,13 +162,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editFinishingBtn'])) {
     WHERE finishing_id = '$updateFinishingId'";
 
     if (mysqli_query($conn, $updateFinishing)) {
-        echo "<script>
-            alert(' Finishing updated successfully.');
-            window.location.href = 'adminSettings.php?id=" . $user_id . "';
-          </script>";
+        $_SESSION['success'] = true; // Set flag for toast
+        $_SESSION['toastMessage'] = "Finishing {$updateFinishingId} edited successfully!";
+        header("Location: adminSettings.php?id=" . $user_id);
         exit;
     } else {
-        echo "Error updating record: " . mysqli_error($conn);
+        $_SESSION['failed'] = true; // Set flag for toast
+        $_SESSION['toastFailedMessage'] = "Error Finishing {$updateFinishingId} record: " . mysqli_error($conn);
+        header("Location: adminSettings.php?id=" . $user_id);
+        exit;
     }
 }
 
@@ -159,13 +182,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteFinishingBtn']))
     $deleteFinishing = "DELETE FROM finishing_list WHERE finishing = '$deleteFinishingId'";
 
     if (mysqli_query($conn, $deleteFinishing)) {
-        echo "<script>
-            alert(' Finishing Deleted successfully.');
-            window.location.href = 'adminSettings.php?id=" . $user_id . "';
-          </script>";
+        $_SESSION['success'] = true; // Set flag for toast
+        $_SESSION['toastMessage'] = "Finishing {$deleteFinishingId} deleted successfully!";
+        header("Location: adminSettings.php?id=" . $user_id);
         exit;
     } else {
-        echo "Error updating record: " . mysqli_error($conn);
+        $_SESSION['failed'] = true; // Set flag for toast
+        $_SESSION['toastFailedMessage'] = "Error Finishing {$deleteFinishingId} record: " . mysqli_error($conn);
+        header("Location: adminSettings.php?id=" . $user_id);
+        exit;
     }
 }
 
@@ -184,7 +209,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['addUserBtn'])) {
     $queryCheckEmail = mysqli_query($conn, $checkEmail);
 
     if (mysqli_num_rows($queryCheckEmail) > 0) {
-        echo "<p style='color:red;'>Email already exists.</p>";
+        $_SESSION['failed'] = true;
+        $_SESSION['toastFailedMessage'] = "Email already exists.";
+        header("Location: adminSettings.php?id=" . $user_id);
+        exit;
     } else {
         // Hash password and insert user
         $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
@@ -193,12 +221,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['addUserBtn'])) {
         VALUES ('$newName', '$newEmail', '$newPhoneNumber', '$hashedPassword', '$newRole', '$newCreateDate', $newImg)";
 
         if (mysqli_query($conn, $addUser)) {
-            echo "<script>
-            alert(' Add User successfully.');
-            window.location.href = 'adminSettings.php?id=" . $user_id . "';
-        </script>";
+            $_SESSION['success'] = true; // Set flag for toast
+            $_SESSION['toastMessage'] = "User added successfully!";
+            header("Location: adminSettings.php?id=" . $user_id);
+            exit;
         } else {
-            echo "Error updating record: " . mysqli_error($conn);
+            $_SESSION['failed'] = true; // Set flag for toast
+            $_SESSION['toastFailedMessage'] = "Error user add: " . mysqli_error($conn);
+            header("Location: adminSettings.php?id=" . $user_id);
+            exit;
         }
     }
 }
@@ -217,13 +248,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editUserBtn'])) {
     WHERE user_id = '$updateUserId'";
 
     if (mysqli_query($conn, $updateUser)) {
-        echo "<script>
-        alert('User updated successfully.');
-        window.location.href = 'adminSettings.php?id=" . $user_id . "';
-        </script>";
+        $_SESSION['success'] = true; // Set flag for toast
+        $_SESSION['toastMessage'] = "User {$updateUserId} edited successfully!";
+        header("Location: adminSettings.php?id=" . $user_id);
         exit;
     } else {
-        echo "Error updating record: " . mysqli_error($conn);
+        $_SESSION['failed'] = true; // Set flag for toast
+        $_SESSION['toastFailedMessage'] = "Error user {$updateUserId} record: " . mysqli_error($conn);
+        header("Location: adminSettings.php?id=" . $user_id);
+        exit;
     }
 }
 
@@ -235,13 +268,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
     $deleteUser = "DELETE FROM user WHERE user_id = '$deleteUserId'";
 
     if (mysqli_query($conn, $deleteUser)) {
-        echo "<script>
-        alert(' User Deleted successfully.');
-        window.location.href = 'adminSettings.php?id=" . $user_id . "';
-    </script>";
+        $_SESSION['success'] = true; // Set flag for toast
+        $_SESSION['toastMessage'] = "User {$deleteUserId} deleted successfully!";
+        header("Location: adminSettings.php?id=" . $user_id);
         exit;
     } else {
-        echo "Error updating record: " . mysqli_error($conn);
+        $_SESSION['failed'] = true; // Set flag for toast
+        $_SESSION['toastFailedMessage'] = "Error user {$deleteUserId} record: " . mysqli_error($conn);
+        header("Location: adminSettings.php?id=" . $user_id);
+        exit;
     }
 }
 
@@ -253,7 +288,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Responsive Sidebar Layout</title>
+    <title>Admin Settings</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
@@ -315,12 +350,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
     <!-- Main Content -->
     <main id="mainContent" class="main-content">
         <div class="container-fluid">
-            <div class="mt-3 fw-bold">
+
+            <?php if ($showToast): ?>
+                <!-- Success Toast -->
+                <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+                    <div id="successToast" class="toast text-white bg-success border-0">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <?php echo htmlspecialchars($showMessage); ?>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($showFailedToast): ?>
+                <!-- Failed Toast -->
+                <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+                    <div id="failedToast" class="toast text-white bg-danger border-0">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <?php echo htmlspecialchars($showFailedMessage); ?>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+
+            <div class="mt-4 fw-bold">
                 <span>Settings</span>
             </div>
 
             <!-- Navigation Buttons -->
-            <div class="mb-3 mt-3" id="myTab" role="tablist">
+            <div class="mb-3 mt-4" id="myTab" role="tablist">
                 <button class="btn navtab-btn me-2 btn-sm active" id="priceTab-tab" data-bs-toggle="tab"
                     data-bs-target="#priceTab" type="button" role="tab" aria-controls="priceTab"
                     aria-selected="true">
@@ -871,6 +936,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
     <script src="https://cdn.datatables.net/2.3.0/js/dataTables.bootstrap5.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.3/js/dataTables.buttons.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.dataTables.js"></script>
+
+    <?php if ($showToast): ?>
+        <script>
+            const toast = new bootstrap.Toast(document.getElementById('successToast'));
+            toast.show();
+        </script>
+    <?php endif; ?>
+
+    <?php if ($showFailedToast): ?>
+        <script>
+            const toastFailed = new bootstrap.Toast(document.getElementById('failedToast'));
+            toastFailed.show();
+        </script>
+    <?php endif; ?>
 
     <script>
         const toggleBtn = document.getElementById('toggleSidebar');

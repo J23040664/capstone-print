@@ -188,7 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
             </div>
         <?php endif; ?>
 
-        <div class="mt-3 fw-bold">
+        <div class="mt-4 fw-bold">
             <span>My Profile</span>
         </div>
 

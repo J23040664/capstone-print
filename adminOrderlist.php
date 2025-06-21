@@ -93,7 +93,7 @@ if (mysqli_num_rows($queryShowOrderList) === 0) {
     <!-- Main Content -->
     <main id="mainContent" class="main-content">
         <div class="container-fluid">
-            <div class="mt-3 fw-bold">
+            <div class="mt-4 fw-bold">
                 <span>Order List</span>
             </div>
 

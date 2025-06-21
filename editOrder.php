@@ -129,7 +129,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editOrderBtn'])) {
     <!-- Main Content -->
     <main id="mainContent" class="main-content">
         <div class="container-fluid">
-            <div class="mt-3 fw-bold">
+            <div class="mt-4 fw-bold">
                 <span>Order Details</span>
             </div>
 

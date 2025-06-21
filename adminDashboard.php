@@ -188,93 +188,93 @@ $todayNewUsers = $newUserCounts[$currentMonth] ?? 0;
                 </div>
             <?php endif; ?>
 
-            <div class="mt-3 fw-bold">
+            <div class="mt-4 fw-bold">
                 <span>Dashboard</span>
+            </div>
 
-                <div class="row">
+            <div class="row">
 
-                    <!-- Today Sales -->
-                    <div class="col-md-3 mt-4 d-flex">
-                        <div class="card h-100 w-100 custom-card">
-                            <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                                <h5 class="card-title fs-6">Today Sales</h5>
-                                <p class="card-text fs-2" id="todaySales">Loading...</p>
-                            </div>
+                <!-- Today Sales -->
+                <div class="col-md-3 mt-4 d-flex">
+                    <div class="card h-100 w-100 custom-card">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                            <h5 class="card-title fs-6">Today Sales</h5>
+                            <p class="card-text fs-2" id="todaySales">Loading...</p>
                         </div>
                     </div>
-
-                    <!-- Today Order -->
-                    <div class="col-md-3 mt-4 d-flex">
-                        <div class="card h-100 w-100 custom-card">
-                            <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                                <h5 class="card-title fs-6">Today Orders</h5>
-                                <p class="card-text fs-2" id="todayOrders">Loading...</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Pending Orders -->
-                    <div class="col-md-3 mt-4 d-flex">
-                        <div class="card h-100 w-100 custom-card">
-                            <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                                <h5 class="card-title fs-6">Pending Orders</h5>
-                                <p class="card-text fs-2" style="color: #FFC107;" id="pendingOrders">Loading...</p>
-                                <a href="adminOrderlist.php?id=<?php echo $rowShowUserInfo['user_id']; ?>" class=" btn login-btn mt-3">Manage Orders</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Pending quotations -->
-                    <div class="col-md-3 mt-4 d-flex">
-                        <div class="card h-100 w-100 custom-card">
-                            <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                                <h5 class="card-title fs-6">Pending Quotations</h5>
-                                <p class="card-text fs-2" style="color: #FFC107;" id="pendingQuotations">Loading...</p>
-                                <a href="adminQuotationlist.php?id=<?php echo $rowShowUserInfo['user_id']; ?>" class="btn login-btn mt-3">Manage Quotations</a>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
 
-                <div class="row">
-                    <!-- Sales and Orders Chart -->
-                    <div class="col-md-12 mt-4 d-flex">
-                        <div class="card h-100 w-100">
-                            <div class="card-body">
-                                <h5 class="card-title fs-6">Sales & Orders in <?php echo $currentYear; ?></h5>
-                                <p class="card-text fs-2">RM <?php echo number_format($todayCost, 2); ?></p>
-                                <canvas id="orderCountSales" height="90"></canvas>
-                            </div>
+                <!-- Today Order -->
+                <div class="col-md-3 mt-4 d-flex">
+                    <div class="card h-100 w-100 custom-card">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                            <h5 class="card-title fs-6">Today Orders</h5>
+                            <p class="card-text fs-2" id="todayOrders">Loading...</p>
                         </div>
                     </div>
-
                 </div>
 
-                <div class="row">
-                    <!-- New User Count Chart -->
-                    <div class="col-md-6 mt-4 d-flex">
-                        <div class="card h-100 w-100">
-                            <div class="card-body">
-                                <h5 class="card-title fs-6">New Users in <?php echo date('F'); ?></h5>
-                                <p class="card-text fs-2"><?php echo $todayNewUsers; ?></p>
-                                <canvas id="newUserChart" height="100"></canvas>
-                            </div>
+                <!-- Pending Orders -->
+                <div class="col-md-3 mt-4 d-flex">
+                    <div class="card h-100 w-100 custom-card">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                            <h5 class="card-title fs-6">Pending Orders</h5>
+                            <p class="card-text fs-2" style="color: #FFC107;" id="pendingOrders">Loading...</p>
+                            <a href="adminOrderlist.php?id=<?php echo $rowShowUserInfo['user_id']; ?>" class=" btn login-btn mt-3">Manage Orders</a>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Service Type Pie Chart -->
-                    <div class="col-md-6 mt-4 d-flex">
-                        <div class="card h-100 w-100">
-                            <div class="card-body">
-                                <h5 class="card-title fs-6">Service Types Distribution</h5>
-                                <canvas id="serviceTypeChart" height="100"></canvas>
-                            </div>
+                <!-- Pending quotations -->
+                <div class="col-md-3 mt-4 d-flex">
+                    <div class="card h-100 w-100 custom-card">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                            <h5 class="card-title fs-6">Pending Quotations</h5>
+                            <p class="card-text fs-2" style="color: #FFC107;" id="pendingQuotations">Loading...</p>
+                            <a href="adminQuotationlist.php?id=<?php echo $rowShowUserInfo['user_id']; ?>" class="btn login-btn mt-3">Manage Quotations</a>
                         </div>
                     </div>
                 </div>
 
             </div>
+
+            <div class="row">
+                <!-- Sales and Orders Chart -->
+                <div class="col-md-12 mt-4 d-flex">
+                    <div class="card h-100 w-100">
+                        <div class="card-body">
+                            <h5 class="card-title fs-6">Sales & Orders in <?php echo $currentYear; ?></h5>
+                            <p class="card-text fs-2">RM <?php echo number_format($todayCost, 2); ?></p>
+                            <canvas id="orderCountSales" height="90"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <!-- New User Count Chart -->
+                <div class="col-md-6 mt-4 d-flex">
+                    <div class="card h-100 w-100">
+                        <div class="card-body">
+                            <h5 class="card-title fs-6">New Users in <?php echo date('F'); ?></h5>
+                            <p class="card-text fs-2"><?php echo $todayNewUsers; ?></p>
+                            <canvas id="newUserChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service Type Pie Chart -->
+                <div class="col-md-6 mt-4 d-flex">
+                    <div class="card h-100 w-100">
+                        <div class="card-body">
+                            <h5 class="card-title fs-6">Service Types Distribution</h5>
+                            <canvas id="serviceTypeChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </main>
 
