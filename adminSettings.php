@@ -255,19 +255,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Responsive Sidebar Layout</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script src="./assets/jquery-3.7.1.js"></script>
-    <script src="https://cdn.datatables.net/2.3.0/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.3.0/js/dataTables.bootstrap5.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.0/css/dataTables.bootstrap5.css">
-
-    <script src="https://cdn.datatables.net/buttons/3.2.3/js/dataTables.buttons.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.dataTables.js"></script>
-
-    <link rel="stylesheet" href="./adminStyle.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.0/css/dataTables.bootstrap5.css" />
+    <link rel="stylesheet" href="./adminStyle.css" />
 
 </head>
 
@@ -873,6 +864,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
             </div>
         </div>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./assets/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.3.0/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.3.0/js/dataTables.bootstrap5.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.3/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.dataTables.js"></script>
 
     <script>
         const toggleBtn = document.getElementById('toggleSidebar');

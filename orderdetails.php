@@ -59,6 +59,7 @@ while ($row = mysqli_fetch_assoc($result_finishing)) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <!-- Same head as your createorder.php -->
     <meta charset="UTF-8" />
@@ -66,12 +67,13 @@ while ($row = mysqli_fetch_assoc($result_finishing)) {
     <title>Order Details</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+
     <style>
         body {
             overflow-x: hidden;
             background-color: #fff;
         }
+
         .sidebar {
             width: 240px;
             background-color: #343a40;
@@ -84,7 +86,11 @@ while ($row = mysqli_fetch_assoc($result_finishing)) {
             z-index: 1030;
             transition: all 0.3s ease;
         }
-        .sidebar.collapsed { width: 80px; }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
         .s_logo {
             color: white;
             display: flex;
@@ -92,6 +98,7 @@ while ($row = mysqli_fetch_assoc($result_finishing)) {
             align-items: center;
             margin: 10px 0;
         }
+
         .sidebar .nav-link {
             color: #ccc;
             padding: 12px 20px;
@@ -100,21 +107,52 @@ while ($row = mysqli_fetch_assoc($result_finishing)) {
             gap: 10px;
             white-space: nowrap;
         }
+
         .sidebar .nav-link:hover {
             background-color: #495057;
             color: white;
             text-decoration: none;
         }
+
         .sidebar.collapsed .nav-link span,
-        .sidebar.collapsed .s_logo span { display: none; }
-        .top-navbar { margin-left: 240px; transition: margin-left 0.3s ease; }
-        .top-navbar.collapsed { margin-left: 80px; }
-        .main-content { margin-left: 240px; transition: margin-left 0.3s ease; padding: 1rem; }
-        .main-content.collapsed { margin-left: 80px; }
+        .sidebar.collapsed .s_logo span {
+            display: none;
+        }
+
+        .top-navbar {
+            margin-left: 240px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .top-navbar.collapsed {
+            margin-left: 80px;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            transition: margin-left 0.3s ease;
+            padding: 1rem;
+        }
+
+        .main-content.collapsed {
+            margin-left: 80px;
+        }
+
         @media (max-width: 768px) {
-            .sidebar { transform: translateX(0); left: 0; transition: transform 0.3s ease; }
-            .sidebar.collapsed { transform: translateX(-100%); }
-            .top-navbar, .main-content { margin-left: 0 !important; }
+            .sidebar {
+                transform: translateX(0);
+                left: 0;
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.collapsed {
+                transform: translateX(-100%);
+            }
+
+            .top-navbar,
+            .main-content {
+                margin-left: 0 !important;
+            }
         }
     </style>
 </head>
@@ -257,6 +295,8 @@ while ($row = mysqli_fetch_assoc($result_finishing)) {
         </div>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+
     <!-- Sidebar toggle logic -->
     <script>
         const toggleBtn = document.getElementById('toggleSidebar');
@@ -270,4 +310,5 @@ while ($row = mysqli_fetch_assoc($result_finishing)) {
         });
     </script>
 </body>
+
 </html>

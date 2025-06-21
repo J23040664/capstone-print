@@ -4,6 +4,12 @@ include('dbms.php');
 
 if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['id'] == $_GET['id']) {
     $user_id = $_GET['id'];
+
+    $showLoginToast = false;
+    if (isset($_SESSION['login_success']) && $_SESSION['login_success'] === true) {
+        $showLoginToast = true;
+        unset($_SESSION['login_success']); // Make sure toast shows only once
+    }
     // show the user info
     $showUserInfo = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id WHERE a.user_id = '$user_id'";
     $queryShowUserInfo = mysqli_query($conn, $showUserInfo) or die(mysqli_error($conn));
@@ -111,9 +117,8 @@ $todayNewUsers = $newUserCounts[$currentMonth] ?? 0;
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
-
     <link rel="stylesheet" href="./adminStyle.css">
+
 </head>
 
 <body class="adminDash-body">
@@ -168,6 +173,21 @@ $todayNewUsers = $newUserCounts[$currentMonth] ?? 0;
 
     <main id="mainContent" class="main-content">
         <div class="container-fluid">
+
+            <?php if ($showLoginToast): ?>
+                <!-- Login successful toast container -->
+                <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+                    <div id="successToast" class="toast text-white bg-success border-0">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <span>Login Successful! <br> Welcome to admin dashboard.</span>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
             <div class="mt-3 fw-bold">
                 <span>Dashboard</span>
 
@@ -260,6 +280,14 @@ $todayNewUsers = $newUserCounts[$currentMonth] ?? 0;
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <?php if ($showLoginToast): ?>
+        <script>
+            const loginSuccessToast = new bootstrap.Toast(document.getElementById('successToast'));
+            loginSuccessToast.show();
+        </script>
+    <?php endif; ?>
 
     <script>
         // Sidebar toggle logic

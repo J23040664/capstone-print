@@ -13,9 +13,16 @@ if (isset($_SESSION['role']) && $_SESSION['id'] == $_GET['id']) {
     exit;
 }
 
+
 // list all the image
 $showImgList = "SELECT * FROM profile_images";
 $queryShowImgList = mysqli_query($conn, $showImgList) or die(mysqli_error($conn));
+
+$showUpdateToast = false;
+if (isset($_SESSION['update_success']) && $_SESSION['update_success'] === true) {
+    $showUpdateToast = true;
+    unset($_SESSION['update_success']); // Show only once
+}
 
 // Update profile picture
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateProfileBtn'])) {
@@ -24,10 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateProfileBtn'])) 
     $updateImg = "UPDATE user SET img_id = '$newImgid' WHERE user_id = '$user_id'";
 
     if (mysqli_query($conn, $updateImg)) {
-        echo "<script>
-            alert('Profile image updated successfully.');
-            window.location.href = 'profile.php?id={$user_id}';
-          </script>";
+
+        $_SESSION['update_success'] = true;
+        header("Location: profile.php?id={$user_id}");
         exit;
     } else {
         echo "Error updating record: " . mysqli_error($conn);
@@ -41,10 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateNameBtn'])) {
     $updateName = "UPDATE user SET name = '$newName' WHERE user_id = '$user_id'";
 
     if (mysqli_query($conn, $updateName)) {
-        echo "<script>
-            alert('Name updated successfully.');
-            window.location.href = 'profile.php?id={$user_id}';
-          </script>";
+
+        $_SESSION['update_success'] = true;
+        header("Location: profile.php?id={$user_id}");
         exit;
     } else {
         echo "Error updating record: " . mysqli_error($conn);
@@ -91,10 +96,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
 
     $updatePassword = "UPDATE user SET password = '$hashedNewPassword' WHERE user_id = $user_id";
     if (mysqli_query($conn, $updatePassword)) {
-        echo "<script>
-        alert('Password updated successfully.');
-        window.location.href = 'profile.php?id={$user_id}';
-        </script>";
+
+        $_SESSION['update_success'] = true;
+        header("Location: profile.php?id={$user_id}");
         exit;
     } else {
         echo "Error updating password: " . mysqli_error($conn);
@@ -113,7 +117,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
 
     <link rel="stylesheet" href="./adminStyle.css">
 
@@ -171,6 +174,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
 
     <!-- Main Content -->
     <main id="mainContent" class="main-content">
+        <?php if ($showUpdateToast): ?>
+            <!-- Update Successful Toast -->
+            <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+                <div id="updateToast" class="toast text-white bg-success border-0">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            ✅ Record updated successfully!
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+
         <div class="mt-3 fw-bold">
             <span>My Profile</span>
         </div>
@@ -272,6 +289,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
 
         </div>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <?php if ($showUpdateToast): ?>
+        <script>
+            const toast = new bootstrap.Toast(document.getElementById('updateToast'));
+            toast.show();
+        </script>
+    <?php endif; ?>
 
     <script>
         const toggleBtn = document.getElementById('toggleSidebar');

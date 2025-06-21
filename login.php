@@ -19,9 +19,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
                 // Login success: store user info in session
                 $_SESSION['id'] = $user['user_id'];
                 $_SESSION['role'] = $user['role'];
+                $_SESSION['login_success'] = true;
 
-                echo "<p style='color:green;'>Login successful. Redirecting in 2 seconds...</p>";
-                header("Refresh: 2; url=adminDashboard.php?id=" . urlencode($user['user_id']));
+                header("Refresh: 1; url=adminDashboard.php?id=" . urlencode($user['user_id']));
                 exit;
             } else {
                 $errorMessage = '<div class="alert alert-danger" role="alert">

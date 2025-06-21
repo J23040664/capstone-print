@@ -32,19 +32,9 @@ $result = $stmt->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>My Orders</title>
 
-    <!-- Bootstrap & Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- jQuery & DataTables -->
-    <script src="./assets/jquery-3.7.1.js"></script>
-    <script src="https://cdn.datatables.net/2.3.0/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.3.0/js/dataTables.bootstrap5.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.0/css/dataTables.bootstrap5.css">
-
-    <script src="https://cdn.datatables.net/buttons/3.2.3/js/dataTables.buttons.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.dataTables.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.0/css/dataTables.bootstrap5.css" />
 
     <style>
         body {
@@ -232,15 +222,15 @@ $result = $stmt->get_result();
                                         <td><?php echo date('Y-m-d', strtotime($row['order_date'])); ?></td>
                                         <td>
                                             <?php
-                                                $order_status = $row['order_status'];
-                                                $order_badge_class = ($order_status == 'Completed') ? 'bg-success' : (($order_status == 'Pending') ? 'bg-warning text-dark' : 'bg-info text-dark');
+                                            $order_status = $row['order_status'];
+                                            $order_badge_class = ($order_status == 'Completed') ? 'bg-success' : (($order_status == 'Pending') ? 'bg-warning text-dark' : 'bg-info text-dark');
                                             ?>
                                             <span class="badge <?php echo $order_badge_class; ?>"><?php echo htmlspecialchars($order_status); ?></span>
                                         </td>
                                         <td>
                                             <?php
-                                                $payment_status = $row['payment_status'];
-                                                $payment_badge_class = ($payment_status == 'Paid') ? 'bg-success' : 'bg-warning text-dark';
+                                            $payment_status = $row['payment_status'];
+                                            $payment_badge_class = ($payment_status == 'Paid') ? 'bg-success' : 'bg-warning text-dark';
                                             ?>
                                             <span class="badge <?php echo $payment_badge_class; ?>"><?php echo htmlspecialchars($payment_status); ?></span>
                                         </td>
@@ -250,7 +240,7 @@ $result = $stmt->get_result();
                                             </a>
 
                                             <?php if ($payment_status == 'Pending'): ?>
-                                            <a href="payment.php?order_id=<?php echo urlencode($row['order_id']); ?>&user_id=<?php echo urlencode($customer_id); ?>" class="btn btn-success btn-sm">
+                                                <a href="payment.php?order_id=<?php echo urlencode($row['order_id']); ?>&user_id=<?php echo urlencode($customer_id); ?>" class="btn btn-success btn-sm">
                                                     <i class="bi bi-credit-card"></i> Pay Now
                                                 </a>
                                             <?php endif; ?>
@@ -276,6 +266,13 @@ $result = $stmt->get_result();
         </div>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./assets/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.3.0/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.3.0/js/dataTables.bootstrap5.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.3/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.dataTables.js"></script>
+
     <!-- JS Toggle + DataTable Init -->
     <script>
         const toggleBtn = document.getElementById('toggleSidebar');
@@ -293,18 +290,16 @@ $result = $stmt->get_result();
             lengthChange: false,
             ordering: false,
             dom: '<"d-flex justify-content-between align-items-center mb-3"fB>t<"d-flex justify-content-between mt-2"ip>',
-            buttons: [
-                {
-                    text: '<i class="bi bi-plus-circle"></i> Create New Order',
-                    className: 'btn btn-primary',
-                    action: function () {
-                        window.location.href = 'http://localhost/capstone-print/createOrder.php?id=<?php echo urlencode($customer_id); ?>';
-                    }
+            buttons: [{
+                text: '<i class="bi bi-plus-circle"></i> Create New Order',
+                className: 'btn btn-primary',
+                action: function() {
+                    window.location.href = 'http://localhost/capstone-print/createOrder.php?id=<?php echo urlencode($customer_id); ?>';
                 }
-            ]
+            }]
         });
-
     </script>
 
-    </body>
+</body>
+
 </html>

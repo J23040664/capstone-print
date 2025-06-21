@@ -24,7 +24,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signupbtn'])) {
             $stmt->store_result();
 
             if ($stmt->num_rows > 0) {
-                echo "<p style='color:red;'>Email already exists.</p>";
+                $errorMessage = '<div class="alert alert-danger" role="alert">
+                                    Account have already exist
+                                </div>';
             } else {
                 // Hash password and insert user
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
@@ -46,7 +48,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signupbtn'])) {
             $stmt->close();
         }
     } else {
-        echo "<p style='color:red;'>Error: Please fill in all the fields.</p>";
+        $errorMessage = '<div class="alert alert-danger" role="alert">
+                            Please fill in all the fields
+                        </div>';
     }
 }
 ?>
@@ -71,6 +75,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signupbtn'])) {
     <div class="login-box">
 
         <h3 class="text-center mb-3">Create an account</h3>
+
+        <?php echo $errorMessage ?>
 
         <form method="POST" id="signUpCode">
             <div class="mb-3">

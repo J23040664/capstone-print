@@ -18,7 +18,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['checkAccount'])) {
         header("Location: reset_pass2.php?user_id=" . $row['user_id']);
         exit();
     } else {
-        echo "This account doesn't exist";
+        $errorMessage = '<div class="alert alert-danger" role="alert">
+                                Account does not exist
+                            </div>';
     }
 
 
@@ -49,6 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['checkAccount'])) {
 
         <p class="text-center me-2 mt-3 mb-3">Enter your email and we'll send you a verification code to reset your password.</p>
 
+        <?php echo $errorMessage; ?>
         <form method="POST">
             <label for="username" class="form-label">Email: </label>
             <div class="text-center mb-3">
@@ -61,8 +64,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['checkAccount'])) {
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script> -->
-    <!-- <script src="email.js"></script> -->
 
 </body>
 

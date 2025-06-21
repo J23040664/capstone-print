@@ -216,7 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         '$order_id', NOW(), '$item_id', '$serviceCost', '$finishing_total_price', '$totalCost', '$finishing_quantity', '$user_id', '$customerName', '$orderStatus', '$payment_id', '$payment_status'
     )");
 
-        // Insert into payment
+    // Insert into payment
     mysqli_query($conn, "INSERT INTO `payment` (
         payment_id, order_id, total_price, payment_status
     ) VALUES (
@@ -275,8 +275,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Create Order</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
 
     <style>
         body {
@@ -575,6 +573,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
 
     <!-- JS price maps + update logic -->
     <script>
