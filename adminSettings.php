@@ -267,6 +267,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
 
     $deleteUser = "DELETE FROM user WHERE user_id = '$deleteUserId'";
 
+    if ($deleteUserId == $_SESSION['id']){
+        $_SESSION['failed'] = true; // Set flag for toast
+        $_SESSION['toastFailedMessage'] = "You can't delete your own.";
+        header("Location: adminSettings.php?id=" . $user_id);
+        exit;
+    }
+
     if (mysqli_query($conn, $deleteUser)) {
         $_SESSION['success'] = true; // Set flag for toast
         $_SESSION['toastMessage'] = "User {$deleteUserId} deleted successfully!";
