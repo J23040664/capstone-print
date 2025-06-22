@@ -1,3 +1,70 @@
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+include 'dbms.php'; // Connect to DB
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // Generate quotation_id
+    $result = $conn->query("SELECT quotation_id FROM quotation ORDER BY quotation_id DESC LIMIT 1");
+    if ($result && $row = $result->fetch_assoc()) {
+        $lastId = (int)substr($row['quotation_id'], 1);
+        $newId = 'Q' . str_pad($lastId + 1, 7, '0', STR_PAD_LEFT);
+    } else {
+        $newId = 'Q0000001';
+    }
+
+    // Escape form data
+    $requester_name = mysqli_real_escape_string($conn, $_POST['requester_name']);
+    $requester_email = mysqli_real_escape_string($conn, $_POST['requester_email']);
+    $requester_phone_number = mysqli_real_escape_string($conn, $_POST['requester_phone_number']);
+    $contact_method = mysqli_real_escape_string($conn, $_POST['contact_method']);
+    $request_type = mysqli_real_escape_string($conn, $_POST['request_type']);
+    $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : null;
+    $paper_size = mysqli_real_escape_string($conn, $_POST['paper_size']);
+    $size_unit = mysqli_real_escape_string($conn, $_POST['custom_unit'] ?? $_POST['size_unit'] ?? '');
+    $size_width = isset($_POST['custom_width']) && $_POST['custom_width'] !== '' ? (float)$_POST['custom_width'] : (float)($_POST['size_width'] ?? 0);
+    $size_height = isset($_POST['custom_height']) && $_POST['custom_height'] !== '' ? (float)$_POST['custom_height'] : (float)($_POST['size_height'] ?? 0);
+    $paper_type = mysqli_real_escape_string($conn, $_POST['paper_type']);
+    $finishing = mysqli_real_escape_string($conn, $_POST['finishing']);
+    $file_type = mysqli_real_escape_string($conn, $_POST['file_type']);
+    $file_page = isset($_POST['file_page']) ? (int)$_POST['file_page'] : null;
+    $remark = mysqli_real_escape_string($conn, $_POST['remark']);
+    $quotation_status = mysqli_real_escape_string($conn, $_POST['quotation_status'] ?? 'Pending');
+
+    // Handle file upload
+    $file_data = null;
+    if (
+        isset($_FILES['file_data']) &&
+        $_FILES['file_data']['error'] === 0 &&
+        is_uploaded_file($_FILES['file_data']['tmp_name']) &&
+        is_readable($_FILES['file_data']['tmp_name'])
+    ) {
+        $file_data = addslashes(file_get_contents($_FILES['file_data']['tmp_name']));
+    }
+
+    // Build and execute SQL
+    $sql = "INSERT INTO quotation (
+        quotation_id, requester_name, requester_email, requester_phone_number, contact_method, request_type,
+        quantity, paper_size, size_unit, size_width, size_height, paper_type, finishing,
+        file_type, file_data, file_page, remark, quotation_status, create_date
+    ) VALUES (
+        '$newId', '$requester_name', '$requester_email', '$requester_phone_number', '$contact_method', '$request_type',
+        $quantity, '$paper_size', '$size_unit', $size_width, $size_height, '$paper_type', '$finishing',
+        '$file_type', " . ($file_data ? "'$file_data'" : "NULL") . ", $file_page, '$remark', '$quotation_status', NOW()
+    )";
+
+    if ($conn->query($sql)) {
+        echo "<script>alert('Quotation submitted successfully!'); window.location.href = 'customerOrderlist.php';</script>";
+    } else {
+        echo "Error: " . $conn->error;
+    }
+
+    $conn->close();
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,7 +94,7 @@
 <div class="container form-container">
   <h3 class="mb-4">Quotation Request Form</h3>
 
-  <form method="POST" action="submit_quotation.php" enctype="multipart/form-data">
+  <form method="POST" enctype="multipart/form-data">
     <!-- Customer Info -->
     <div class="mb-3">
       <label class="form-label">Full Name</label>
@@ -82,7 +149,7 @@
     <!-- Paper Size -->
     <div class="mb-3">
     <label class="form-label">Paper Size</label>
-    <select name="paper_size" id="paper_size" class="form-select" required>
+    <select name="paper_size" id="paper_size" class="form-select">
         <option value="" selected disabled>Select a size</option>
         <option value="A4">A4</option>
         <option value="A3">A3</option>
@@ -116,6 +183,9 @@
         <option value="mm">mm</option>
         <option value="inch">inch</option>
         </select>
+        <input type="hidden" name="size_unit" id="hidden_size_unit">
+        <input type="hidden" name="size_width" id="hidden_size_width">
+        <input type="hidden" name="size_height" id="hidden_size_height">
     </div>
     </div>
 
@@ -161,6 +231,7 @@
     </div>
     <!-- Hidden input -->
     <input type="hidden" name="file_type" id="file_type">
+    <input type="hidden" name="file_page" id="file_page">
 
 
 
@@ -227,8 +298,17 @@
     const updateDisplay = (size, unit) => {
         if (!sizeData[size]) return;
         const base = sizeData[size];
-        document.getElementById("width").value = cmTo[unit](base.width).toFixed(2);
-        document.getElementById("height").value = cmTo[unit](base.height).toFixed(2);
+        const width = cmTo[unit](base.width).toFixed(2);
+        const height = cmTo[unit](base.height).toFixed(2);
+
+        document.getElementById("width").value = width;
+        document.getElementById("height").value = height;
+
+        // Set hidden input values
+        document.getElementById("hidden_size_width").value = width;
+        document.getElementById("hidden_size_height").value = height;
+        document.getElementById("hidden_size_unit").value = unit;
+
   };
 
     document.getElementById("paper_size").addEventListener("change", function () {
@@ -284,6 +364,7 @@
         const typedarray = new Uint8Array(this.result);
         pdfjsLib.getDocument(typedarray).promise.then(function (pdf) {
             pageCountSpan.textContent = pdf.numPages;
+            document.getElementById("file_page").value = pdf.numPages;
             pageInfo.style.display = "inline";
         }).catch(function () {
             pageInfo.style.display = "none";
