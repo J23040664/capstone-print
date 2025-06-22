@@ -257,7 +257,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // If everything is successful
-    echo "<script>alert('Order inserted successfully!'); window.location.href='orderlist.html';</script>";
+    echo "<script>
+    alert('Order inserted successfully!');
+    window.location.href='payment.php?order_id=$order_id&id=$user_id';
+    </script>";
     exit;
 }
 

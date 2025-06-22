@@ -235,12 +235,12 @@ $result = $stmt->get_result();
                                             <span class="badge <?php echo $payment_badge_class; ?>"><?php echo htmlspecialchars($payment_status); ?></span>
                                         </td>
                                         <td>
-                                            <a href="http://localhost/capstone-print/orderdetails.php?order_id=<?php echo urlencode($row['order_id']); ?>&id=<?php echo urlencode($customer_id); ?>" class="btn btn-outline-primary btn-sm me-2">
+                                            <a href="orderdetails.php?order_id=<?php echo urlencode($row['order_id']); ?>&id=<?php echo urlencode($customer_id); ?>" class="btn btn-outline-primary btn-sm me-2">
                                                 <i class="bi bi-eye"></i> View
                                             </a>
 
                                             <?php if ($payment_status == 'Pending'): ?>
-                                                <a href="payment.php?order_id=<?php echo urlencode($row['order_id']); ?>&user_id=<?php echo urlencode($customer_id); ?>" class="btn btn-success btn-sm">
+                                                <a href="payment.php?order_id=<?php echo urlencode($row['order_id']); ?>&id=<?php echo urlencode($customer_id); ?>" class="btn btn-success btn-sm">
                                                     <i class="bi bi-credit-card"></i> Pay Now
                                                 </a>
                                             <?php endif; ?>
@@ -255,7 +255,7 @@ $result = $stmt->get_result();
                     <div class="text-center py-5">
                         <i class="bi bi-folder-x" style="font-size: 3rem; color: #ccc;"></i>
                         <p class="mt-3 fs-5 text-muted">You have no order history yet.</p>
-                        <a href="http://localhost/capstone-print/createOrder.php?id=<?php echo urlencode($customer_id); ?>" class="btn btn-primary mt-3">
+                        <a href="createOrder.php?id=<?php echo urlencode($customer_id); ?>" class="btn btn-primary mt-3">
                             <i class="bi bi-plus-circle"></i> Create New Order
                         </a>
                     </div>
@@ -294,7 +294,7 @@ $result = $stmt->get_result();
                 text: '<i class="bi bi-plus-circle"></i> Create New Order',
                 className: 'btn btn-primary',
                 action: function() {
-                    window.location.href = 'http://localhost/capstone-print/createOrder.php?id=<?php echo urlencode($customer_id); ?>';
+                    window.location.href = 'createOrder.php?id=<?php echo urlencode($customer_id); ?>';
                 }
             }]
         });
