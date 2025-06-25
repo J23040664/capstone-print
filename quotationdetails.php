@@ -5,6 +5,7 @@ include('dbms.php');
 // must include at each page, to prevent change user id from url
 if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['id'] == $_GET['id']) {
     $user_id = $_GET['id'];
+    $quotation_id = $_GET['quotation_id'];
     // show the user info
     $showUserInfo = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id WHERE a.user_id = '$user_id'";
     $queryShowUserInfo = mysqli_query($conn, $showUserInfo) or die(mysqli_error($conn));
@@ -14,28 +15,25 @@ if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['id'] 
     exit;
 }
 
-$quotation_id = $_GET['quotation_id'];
-$showQuotation = "SELECT * FROM quotation WHERE quotation_id = '$quotation_id'";
-$queryShowQuotation = mysqli_query($conn, $showQuotation) or die("Error: " . mysqli_error($conn));
+$showQuotationDetails = "SELECT * FROM quotation WHERE quotation_id = '$quotation_id'";
+$queryShowQuotationDetails = mysqli_query($conn, $showQuotationDetails) or die("Error: " . mysqli_error($conn));
 
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['viewFile'])) {
-    $viewFile = "SELECT file_data, file_type FROM quotation WHERE quotation_id = '$quotation_id'";
-    $queryViewFile = mysqli_query($conn, $viewFile);
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['viewFileBtn'])) {
+    $query = "SELECT file_type, file_data FROM quotation WHERE quotation_id = '$quotation_id'";
+    $result = mysqli_query($conn, $query);
 
-    if ($rowViewFile = mysqli_fetch_assoc($queryViewFile)) {
-        if (!empty($rowViewFile['file_data'])) {
-            $fileDataEncoded = $rowViewFile['file_data'];  // base64 encoded string from DB
-            $fileType = $rowViewFile['file_type'] ?? 'application/octet-stream'; // fallback
-            $fileData = base64_decode($fileDataEncoded);  // decode before output
-            header("Content-Type: $fileType");
-            header("Content-Disposition: inline; filename=\"reference_file\"");
-            echo $fileData;
-            exit;
-        }
+    if ($row = mysqli_fetch_assoc($result)) {
+        $fileType = strtolower($row['file_type']);
+        $fileData = $row['file_data'];
+
+        header("Content-Type: application/$fileType");
+        header("Content-Disposition: inline; filename=\"quotation.pdf\"");
+        echo $fileData;
+        exit;
+    } else {
+        echo "File not found.";
     }
 }
-
-
 
 // edit quotation status
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editQuotationBtn'])) {
@@ -48,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editQuotationBtn'])) {
     if (mysqli_query($conn, $updateQuotation)) {
         echo "<script>
             alert(' Quotation updated successfully.');
-            window.location.href = 'quotationlist.php';
+            window.location.href = 'adminQuotationlist.php?id=$user_id';
           </script>";
         exit;
     } else {
@@ -126,82 +124,150 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editQuotationBtn'])) {
         <div class="container mt-5 mb-5">
             <h2 class="mb-4">Quotation Details</h2>
             <div class="bg-white p-4 rounded shadow-sm">
-                <?php while ($rowShowQuotation = mysqli_fetch_assoc($queryShowQuotation)) { ?>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" value="<?php echo $rowShowQuotation['requester_name'] ?? ''; ?>" disabled>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Email Address <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" value="<?php echo $rowShowQuotation['requester_email'] ?? ''; ?>" disabled>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Phone Number</label>
-                            <input type="text" class="form-control" value="<?php echo $rowShowQuotation['requester_phone_number'] ?? ''; ?>" disabled>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Type of Request</label>
-                            <select class="form-select" disabled>
-                                <option value="None" <?php if (empty($rowShowQuotation['request_type'])) echo 'selected'; ?>>None</option>
-                                <option value="Poster" <?php if ($rowShowQuotation['request_type'] === 'Poster') echo 'selected'; ?>>Poster</option>
-                                <option value="Booklet" <?php if ($rowShowQuotation['request_type'] === 'Booklet') echo 'selected'; ?>>Booklet</option>
-                                <option value="Business Card" <?php if ($rowShowQuotation['request_type'] === 'Business Card') echo 'selected'; ?>>Business Card</option>
-                                <option value="Others" <?php if ($rowShowQuotation['request_type'] === 'Others') echo 'selected'; ?>>Others</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label class="form-label">Quantity</label>
-                            <input type="number" class="form-control" value="<?php echo $rowShowQuotation['quantity'] ?? ''; ?>" disabled>
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Paper Size</label>
-                            <select name="newReqPaperSize" class="form-select" disabled>
-                                <option value="None" <?php if (empty($rowShowQuotation['paper_size'])) echo 'selected'; ?>>None</option>
-                                <option value="A4" <?php if ($rowShowQuotation['paper_size'] === 'A4') echo 'selected'; ?>>A4</option>
-                                <option value="A3" <?php if ($rowShowQuotation['paper_size'] === 'A3') echo 'selected'; ?>>A3</option>
-                                <option value="Custom" <?php if ($rowShowQuotation['paper_size'] === 'Custom') echo 'selected'; ?>>Custom</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Paper Type</label>
-                            <select name="newReqPaperType" class="form-select" disabled>
-                                <option value="None" <?php if (empty($rowShowQuotation['paper_type'])) echo 'selected'; ?>>None</option>
-                                <option value="Glossy" <?php if ($rowShowQuotation['paper_type'] === 'Glossy') echo 'selected'; ?>>Glossy</option>
-                                <option value="Matte" <?php if ($rowShowQuotation['paper_type'] === 'Matte') echo 'selected'; ?>>Matte</option>
-                                <option value="Art Paper" <?php if ($rowShowQuotation['paper_type'] === 'Art Paper') echo 'selected'; ?>>Art Paper</option>
-                            </select>
-                        </div>
+                <?php while ($rowShowQuotationDetails = mysqli_fetch_assoc($queryShowQuotationDetails)) { ?>
+                    <!-- Customer Info -->
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="requester_name" class="form-control" value="<?php echo $rowShowQuotationDetails['requester_name'] ?>" disabled>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Finishing (optional)</label>
-                        <input type="text" class="form-control" value="<?php echo $rowShowQuotation['finishing'] ?? ''; ?>" disabled>
+                        <label class="form-label">Email</label>
+                        <input type="email" name="requester_email" class="form-control" value="<?php echo $rowShowQuotationDetails['requester_name'] ?>" disabled>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Upload Reference File (optional)</label>
-                        <?php if (!empty($rowShowQuotation['file_type'])): ?>
+                        <label class="form-label">Phone Number</label>
+                        <input type="text" name="requester_phone_number" class="form-control" value="<?php echo $rowShowQuotationDetails['requester_name'] ?>" disabled>
+                    </div>
+
+                    <!-- Prefered Contact Method -->
+                    <div class="mb-3">
+                        <label class="form-label d-block">Preferred Contact Method</label>
+                        <div class="form-check form-check-inline">
+                            <?php if ($rowShowQuotationDetails['contact_method'] == "Email") { ?>
+                                <input class="form-check-input" type="radio" checked disabled>
+                            <?php } else { ?>
+                                <input class="form-check-input" type="radio" disabled>
+                            <?php } ?>
+                            <label class="form-check-label">Email</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <?php if ($rowShowQuotationDetails['contact_method'] == "WhatsApp") { ?>
+                                <input class="form-check-input" type="radio" checked disabled>
+                            <?php } else { ?>
+                                <input class="form-check-input" type="radio" disabled>
+                            <?php } ?>
+                            <label class="form-check-label">WhatsApp</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <?php if ($rowShowQuotationDetails['contact_method'] == "Phone Call") { ?>
+                                <input class="form-check-input" type="radio" checked disabled>
+                            <?php } else { ?>
+                                <input class="form-check-input" type="radio" disabled>
+                            <?php } ?>
+                            <label class="form-check-label">Phone Call</label>
+                        </div>
+                    </div>
+
+                    <!-- Request Type -->
+                    <div class="mb-3">
+                        <label class="form-label">Request Type</label>
+                        <input type="text" name="request_type" class="form-control" value="<?php echo $rowShowQuotationDetails['requester_name'] ?>" disabled>
+                    </div>
+
+                    <!-- Quantity -->
+                    <div class="mb-3">
+                        <label class="form-label">Quantity</label>
+                        <input type="text" name="quantity" class="form-control" value="<?php echo $rowShowQuotationDetails['requester_name'] ?>" disabled>
+                    </div>
+
+                    <!-- Paper Size -->
+                    <div class="mb-3">
+                        <label class="form-label">Paper Size</label>
+                        <select name="paper_size" id="paper_size" class="form-select" disabled>
+                            <?php if ($rowShowQuotationDetails['paper_size'] == "") { ?>
+                                <option value="" selected>Select a size</option>
+                            <?php } else if ($rowShowQuotationDetails['paper_size'] == "A4") { ?>
+                                <option value="A4">A4</option>
+                            <?php } else if ($rowShowQuotationDetails['paper_size'] == "A3") { ?>
+                                <option value="A3">A3</option>
+                            <?php } else if ($rowShowQuotationDetails['paper_size'] == "A5") { ?>
+                                <option value="A5">A5</option>
+                            <?php } else if ($rowShowQuotationDetails['paper_size'] == "Custom") { ?>
+                                <option value="Custom">Custom</option>
+                            <?php } ?>
+                        </select>
+                    </div>
+
+                    <?php if ($rowShowQuotationDetails['paper_size'] == "A4" || $rowShowQuotationDetails['paper_size'] == "A3" || $rowShowQuotationDetails['paper_size'] == "A5") { ?>
+                        <div id="size-display" class="mb-3" style="display: block;">
+                            <label class="form-label">Dimensions</label>
+                            <div class="d-flex align-items-center gap-2">
+                                <input type="number" class="form-control" value="<?php echo $rowShowQuotationDetails['size_width']; ?>" placeholder="Width" disabled>
+                                <span>x</span>
+                                <input type="number" class="form-control" value="<?php echo $rowShowQuotationDetails['size_height']; ?>" placeholder="Height" disabled>
+                                <select id="unit" class="form-select" style="width: 100px;">
+                                    <option value="cm">cm</option>
+                                    <option value="mm">mm</option>
+                                    <option value="inch">inch</option>
+                                </select>
+                            </div>
+                        </div>
+                    <?php } ?>
+
+                    <?php if ($rowShowQuotationDetails['paper_size'] == "Custom") { ?>
+                        <div id="custom-size-inputs" style="display: block;">
+                            <label class="form-label mt-2">Enter Custom Size</label>
+                            <div class="d-flex align-items-center gap-2">
+                                <input type="number" class="form-control" value="<?php echo $rowShowQuotationDetails['size_width']; ?>" placeholder="Width" disabled>
+                                <span>x</span>
+                                <input type="number" class="form-control" value="<?php echo $rowShowQuotationDetails['size_height']; ?>" placeholder="Height" disabled>
+
+                                <select id="custom_unit" name="custom_unit" class="form-select" style="width: 100px;">
+                                    <option value="cm">cm</option>
+                                    <option value="mm">mm</option>
+                                    <option value="inch">inch</option>
+                                </select>
+                                <input type="hidden" name="size_unit" id="hidden_size_unit">
+                                <input type="hidden" name="size_width" id="hidden_size_width">
+                                <input type="hidden" name="size_height" id="hidden_size_height">
+                            </div>
+                        </div>
+                    <?php } ?>
+
+                    <!-- Paper Type -->
+                    <div class="mt-3 mb-3">
+                        <label class="form-label">Paper Type</label>
+                        <input type="text" name="paper_type" class="form-control" value="<?php echo $rowShowQuotationDetails['requester_name'] ?>" disabled>
+                    </div>
+
+                    <!-- Finishing -->
+                    <div class="mb-3">
+                        <label class="form-label">Finishing</label>
+                        <input type="text" name="finishing" class="form-control" value="<?php echo $rowShowQuotationDetails['requester_name'] ?>" disabled>
+                    </div>
+
+                    <!-- File Upload -->
+                    <div class="mb-3">
+                        <label class="form-label">Upload File</label>
+                        <?php if (!empty($rowShowQuotationDetails['file_data'])): ?>
                             <form method="post" target="_blank">
-                                <button type="submit" class="btn login-btn w-20" name="viewFile">View File</button>
+                                <input type="hidden" class="form-control" name="viewFileId" value="<?php echo htmlspecialchars($rowShowQuotationDetails['file_id']); ?>">
+                                <button type="submit" class="btn login-btn w-20" name="viewFileBtn">View File</button>
                             </form>
                         <?php else: ?>
                             <input type="text" class="form-control" value="No file uploaded" disabled>
                         <?php endif; ?>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label">Additional Notes</label>
-                        <textarea class="form-control" rows="4" placeholder="Any specific requirements..." value="<?php echo $rowShowQuotation['remark'] ?? ''; ?>" disabled></textarea>
+                    <!-- Remarks -->
+                    <div class="mb-3">
+                        <label class="form-label">Remark</label>
+                        <textarea name="remark" rows="4" class="form-control" placeholder="Any notes or requests..." disabled><?php echo $rowShowQuotationDetails['requester_name'] ?></textarea>
                     </div>
+
+
 
                     <a href="mailto:<?php echo $rowShowQuotation['requester_email']; ?>" class="btn btn-success mb-3 w-100">Reply</a>
 
@@ -220,7 +286,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editQuotationBtn'])) {
                         <hr class="mt-5 mb-5">
 
                         <div class="row">
-                            <a href="quotationlist.php" class="btn btn-secondary mb-3">Back</a>
+                            <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="btn btn-secondary mb-3">Back</a>
                             <button type="submit" class="btn login-btn" name="editQuotationBtn">Save & Changes</button>
                         </div>
 
@@ -231,7 +297,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editQuotationBtn'])) {
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         const toggleBtn = document.getElementById('toggleSidebar');
         const sidebar = document.getElementById('sidebar');

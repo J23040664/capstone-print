@@ -146,7 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editOrderBtn'])) {
                     <!-- upload file -->
                     <div class="mb-4">
                         <label class="form-label">Upload Reference File (optional)</label>
-                        <?php if (!empty($rowShowOrderDetails['file_type'])): ?>
+                        <?php if (!empty($rowShowOrderDetails['file_path'])): ?>
                             <form method="post" target="_blank">
                                 <input type="hidden" class="form-control" name="viewFileId" value="<?php echo htmlspecialchars($rowShowOrderDetails['file_id']); ?>">
                                 <button type="submit" class="btn login-btn w-20" name="viewFileBtn">View File</button>
