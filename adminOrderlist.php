@@ -124,8 +124,12 @@ if (mysqli_num_rows($queryShowOrderList) === 0) {
                                 <td>
                                     <?php if ($rowShowOrderList['order_status'] == "Pending") { ?>
                                         <span class="badge bg-warning text-black"><?php echo $rowShowOrderList['order_status']; ?></span>
+                                    <?php } else if ($rowShowOrderList['order_status'] == "In Progress") { ?>
+                                        <span class="badge bg-warning text-black"><?php echo $rowShowOrderList['order_status']; ?></span>
+                                    <?php } else if ($rowShowOrderList['order_status'] == "Ready To Collect") { ?>
+                                        <span class="badge bg-warning text-black"><?php echo $rowShowOrderList['order_status']; ?></span>
                                     <?php } else if ($rowShowOrderList['order_status'] == "Completed") { ?>
-                                        <span class="badge bg-success text-white"><?php echo $rowShowOrderList['order_status']; ?></span>
+                                        <span class="badge bg-warning text-black"><?php echo $rowShowOrderList['order_status']; ?></span>
                                     <?php } ?>
                                 </td>
                                 <td>

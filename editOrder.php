@@ -40,24 +40,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['viewFileBtn'])) {
 }
 
 
-// update order status
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editOrderBtn'])) {
     $orderStatus = $_POST['orderStatus'];
     $updateOrderStatus = "UPDATE `order` 
     SET order_status = '$orderStatus'
     WHERE order_id = '$order_id'";
-    print_r($_POST);
+
     if (mysqli_query($conn, $updateOrderStatus)) {
         echo "<script>
-            alert(' Order updated successfully.');
-            window.location.href = 'adminOrderlist.php?user_id=" . $user_id . "';
-          </script>";
+            alert('Order updated successfully.');
+            window.location.href = 'adminOrderlist.php?id=$user_id';
+        </script>";
         exit;
     } else {
-        echo "Error updating record: " . mysqli_error($conn);
+        echo "Error: " . mysqli_error($conn);
     }
 }
-
 
 ?>
 
@@ -224,14 +222,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editOrderBtn'])) {
 
                     <!-- update the order status -->
                     <form method="post">
-
                         <div class="mb-5 mt-2">
                             <label for="orderStatus" class="form-label">Order Status:</label>
-                            <select class="form-select" name="orderStatus">
-                                <option value="Pending">Pending</option>
-                                <option value="In Progress">In Progress</option>
-                                <option value="Ready to collect">Ready to collect</option>
-                                <option value="Completed">Completed</option>
+                            <select class="form-select" name="orderStatus" id="orderStatus">
+                                <?php
+                                $statuses = ["Pending", "In Progress", "Ready To Collect", "Completed"];
+                                $currentStatus = $rowShowOrderDetails['order_status'] ?? '';
+
+                                foreach ($statuses as $status) {
+                                    $selected = ($status == $currentStatus) ? 'selected' : '';
+                                    echo "<option value=\"$status\" $selected>$status</option>";
+                                }
+                                ?>
                             </select>
                         </div>
 
