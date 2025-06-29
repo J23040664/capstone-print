@@ -9,17 +9,19 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Art & Print SS15 - Professional Printing Services</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
     <?php
     require_once 'includes/header.php';
     ?>
     <main>
-        <section id="calculator" class="section">
+        <section id="calculator" class="section active">
             <div class="container">
                 <h2 class="section-title">Fee Calculator</h2>
                 <div class="calculator">
                     <div class="form-group">
+                        <h4>Calculating your budget? Try using our calculator to see how much you need to pay. </h4>
                         <label>Service Type</label>
                         <select id="calcService" onchange="calculateFee()">
                             <option value="">Select Service</option>
@@ -43,9 +45,20 @@ session_start();
                     <div class="calc-result" id="calcResult">
                         Enter service and quantity to calculate
                     </div>
+
+                    <div class="calc-order">
+                        <p>Ready to make order with us?</p>
+                        <a href="order.php" class="btn btn-secondary">Place Order Now</a>
+                    </div>
                 </div>
             </div>
         </section>
+    </main>
+    <?php
+        require_once 'includes/footer.php';
+    ?>
+    <script src="js/hamburger.js"></script>
+</body>
 <script>
     const prices = {
         'print-bw': 0.10,
@@ -56,7 +69,7 @@ session_start();
         'binding-spiral': 3.00,
         'binding-hard': 8.00,
         'lamination-a4': 2.00,
-        'lamination-a3': 3.00
+        'lamination-a3': 3.00 
     };
         function calculateFee() {
         console.log("calculateFee() called!");
@@ -70,15 +83,13 @@ session_start();
         }
 
         let total = 0;
-            
-        if (service === 'namecard') {
             const minQuantity = Math.max(quantity, 100);
             total = minQuantity * prices[service];
             resultDiv.innerHTML = `<strong>Total: RM ${total.toFixed(2)}</strong><br><small>Minimum 100 pieces for name cards</small>`;
         } else {
-            // This part might need adjustment if calcService also uses general terms like 'binding'/'lamination'
             total = quantity * prices[service];
             resultDiv.innerHTML = `<strong>Total: RM ${total.toFixed(2)}</strong>`;
         }
-    }
+        <script src="js/smooth-scrolling.js"></script>
+        <script src="js/hamburger.js"></script>
 </script>
