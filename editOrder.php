@@ -226,7 +226,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editOrderBtn'])) {
                             <label for="orderStatus" class="form-label">Order Status:</label>
                             <select class="form-select" name="orderStatus" id="orderStatus">
                                 <?php
-                                $statuses = ["Pending", "In Progress", "Ready To Collect", "Completed"];
+                                $statuses = ["Pending", "In Progress", "Ready To Collect", "Completed", "Cancelled"];
                                 $currentStatus = $rowShowOrderDetails['order_status'] ?? '';
 
                                 foreach ($statuses as $status) {

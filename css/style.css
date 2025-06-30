@@ -164,10 +164,23 @@ main {
     display:block;
     text-align: center;
     margin: 10px;
+    margin-top: 24px;
     margin-bottom:10px ;
-    border-radius: 20px;
+    border-radius: 10px;
     transition: transform 0.3s ease;
-    
+}
+
+.section-test-msg {
+    display: block;
+    text-align: center;
+    margin: 10px;
+    margin-top: 24px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+    color: black;
+    background-color: #fff7c2;
+    border: 1px solid #fff7c2;
 }
 
 /* Home Section */
@@ -221,6 +234,9 @@ main {
     color: #e53935;
 }
 
+.service-card p {
+    font-size: 14px;
+}
 
 
 /* Order Form */
@@ -337,17 +353,36 @@ main {
 
 .status-pending {
     background: #fff3cd;
+    /* warm yellow */
     color: #856404;
+    /* dark yellow/brown */
+    border: 1px solid #ffe08a;
 }
 
-.status-processing {
-    background: #d1ecf1;
-    color: #0c5460;
+.status-in-progress {
+    background: #cce5ff;
+    /* soft blue */
+    color: #004085;
+    /* dark blue */
+    border: 1px solid #b8daff;
 }
 
-.status-ready {
+.status-ready-to-collect {
     background: #d4edda;
     color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-completed {
+    background: #c3e6cb;
+    color: #0b2e13;
+    border: 1px solid #8fd19e;
+}
+
+.status-cancelled {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
 }
 
 /* Login Form */
@@ -361,7 +396,6 @@ main {
 }
 
 /* Track Order Page */
-
 .order-tracking-form {
     max-width: 500px;
     margin: 0 auto 2rem auto; 
