@@ -1,6 +1,6 @@
 /* Login Page */
 .login-body {
-    background-color: #FAFAFA;
+    background-color: #FFF6F5;
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -16,22 +16,24 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+.form-control:focus {
+    outline: none;
+    border: 2px solid #c62828;
+}
+
 .login-btn {
-    background: #ee5351;
-    border: solid;
-    outline-color: #000000;
-    color: white;
+    background: #c62828;
+    color: #FAFAFA;
 }
 
 .login-btn:hover {
-    background-color: #FAFAFA;
-    border: solid;
-    outline-color: #000000;
-    color: #000000;
+    background: transparent;
+    color: #c62828;
+    border: 1px solid #c62828;
 }
 
 .link {
-    color: #ee5351;
+    color: #c62828;
 }
 
 .link:hover {
@@ -40,15 +42,13 @@
 
 /* sign up page */
 .sendcode-btn {
-    border: solid;
-    outline-color: #ee5351;
-    color: #ee5351;
+    background: transparent;
+    color: #c62828;
+    border: 2px solid #c62828;
 }
 
 .sendcode-btn:hover {
-    background-color: #ee5351;
-    border: solid;
-    outline-color: #ee5351;
+    background: #c62828;
     color: #FAFAFA;
 }
 
@@ -68,30 +68,26 @@
 /* admin dashboard page */
 .adminDash-body {
     overflow-x: hidden;
-    background-color: #FAFAFA;
+    background-color: #FFF6F5;
 }
 
 /* Top navbar styling */
 .top-navbar {
-    background-color: #ee5351;
+    background-color: #c62828;
     margin-left: 240px;
     transition: margin-left 0.3s ease;
 }
 
-.top-navbar.collapsed {
-    margin-left: 80px;
-}
-
 .toggle-btn {
     color: #FAFAFA;
-    outline: solid 1px;
-    outline-color: #FAFAFA;
+    border: solid 1px;
+    border-color: #FAFAFA;
 }
 
 .toggle-btn:hover {
-    background-color: #FAFAFA;
-    color: #212121;
-    outline-color: #212121;
+    background-color: #e53935;
+    color: #fafafa;
+    border-color: #fafafa;
 }
 
 button.dropdown-toggle {
@@ -114,7 +110,7 @@ button.dropdown-toggle:active {
 /* Sidebar styling */
 .sidebar {
     width: 240px;
-    background-color: #ee5351;
+    background-color: #212529;
     color: #FAFAFA;
     transition: all 0.3s ease;
     height: 100vh;
@@ -125,8 +121,21 @@ button.dropdown-toggle:active {
     z-index: 1030;
 }
 
+.top-navbar.collapsed {
+    margin-left: 80px;
+}
+
 .sidebar.collapsed {
     width: 80px;
+}
+
+.sidebar.collapsed .nav-link span,
+.sidebar.collapsed .s_logo span {
+    display: none;
+}
+
+.main-content.collapsed {
+    margin-left: 80px;
 }
 
 .sidebar .nav-link {
@@ -139,14 +148,9 @@ button.dropdown-toggle:active {
 }
 
 .sidebar .nav-link:hover {
-    background-color: #C62828;
-    color: white;
-    text-decoration: none;
-}
-
-.sidebar.collapsed .nav-link span,
-.sidebar.collapsed .s_logo span {
-    display: none;
+    background-color: #e53935;
+    color: #fafafa;
+    border: 1px solid #fafafa;
 }
 
 .s_logo {
@@ -157,16 +161,42 @@ button.dropdown-toggle:active {
     margin: 10px 0;
 }
 
+/* offcanvas on mobile */
+#mobileSidebar .offcanvas{
+    width: 240px;
+    background-color: #c62828;
+    color: #FAFAFA;
+    transition: all 0.3s ease;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    z-index: 1030;
+}
+
+/* Nav-link styling inherited from .sidebar */
+#mobileSidebar .nav-link {
+    color: #FAFAFA;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+}
+
+#mobileSidebar .nav-link:hover {
+    background-color: #e53935;
+    color: #fafafa;
+    border: 1px solid #fafafa; 
+}
+
 /* Main content positioning */
 .main-content {
     margin-left: 240px;
     transition: margin-left 0.3s ease;
     padding: 1rem;
     padding-top: 70px;
-}
-
-.main-content.collapsed {
-    margin-left: 80px;
 }
 
 /* Responsive adjustments */
@@ -194,23 +224,27 @@ button.dropdown-toggle:active {
 }
 
 /* order list page */
+.dt-paging-button.page-item .page-link {
+    color: #c62828;
+}
+
 .dt-paging-button.page-item.active .page-link {
-    background-color: #ee5351 !important;
-    color: #FAFAFA !important;
-    border-color: #ee5351 !important;
+    background-color: #c62828;
+    color: #FAFAFA;
+    border-color: #ee5351;
 }
 
 /* admin setting page */
 .navtab-btn {
-    border: 2px solid #ee5351;
-    color: #ee5351;
+    border: 2px solid #c62828;
+    color: #c62828;
     background-color: #FAFAFA;
 }
 
 .navtab-btn:hover,
 .navtab-btn.active,
 .navtab-btn:focus {
-    background-color: #ee5351;
+    background-color: #c62828;
     color: #FAFAFA;
     border-color: #FAFAFA;
 }

@@ -75,9 +75,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editOrderBtn'])) {
 
 </head>
 
-<body>
+<body class="adminDash-body">
     <!-- Sidebar Navigation -->
-    <div id="sidebar" class="d-flex flex-column p-3 sidebar">
+    <div id="offcanvas offcanvas-start show" class="d-flex flex-column p-3 sidebar">
         <div class="s_logo fs-5">
             <span>Art & Print</span>
         </div>
@@ -90,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editOrderBtn'])) {
                 <a href="adminOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
             </li>
             <li class="nav-item">
-                <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-question"></i><span>Manage Quotations</span></a>
+                <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i><span>Manage Quotations</span></a>
             </li>
         </ul>
     </div>
@@ -268,4 +268,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editOrderBtn'])) {
     </script>
 </body>
 
-</html>r
+</html>

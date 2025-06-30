@@ -81,6 +81,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
         </div>
     <?php endif; ?>
 
+
+
     <div class="login-box">
 
         <h3 class="text-center mb-3">Sign In</h3>
@@ -112,8 +114,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
                 <span>Don't have an account? <a class="text-decoration-none link" href="signup.php">Sign Up</a></span>
             </div>
         </form>
-
+        <hr class="mt-4 mb-4">
+        <a href="home.php" class="link d-block text-center">Back To Home Page</a>
     </div>
+
 
 
 

@@ -32,7 +32,7 @@ $queryShowQuotation = mysqli_query($conn, $showQuotation) or die(mysqli_error($c
     <link rel="stylesheet" href="./adminStyle.css" />
 </head>
 
-<body>
+<body class="adminDash-body">
 
     <!-- Sidebar Navigation -->
     <div id="sidebar" class="d-flex flex-column p-3 sidebar">
