@@ -1,12 +1,13 @@
 <header>
     <div class="container">
         <nav>
-        <a href="index.php" class="logo">
-    <img src="/img/logo.png" alt="Art & Print SS15 Logo" class="nav-logo-img">
-</a>
+            <a href="index.php" class="logo">
+                <img src="/img/logo.png" alt="Art & Print SS15 Logo" class="nav-logo-img">
+            </a>
 
             <div class="nav-toggle" id="navToggle">
-                <i class="fas fa-bars"></i> </div>
+                <i class="fas fa-bars"></i>
+            </div>
 
             <ul class="nav-links" id="navLinks">
                 <li><a href="home.php" class="<?php echo ($current_page == 'index.php') ? 'active' : ''; ?>">Home</a></li>
@@ -22,9 +23,9 @@
                 </li>
             </ul>
 
-            <div class="theme-switch-wrapper desktop-visible">
-</div>
-                
+            <div class="auth-buttons desktop-visible">
+                <a href="login.php" class="btn btn-secondary">Login</a>
+                <a href="register.php" class="btn btn-primary">Register</a>
             </div>
         </nav>
     </div>
