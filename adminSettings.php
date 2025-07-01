@@ -304,7 +304,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
 
 </head>
 
-<body>
+<body class="adminDash-body">
 
     <!-- Sidebar Navigation -->
     <div id="sidebar" class="d-flex flex-column p-3 sidebar">

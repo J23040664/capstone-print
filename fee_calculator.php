@@ -9,13 +9,13 @@ session_start();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Art & Print SS15 - Professional Printing Services</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="./assets/css/landingStyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
     <?php
-    require_once 'includes/header.php';
+    require_once './assets/includes/header.php';
     ?>
     <main>
         <section id="calculator" class="section active">
@@ -126,11 +126,11 @@ session_start();
             </div>
         </section>
     </main>
-    <?php require_once 'includes/footer.php'; ?>
+    <?php require_once './assets/includes/footer.php'; ?>
 </body>
 
-<script src="js/hamburger.js"></script>
-<script src="js/smooth-scrolling.js"></script>
+<script src="./assets/js/hamburger.js"></script>
+<script src="./assets/js/smooth-scrolling.js"></script>
 
 <script>
     function preventFinishingSelect() {
@@ -159,6 +159,15 @@ session_start();
 </script>
 
 <script>
+    const copyInput = document.getElementById('copyCount');
+    const calcResult = document.getElementById('calcResult');
+
+    copyInput.addEventListener('input', () => {
+        calcResult.innerHTML = 'Calculate Price';
+    });
+</script>
+
+<script>
     function calculateFee() {
         const pages = parseInt(document.getElementById('pageCount').value) || 0;
         const copies = parseInt(document.getElementById('copyCount').value) || 0;
@@ -171,6 +180,8 @@ session_start();
         const finishing2 = parseFloat(document.getElementById('finishing2').value) || 0;
         const finishing3 = parseFloat(document.getElementById('finishing3').value) || 0;
 
+        const calcResult = document.getElementById('calcResult');
+
         if (copies === 0 || pages === 0 || size === 0 || color === 0 || service === 0) {
             document.getElementById('calcResult').innerText = "Please fill up required fields before click here.";
             return;
@@ -180,7 +191,27 @@ session_start();
         const finishingCost = finishing1 + finishing2 + finishing3;
         const totalCost = cost + finishingCost;
 
-        document.getElementById('calcResult').innerHTML =
+        calcResult.innerHTML =
             `<strong>Total Price: RM ${totalCost.toFixed(2)}</strong>`;
     }
+
+    // Run calculateFee() when input
+    window.addEventListener('DOMContentLoaded', () => {
+        const inputFields = ['pageCount', 'copyCount'];
+        const selectFields = ['serviceType', 'paperSize', 'printColour', 'finishing1', 'finishing2', 'finishing3'];
+
+        inputFields.forEach(id => {
+            const field = document.getElementById(id);
+            if (field) {
+                field.addEventListener('input', calculateFee);
+            }
+        });
+
+        selectFields.forEach(id => {
+            const field = document.getElementById(id);
+            if (field) {
+                field.addEventListener('change', calculateFee);
+            }
+        });
+    });
 </script>
