@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "./dbms.php";
+include "dbms.php";
 
 $showLogoutToast = false;
 if (isset($_SESSION['logout']) && $_SESSION['logout']) {
@@ -51,8 +51,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
 }
 ?>
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -63,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.12.1/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="./adminStyle.css">
+    <link rel="stylesheet" href="./assets/css/systemStyle.css">
 </head>
 
 <body class="login-body">
@@ -80,8 +78,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
             </div>
         </div>
     <?php endif; ?>
-
-
 
     <div class="login-box">
 
@@ -115,12 +111,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
             </div>
         </form>
         <hr class="mt-4 mb-4">
-        <a href="home.php" class="link d-block text-center">Back To Home Page</a>
+        <a href="index.php" class="link d-block text-center">Back To Home Page</a>
     </div>
-
-
-
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
 

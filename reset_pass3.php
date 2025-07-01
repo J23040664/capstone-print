@@ -1,18 +1,18 @@
 <?php
-include ("./dbms.php");
+include ("dbms.php");
 session_start();
 
-if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $_GET['user_id']) {
+if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $_GET['id']) {
     header("Location: login.php");
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['resetpassbtn'])) {
-    $user_id = $_GET['user_id'];
+    $user_id = $_GET['id'];
     $new_password = $_POST['password'];
     $confirm_password = $_POST['confirmpassword'];
 
     if ($new_password !== $confirm_password) {
-        die("Passwords do not match.");
+        $passwordNotMatch = true;
     }
 
     $checkPassword = $conn->prepare("SELECT password FROM user WHERE user_id = ?");
@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['resetpassbtn'])) {
 
         // Check if new password matches current one
         if (password_verify($new_password, $old_hashed_password)) {
-            die("New password cannot be the same as the current password.");
+            $passwordMatchCurrent = true;
         }
 
         // Hash new password
@@ -34,21 +34,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['resetpassbtn'])) {
 
         // Update password
         $updatePassword = $conn->prepare("UPDATE user SET password = ? WHERE user_id = ?");
-        $updatePassword->bind_param("si", $hashed_password, $id);
+        $updatePassword->bind_param("si", $hashed_password, $user_id);
 
-        if ($updatePassword->execute()) {
-            echo "<p style='color:green;'>Password has been reset successfully. Redirecting to login...</p>";
+        if ($passwordNotMatch) {
+            $message = '<div class="alert alert-danger" role="alert">
+                            Password and Confrim Password is not match
+                        </div>';
+
+        } else if ($passwordMatchCurrent) {
+            $message = '<div class="alert alert-danger" role="alert">
+                            New Password cannot same with current password
+                        </div>';
+        } else if ($updatePassword->execute()) {
             header("refresh:2; url=login.php");
             session_unset();
             session_destroy();
             exit;
         } else {
-            echo "Error updating password: " . $updatePassword->error;
+            $message = '<div class="alert alert-danger" role="alert">' .
+                            "Error updating password: " . $updatePassword->error;
+                        '</div>';
         }
 
         $updatePassword->close();
     } else {
-        die("User not found.");
+        $message = '<div class="alert alert-danger" role="alert">
+                        User not found
+                    </div>';
     }
 
     $checkPassword->close();
@@ -69,17 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['resetpassbtn'])) {
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.12.1/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="./adminStyle.css">
-
-    <style>
-        body {
-            background-color: #f2f2f5;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-    </style>
+    <link rel="stylesheet" href="./assets/css/systemStyle.css">
 </head>
 
 <body class="login-body">
@@ -87,6 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['resetpassbtn'])) {
     <div class="login-box">
 
         <h3 class="text-center mb-3">Reset Password</h3>
+        <?php echo $message; ?>
 
         <form method="POST">
             <div class="mb-3">

@@ -117,8 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-
-    <link rel="stylesheet" href="./adminStyle.css">
+    <link rel="stylesheet" href="./assets//css/systemStyle.css">
 
 </head>
 
@@ -230,14 +229,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
             <hr>
 
             <form method="post">
-                <label for="updateName">Name:</label>
-                <input type="text" class="form-control" name="updateName" value="<?php echo $rowShowUserInfo['name']; ?>">
-                <button type="submit" class="btn login-btn mt-3" name="updateNameBtn">Save & Changes</button>
+                <div class="mb-3">
+                    <label for="updateName">Name:</label>
+                    <input type="text" class="form-control" name="updateName" id="updateName" value="<?php echo $rowShowUserInfo['name']; ?>">
+                </div>
+
+                <div class="mb-3">
+                    <label>Email:</label><br>
+                    <button type="button" class="btn change-email-btn form-control text-start" data-bs-toggle="modal" data-bs-target="#changeEmailModal">
+                        <span><?php echo htmlspecialchars($rowShowUserInfo['email']); ?></span>
+                    </button>
+                </div>
+
+                <!-- Change Email Modal -->
+                <div class="modal fade" id="changeEmailModal">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="changeEmailModalLabel">Change Email</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+
+                            <form method="post" id="changeEmailForm">
+                                <div class="modal-body">
+                                    <label for="updateEmail">New Email Address:</label>
+                                    <input type="email" class="form-control mb-3" name="updateEmail" id="updateEmail" required>
+
+                                    <label for="code">Verification Code:</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="code" name="code" required />
+                                        <button type="button" class="btn btn-sm sendcode-btn" onclick="verifyCode(document.getElementById('updateEmail').value)" id="send_code_btn" disabled>
+                                            Send code
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" name="changeEmailBtn" class="btn login-btn">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="updateMobileNumber">Mobile Number:</label>
+                    <input type="text" class="form-control" name="updateMobileNumber" id="updateMobileNumber" value="<?php echo $rowShowUserInfo['phone_number']; ?>">
+                </div>
+
+                <button type="submit" class="btn login-btn mt-3" name="updateNameBtn" id="saveButton" style="display: none;">Save & Changes</button>
             </form>
 
             <hr>
 
-            <h6>Password</h6>
+            <h6><strong>Password</strong></h6>
             <button class="btn login-btn" data-bs-toggle="modal" data-bs-target="#changePassModal">Change Password</button>
 
             <!-- change password modal -->
@@ -291,6 +337,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="./assets/js/email.js"></script>
 
     <?php if ($showUpdateToast): ?>
         <script>
@@ -309,6 +357,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
             sidebar.classList.toggle('collapsed');
             topNavbar.classList.toggle('collapsed');
             mainContent.classList.toggle('collapsed');
+        });
+    </script>
+
+    <script>
+        // Get references to input fields and button
+        const nameInput = document.getElementById('updateName');
+        const phoneInput = document.getElementById('updateMobileNumber');
+        const saveButton = document.getElementById('saveButton');
+
+        // Group inputs into an array
+        const inputs = [nameInput, emailInput, phoneInput];
+
+        // Store original values
+        const originalValues = {};
+        inputs.forEach(input => {
+            originalValues[input.id] = input.value;
+        });
+
+        // Add event listener to check if any field changed
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                let changed = false;
+                inputs.forEach(inp => {
+                    if (inp.value !== originalValues[inp.id]) {
+                        changed = true;
+                    }
+                });
+                saveButton.style.display = changed ? 'inline-block' : 'none';
+            });
+        });
+    </script>
+
+    <script>
+        const emailInput = document.getElementById('updateEmail');
+        const sendCodeBtn = document.getElementById('send_code_btn');
+
+        // Simple email validation regex
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        // Enable or disable button based on email validity
+        emailInput.addEventListener('input', () => {
+            if (isValidEmail(emailInput.value)) {
+                sendCodeBtn.disabled = false;
+            } else {
+                sendCodeBtn.disabled = true;
+            }
+        });
+    </script>
+
+    <script>
+        document.getElementById('changeEmailForm').addEventListener('submit', function(e) {
+            const inputCode = document.getElementById('code').value;
+            const storedCode = sessionStorage.getItem('verificationCode');
+            if (inputCode !== storedCode) {
+                e.preventDefault(); // stop submit
+                alert("Invalid verification code.");
+            } else {
+                // Code is correct, so remove it from sessionStorage
+                sessionStorage.removeItem('verificationCode');
+            }
         });
     </script>
 

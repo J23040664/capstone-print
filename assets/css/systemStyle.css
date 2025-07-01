@@ -248,3 +248,16 @@ button.dropdown-toggle:active {
     color: #FAFAFA;
     border-color: #FAFAFA;
 }
+
+/* profile setting page */
+.change-email-btn {
+    outline: 1px solid #DEE2E6;
+    background-color: #FFFFFF;
+    color: #212529;
+    border: none;
+}
+
+.change-email-btn:hover {
+    background-color: #EAECEF;
+    outline-color: #c62828;
+}

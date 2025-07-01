@@ -1,5 +1,5 @@
 <?php
-include "./dbms.php";
+include "dbms.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signupbtn'])) {
 
@@ -66,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signupbtn'])) {
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.12.1/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="./adminStyle.css">
+    <link rel="stylesheet" href="./assets/css/systemStyle.css">
 
 </head>
 
@@ -143,7 +143,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signupbtn'])) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script src="./email.js"></script>
+    <script src="./assets/js/email.js"></script>
 
     <script>
         document.getElementById('signUpCode').addEventListener('submit', function(e) {
@@ -155,6 +155,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signupbtn'])) {
             } else {
                 // Code is correct, so remove it from sessionStorage
                 sessionStorage.removeItem('verificationCode');
+            }
+        });
+    </script>
+
+    <script>
+        const emailInput = document.getElementById('updateEmail');
+        const sendCodeBtn = document.getElementById('send_code_btn');
+
+        // Simple email validation regex
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        // Enable or disable button based on email validity
+        emailInput.addEventListener('input', () => {
+            if (isValidEmail(emailInput.value)) {
+                sendCodeBtn.disabled = false;
+            } else {
+                sendCodeBtn.disabled = true;
             }
         });
     </script>
