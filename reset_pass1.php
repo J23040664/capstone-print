@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['checkAccount'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login - Art & Print</title>
+    <title>Reset Password</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.12.1/font/bootstrap-icons.min.css">
@@ -52,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['checkAccount'])) {
             <label for="username" class="form-label">Email: </label>
             <div class="text-center mb-3">
                 <input type="email" class="form-control" id="email" name="email" required>
-                <button type="submit" class="btn w-100 mt-3 mb-3 login-btn" name="checkAccount">Next</button>
+                <button type="submit" class="btn w-100 mt-3 mb-3 login-btn" name="checkAccount" id="checkAccount">Next</button>
                 <a class="text-black text-decoration-none" href="login.php"><i class="bi bi-arrow-left me-2"></i>Back to login</a>
             </div>
         </form>
@@ -61,4 +61,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['checkAccount'])) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
+
+<script>
+    const emailInput = document.getElementById('email');
+    const nextBtn = document.getElementById('checkAccount');
+
+    // Simple email validation regex
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    // Enable or disable button based on email validity
+    emailInput.addEventListener('input', () => {
+        if (isValidEmail(emailInput.value)) {
+            nextBtn.disabled = false;
+        } else {
+            nextBtn.disabled = true;
+        }
+    });
+</script>

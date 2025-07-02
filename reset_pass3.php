@@ -1,5 +1,5 @@
 <?php
-include ("dbms.php");
+include("dbms.php");
 session_start();
 
 if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $_GET['id']) {
@@ -40,7 +40,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['resetpassbtn'])) {
             $message = '<div class="alert alert-danger" role="alert">
                             Password and Confrim Password is not match
                         </div>';
-
         } else if ($passwordMatchCurrent) {
             $message = '<div class="alert alert-danger" role="alert">
                             New Password cannot same with current password
@@ -52,8 +51,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['resetpassbtn'])) {
             exit;
         } else {
             $message = '<div class="alert alert-danger" role="alert">' .
-                            "Error updating password: " . $updatePassword->error;
-                        '</div>';
+                "Error updating password: " . $updatePassword->error;
+            '</div>';
         }
 
         $updatePassword->close();
@@ -65,8 +64,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['resetpassbtn'])) {
 
     $checkPassword->close();
     $conn->close();
-
-
 }
 
 ?>
@@ -77,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['resetpassbtn'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login - Art & Print</title>
+    <title>Reset Password</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.12.1/font/bootstrap-icons.min.css">
@@ -120,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['resetpassbtn'])) {
                 <button type="submit" class="btn login-btn" name="resetpassbtn">Continue</button>
             </div>
         </form>
-            
+
         <div class="text-center">
             <a class="text-black text-decoration-none" href="login.php">Cancel</a>
         </div>

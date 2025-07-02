@@ -133,7 +133,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
             icon.classList.toggle('bi-eye-slash');
         });
     </script>
-
 </body>
 
 </html>

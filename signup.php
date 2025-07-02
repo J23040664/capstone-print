@@ -146,6 +146,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signupbtn'])) {
     <script src="./assets/js/email.js"></script>
 
     <script>
+        const emailInput = document.getElementById('email');
+        const sendCodeBtn = document.getElementById('send_code_btn');
+
+        // Simple email validation regex
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        // Disable button initially
+        sendCodeBtn.disabled = true;
+
+        // Enable or disable send button based on email input
+        emailInput.addEventListener('input', () => {
+            sendCodeBtn.disabled = !isValidEmail(emailInput.value);
+        });
+
+        // Disable send button for 60 seconds after click
+        sendCodeBtn.addEventListener('click', () => {
+            sendCodeBtn.disabled = true;
+            sendCodeBtn.textContent = "Please wait...";
+
+            setTimeout(() => {
+                // Recheck email validity before enabling again
+                sendCodeBtn.disabled = !isValidEmail(emailInput.value);
+                sendCodeBtn.textContent = "Send Code";
+            }, 60000); // 60 seconds
+        });
+    </script>
+
+    <script>
         document.getElementById('signUpCode').addEventListener('submit', function(e) {
             const inputCode = document.getElementById('code').value;
             const storedCode = sessionStorage.getItem('verificationCode');
@@ -155,25 +185,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['signupbtn'])) {
             } else {
                 // Code is correct, so remove it from sessionStorage
                 sessionStorage.removeItem('verificationCode');
-            }
-        });
-    </script>
-
-    <script>
-        const emailInput = document.getElementById('updateEmail');
-        const sendCodeBtn = document.getElementById('send_code_btn');
-
-        // Simple email validation regex
-        function isValidEmail(email) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        }
-
-        // Enable or disable button based on email validity
-        emailInput.addEventListener('input', () => {
-            if (isValidEmail(emailInput.value)) {
-                sendCodeBtn.disabled = false;
-            } else {
-                sendCodeBtn.disabled = true;
             }
         });
     </script>

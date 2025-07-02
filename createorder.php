@@ -1,14 +1,19 @@
 <?php
+session_start();
 // Include your database connection
 include 'dbms.php';
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-
-$user_id = $_GET['id'];
-$user_info = "SELECT * FROM user WHERE user_id = '$user_id'";
-$result_user_info = mysqli_query($conn, $user_info);
-$row_user_info = mysqli_fetch_assoc($result_user_info);
+if ($_SESSION['id'] == $_GET['id']) {
+    $user_id = $_GET['id'];
+    $user_info = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id WHERE a.user_id = '$user_id'";
+    $result_user_info = mysqli_query($conn, $user_info);
+    $row_user_info = mysqli_fetch_assoc($result_user_info);
+} else {
+    header("Location: login.php");
+    exit;
+}
 
 // Preload service prices (print + size + color)
 $service_prices = [];
@@ -278,140 +283,81 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Create Order</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-
-    <style>
-        body {
-            overflow-x: hidden;
-            background-color: #fff;
-        }
-
-        /* Sidebar styling */
-        .sidebar {
-            width: 240px;
-            background-color: #343a40;
-            color: white;
-            transition: all 0.3s ease;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            overflow-y: auto;
-            z-index: 1030;
-        }
-
-        .sidebar.collapsed {
-            width: 80px;
-        }
-
-        .s_logo {
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 10px 0;
-        }
-
-        .sidebar .nav-link {
-            color: #ccc;
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            white-space: nowrap;
-        }
-
-        .sidebar .nav-link:hover {
-            background-color: #495057;
-            color: white;
-            text-decoration: none;
-        }
-
-        .sidebar.collapsed .nav-link span,
-        .sidebar.collapsed .s_logo span {
-            display: none;
-        }
-
-        /* Top navbar positioning */
-        .top-navbar {
-            margin-left: 240px;
-            transition: margin-left 0.3s ease;
-        }
-
-        .top-navbar.collapsed {
-            margin-left: 80px;
-        }
-
-        /* Main content positioning */
-        .main-content {
-            margin-left: 240px;
-            transition: margin-left 0.3s ease;
-            padding: 1rem;
-        }
-
-        .main-content.collapsed {
-            margin-left: 80px;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(0);
-                left: 0;
-                transition: transform 0.3s ease;
-            }
-
-            .sidebar.collapsed {
-                transform: translateX(-100%);
-            }
-
-            .top-navbar,
-            .main-content {
-                margin-left: 0 !important;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="./assets/css/systemStyle.css">
 </head>
 
 <body>
 
-    <!-- Sidebar Navigation -->
-    <div id="sidebar" class="sidebar d-flex flex-column p-3">
-        <div class="s_logo fs-5">
-            <span>System Name</span>
+    <!-- Offcanvas Sidebar (mobile only) -->
+    <div class="offcanvas offcanvas-start d-md-none text-bg-dark" tabindex="-1" id="mobileSidebar">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="mobileSidebarLabel">Art & Print</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <hr />
+        <div class="offcanvas-body p-3">
+            <ul class="nav nav-pills flex-column">
+                <li class="nav-item">
+                    <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i> Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a href="adminOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i> Manage Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i> Manage Quotations</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Static Sidebar (visible on md and up) -->
+    <div id="sidebar" class="d-none d-md-flex flex-column p-3 sidebar">
+        <div class="s_logo fs-5">
+            <span>Art & Print</span>
+        </div>
+        <hr style="height: 2px; background-color: #FAFAFA; border: none;">
         <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-                <a href="dashboard.html" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
+                <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i> <span>Dashboard</span></a>
             </li>
             <li class="nav-item">
-                <a href="orderlist.html" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
+                <a href="adminOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i> <span>Manage Orders</span></a>
+            </li>
+            <li class="nav-item">
+                <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i> <span>Manage Quotations</span></a>
             </li>
         </ul>
     </div>
 
     <!-- Top Navbar -->
-    <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3 top-navbar">
+    <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light shadow-sm px-3 top-navbar fixed-top">
         <div class="container-fluid">
-            <button class="btn btn-outline-secondary me-2" id="toggleSidebar">
+
+            <!-- mobile toggle btn -->
+            <button class="btn toggle-btn d-block d-sm-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <!-- desktop toggle btn -->
+            <button class="btn toggle-btn d-none d-md-block" id="toggleSidebar">
                 <i class="bi bi-list"></i>
             </button>
 
             <!-- User dropdown on the right -->
             <div class="d-flex align-items-center ms-auto">
                 <div class="dropdown">
-                    <button class="btn dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
-                        <img src="./assets/icon/userpicture.png" class="rounded-circle" width="30" height="30"
-                            alt="profile_picture" />
-                        <span>abc</span>
+                    <button class="btn dropdown-toggle d-flex align-items-center gap-2"
+                        data-bs-toggle="dropdown">
+                        <img src="data:<?php echo $row_user_info['img_type']; ?>;base64,<?php echo base64_encode($row_user_info['img_data']); ?>"
+                            class="rounded-circle" width="30" height="30" alt="profile" />
+                        <span style="color: #FAFAFA;"><?php echo $row_user_info['name']; ?></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#">My Profile</a></li>
-                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><a class="dropdown-item" href="profile.php?id=<?php echo $user_id; ?>">My Profile</a></li>
+                        <li><a class="dropdown-item" href="adminSettings.php?id=<?php echo $user_id; ?>">Settings</a></li>
                         <li>
                             <hr class="dropdown-divider" />
                         </li>
-                        <li><a class="dropdown-item text-danger" href="login.html">Log out</a></li>
+                        <li><a class="dropdown-item text-danger" href="logout.php">Log out</a></li>
                     </ul>
                 </div>
             </div>
@@ -498,14 +444,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <!-- Pages Count -->
                     <div class="mb-4">
-                        <label for="pages" class="form-label">Number of Pages:</label>
-                        <input class="form-control" type="number" id="pages" name="pages" readonly>
+                        <label for="pages" class="form-label">Number of Pages (Auto Calculate When Uploaded File):</label>
+                        <input class="form-control" style="background-color: #EAECEF; cursor: not-allowed;" type="number" id="pages" name="pages" readonly>
                     </div>
 
                     <!-- Service Cost Output -->
                     <div class="mb-4">
                         <label class="form-label">Service Cost:</label>
-                        <input class="form-control" type="text" id="serviceCost" name="serviceCost" value="RM 0.00" readonly>
+                        <input class="form-control" style="background-color: #EAECEF; cursor: not-allowed;" type="text" id="serviceCost" name="serviceCost" value="RM 0.00" readonly>
                     </div>
 
                     <!-- Finishing Type 1 Dropdown -->
@@ -557,19 +503,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <!-- Finishing Cost Output -->
                     <div class="mb-4">
                         <label class="form-label">Finishing Cost:</label>
-                        <input class="form-control" type="text" id="finishingCost" name="finishingCost" value="RM 0.00" readonly>
+                        <input class="form-control" style="background-color: #EAECEF; cursor: not-allowed;" type="text" id="finishingCost" name="finishingCost" value="RM 0.00" readonly>
                     </div>
 
                     <!-- Total Cost Output -->
                     <div class="mb-4">
                         <label class="form-label">Total Cost:</label>
-                        <input class="form-control" type="text" id="totalCost" name="totalCost" value="RM 0.00" readonly>
+                        <input class="form-control" style="background-color: #EAECEF; cursor: not-allowed;" type="text" id="totalCost" name="totalCost" value="RM 0.00" readonly>
                     </div>
 
                     <!-- Form Buttons -->
                     <div class="d-flex justify-content-end gap-2">
                         <a href="orderlist.html" class="btn btn-light">Cancel</a>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn login-btn">Submit</button>
                     </div>
 
                 </form>

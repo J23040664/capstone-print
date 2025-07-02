@@ -13,7 +13,6 @@ if (isset($_SESSION['role']) && $_SESSION['id'] == $_GET['id']) {
     exit;
 }
 
-
 // list all the image
 $showImgList = "SELECT * FROM profile_images";
 $queryShowImgList = mysqli_query($conn, $showImgList) or die(mysqli_error($conn));
@@ -22,6 +21,12 @@ $showUpdateToast = false;
 if (isset($_SESSION['update_success']) && $_SESSION['update_success'] === true) {
     $showUpdateToast = true;
     unset($_SESSION['update_success']); // Show only once
+}
+
+$showUpdateErrorToast = false;
+if (isset($_SESSION['update_error']) && $_SESSION['update_error'] === true) {
+    $showUpdateErrorToast = true;
+    unset($_SESSION['update_error']); // Show only once
 }
 
 // Update profile picture
@@ -40,19 +45,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateProfileBtn'])) 
     }
 }
 
-// Update name
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateNameBtn'])) {
-    $newName = $_POST['updateName'];
+// Update info
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateInfoBtn'])) {
+    $newName = trim($_POST['updateName']);
+    $newPhoneNumber = trim($_POST['updatePhoneNumber']);
 
-    $updateName = "UPDATE user SET name = '$newName' WHERE user_id = '$user_id'";
+    // Check if either field is empty
+    if (empty($newName) || empty($newPhoneNumber)) {
+        $_SESSION['update_error'] = true;
+        header("Location: profile.php?id={$user_id}");
+        exit;
+    }
 
-    if (mysqli_query($conn, $updateName)) {
+    $updateInfo = "UPDATE user SET name = '$newName', phone_number = '$newPhoneNumber'  WHERE user_id = '$user_id'";
+
+    if (mysqli_query($conn, $updateInfo)) {
+        $_SESSION['update_success'] = true;
+        header("Location: profile.php?id={$user_id}");
+        exit;
+    } else {
+        $_SESSION['update_error'] = true;
+        header("Location: profile.php?id={$user_id}");
+        exit;
+    }
+}
+
+// update email
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateEmailBtn'])) {
+    $newEmail = $_POST['updateEmail'];
+
+    $updateEmail = "UPDATE user SET email = '$newEmail' WHERE user_id = '$user_id'";
+
+    if (mysqli_query($conn, $updateEmail)) {
 
         $_SESSION['update_success'] = true;
         header("Location: profile.php?id={$user_id}");
         exit;
     } else {
-        echo "Error updating record: " . mysqli_error($conn);
+        $_SESSION['update_error'] = true;
+        header("Location: profile.php?id={$user_id}");
+        exit;
     }
 }
 
@@ -78,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
     if (!password_verify($old_password, $hashedOldPassword)) {
         echo "<script>
         alert('Old password is not match.');
-        window.location.href = 'profile.php';
+        window.location.href = 'profile.php?id={$user_id}';
         </script>";
         exit;
     }
@@ -101,7 +133,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
         header("Location: profile.php?id={$user_id}");
         exit;
     } else {
-        echo "Error updating password: " . mysqli_error($conn);
+        $_SESSION['update_error'] = true;
+        header("Location: profile.php?id={$user_id}");
+        exit;
     }
 }
 
@@ -123,29 +157,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
 
 <body class="adminDash-body">
 
-    <!-- Sidebar Navigation -->
-    <div id="sidebar" class="d-flex flex-column p-3 sidebar">
+    <!-- Offcanvas Sidebar (mobile only) -->
+    <div class="offcanvas offcanvas-start d-md-none text-bg-dark" tabindex="-1" id="mobileSidebar">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="mobileSidebarLabel">Art & Print</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-3">
+            <ul class="nav nav-pills flex-column">
+                <li class="nav-item">
+                    <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i> Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a href="adminOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i> Manage Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i> Manage Quotations</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Static Sidebar (visible on md and up) -->
+    <div id="sidebar" class="d-none d-md-flex flex-column p-3 sidebar">
         <div class="s_logo fs-5">
             <span>Art & Print</span>
         </div>
-        <hr style="height: 4px; background-color: #FAFAFA; border: none;">
+        <hr style="height: 2px; background-color: #FAFAFA; border: none;">
         <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-                <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
+                <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i> <span>Dashboard</span></a>
             </li>
             <li class="nav-item">
-                <a href="adminOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
+                <a href="adminOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i> <span>Manage Orders</span></a>
             </li>
             <li class="nav-item">
-                <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i><span>Manage Quotations</span></a>
+                <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i> <span>Manage Quotations</span></a>
             </li>
         </ul>
     </div>
 
     <!-- Top Navbar -->
-    <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light shadow-sm px-3 top-navbar">
+    <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light shadow-sm px-3 top-navbar fixed-top">
         <div class="container-fluid">
-            <button class="btn toggle-btn" id="toggleSidebar">
+
+            <!-- mobile toggle btn -->
+            <button class="btn toggle-btn d-block d-sm-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <!-- desktop toggle btn -->
+            <button class="btn toggle-btn d-none d-md-block" id="toggleSidebar">
                 <i class="bi bi-list"></i>
             </button>
 
@@ -180,6 +242,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
                     <div class="d-flex">
                         <div class="toast-body">
                             ✅ Record updated successfully!
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($showUpdateErrorToast): ?>
+            <!-- show Toast when error -->
+            <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+                <div id="updateErrorToast" class="toast text-white bg-danger border-0">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            Error updating record
                         </div>
                         <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                     </div>
@@ -235,51 +311,95 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
                 </div>
 
                 <div class="mb-3">
-                    <label>Email:</label><br>
-                    <button type="button" class="btn change-email-btn form-control text-start" data-bs-toggle="modal" data-bs-target="#changeEmailModal">
+                    <label for="emailBtn">Email:</label><br>
+                    <button type="button" name="emailBtn" class="btn change-email-btn form-control text-start" data-bs-toggle="modal" data-bs-target="#changeEmailModal">
                         <span><?php echo htmlspecialchars($rowShowUserInfo['email']); ?></span>
                     </button>
                 </div>
 
-                <!-- Change Email Modal -->
-                <div class="modal fade" id="changeEmailModal">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="changeEmailModalLabel">Change Email</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="mb-3">
+                    <label for="updatePhoneNumber">Mobile Number:</label>
+                    <input type="text" class="form-control" name="updatePhoneNumber" id="updatePhoneNumber" value="<?php echo $rowShowUserInfo['phone_number']; ?>">
+                </div>
+
+                <button type="submit" class="btn login-btn mt-3" name="updateInfoBtn" id="updateInfoBtn" style="display: none;">Save & Changes</button>
+            </form>
+
+            <!-- Change Email Modal -->
+            <div class="modal fade" id="changeEmailModal">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="changeEmailModalLabel">Change Email</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <form method="post" id="changeEmailForm">
+                            <div class="modal-body">
+                                <label for="updateEmail">New Email Address:</label>
+                                <input type="email" class="form-control mb-3" name="updateEmail" id="updateEmail" required>
+
+                                <label for="code">Verification Code:</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="code" name="code" required />
+                                    <button type="button" class="btn btn-sm sendcode-btn" onclick="verifyCode(document.getElementById('updateEmail').value)" id="send_code_btn" disabled>
+                                        Send code
+                                    </button>
+                                </div>
                             </div>
 
-                            <form method="post" id="changeEmailForm">
-                                <div class="modal-body">
-                                    <label for="updateEmail">New Email Address:</label>
-                                    <input type="email" class="form-control mb-3" name="updateEmail" id="updateEmail" required>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" name="updateEmailBtn" class="btn login-btn">Save Changes</button>
+                            </div>
+                        </form>
 
-                                    <label for="code">Verification Code:</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="code" name="code" required />
-                                        <button type="button" class="btn btn-sm sendcode-btn" onclick="verifyCode(document.getElementById('updateEmail').value)" id="send_code_btn" disabled>
-                                            Send code
-                                        </button>
-                                    </div>
-                                </div>
+                        <script>
+                            const emailInput = document.getElementById('updateEmail');
+                            const sendCodeBtn = document.getElementById('send_code_btn');
 
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" name="changeEmailBtn" class="btn login-btn">Save Changes</button>
-                                </div>
-                            </form>
-                        </div>
+                            // Simple email validation regex
+                            function isValidEmail(email) {
+                                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+                            }
+
+                            // Disable button initially
+                            sendCodeBtn.disabled = true;
+
+                            // Enable or disable send button based on email input
+                            emailInput.addEventListener('input', () => {
+                                sendCodeBtn.disabled = !isValidEmail(emailInput.value);
+                            });
+
+                            // Disable send button for 60 seconds after click
+                            sendCodeBtn.addEventListener('click', () => {
+                                sendCodeBtn.disabled = true;
+                                sendCodeBtn.textContent = "Please wait...";
+
+                                setTimeout(() => {
+                                    // Recheck email validity before enabling again
+                                    sendCodeBtn.disabled = !isValidEmail(emailInput.value);
+                                    sendCodeBtn.textContent = "Send Code";
+                                }, 60000); // 60 seconds
+                            });
+                        </script>
+
+                        <script>
+                            document.getElementById('changeEmailForm').addEventListener('submit', function(e) {
+                                const inputCode = document.getElementById('code').value;
+                                const storedCode = sessionStorage.getItem('verificationCode');
+                                if (inputCode !== storedCode) {
+                                    e.preventDefault(); // stop submit
+                                    alert("Invalid verification code.");
+                                } else {
+                                    // Code is correct, so remove it from sessionStorage
+                                    sessionStorage.removeItem('verificationCode');
+                                }
+                            });
+                        </script>
                     </div>
                 </div>
-
-                <div class="mb-3">
-                    <label for="updateMobileNumber">Mobile Number:</label>
-                    <input type="text" class="form-control" name="updateMobileNumber" id="updateMobileNumber" value="<?php echo $rowShowUserInfo['phone_number']; ?>">
-                </div>
-
-                <button type="submit" class="btn login-btn mt-3" name="updateNameBtn" id="saveButton" style="display: none;">Save & Changes</button>
-            </form>
+            </div>
 
             <hr>
 
@@ -347,6 +467,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
         </script>
     <?php endif; ?>
 
+    <?php if ($showUpdateErrorToast): ?>
+        <script>
+            const toast1 = new bootstrap.Toast(document.getElementById('updateErrorToast'));
+            toast1.show();
+        </script>
+    <?php endif; ?>
+
     <script>
         const toggleBtn = document.getElementById('toggleSidebar');
         const sidebar = document.getElementById('sidebar');
@@ -363,11 +490,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
     <script>
         // Get references to input fields and button
         const nameInput = document.getElementById('updateName');
-        const phoneInput = document.getElementById('updateMobileNumber');
-        const saveButton = document.getElementById('saveButton');
+        const phoneInput = document.getElementById('updatePhoneNumber');
+        const updateInfoBtn = document.getElementById('updateInfoBtn');
 
         // Group inputs into an array
-        const inputs = [nameInput, emailInput, phoneInput];
+        const inputs = [nameInput, phoneInput];
 
         // Store original values
         const originalValues = {};
@@ -384,41 +511,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
                         changed = true;
                     }
                 });
-                saveButton.style.display = changed ? 'inline-block' : 'none';
+                updateInfoBtn.style.display = changed ? 'inline-block' : 'none';
             });
-        });
-    </script>
-
-    <script>
-        const emailInput = document.getElementById('updateEmail');
-        const sendCodeBtn = document.getElementById('send_code_btn');
-
-        // Simple email validation regex
-        function isValidEmail(email) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        }
-
-        // Enable or disable button based on email validity
-        emailInput.addEventListener('input', () => {
-            if (isValidEmail(emailInput.value)) {
-                sendCodeBtn.disabled = false;
-            } else {
-                sendCodeBtn.disabled = true;
-            }
-        });
-    </script>
-
-    <script>
-        document.getElementById('changeEmailForm').addEventListener('submit', function(e) {
-            const inputCode = document.getElementById('code').value;
-            const storedCode = sessionStorage.getItem('verificationCode');
-            if (inputCode !== storedCode) {
-                e.preventDefault(); // stop submit
-                alert("Invalid verification code.");
-            } else {
-                // Code is correct, so remove it from sessionStorage
-                sessionStorage.removeItem('verificationCode');
-            }
         });
     </script>
 

@@ -70,27 +70,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editOrderBtn'])) {
     <!-- Bootstrap and Bootstrap Icons CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="./adminStyle.css">
-
-
+    <link rel="stylesheet" href="./assets/css/systemStyle.css">
 </head>
 
 <body class="adminDash-body">
-    <!-- Sidebar Navigation -->
-    <div id="offcanvas offcanvas-start show" class="d-flex flex-column p-3 sidebar">
+    <!-- Offcanvas Sidebar (mobile only) -->
+    <div class="offcanvas offcanvas-start d-md-none text-bg-dark" tabindex="-1" id="mobileSidebar">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="mobileSidebarLabel">Art & Print</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-3">
+            <ul class="nav nav-pills flex-column">
+                <li class="nav-item">
+                    <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i> Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a href="adminOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i> Manage Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i> Manage Quotations</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Static Sidebar (visible on md and up) -->
+    <div id="sidebar" class="d-none d-md-flex flex-column p-3 sidebar">
         <div class="s_logo fs-5">
             <span>Art & Print</span>
         </div>
-        <hr style="height: 4px; background-color: #FAFAFA; border: none;">
+        <hr style="height: 2px; background-color: #FAFAFA; border: none;">
         <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-                <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i><span>Dashboard</span></a>
+                <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i> <span>Dashboard</span></a>
             </li>
             <li class="nav-item">
-                <a href="adminOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i><span>Manage Orders</span></a>
+                <a href="adminOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i> <span>Manage Orders</span></a>
             </li>
             <li class="nav-item">
-                <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i><span>Manage Quotations</span></a>
+                <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i> <span>Manage Quotations</span></a>
             </li>
         </ul>
     </div>
@@ -98,7 +117,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editOrderBtn'])) {
     <!-- Top Navbar -->
     <nav id="topNavbar" class="navbar navbar-expand-lg navbar-light shadow-sm px-3 top-navbar fixed-top">
         <div class="container-fluid">
-            <button class="btn toggle-btn" id="toggleSidebar">
+
+            <!-- mobile toggle btn -->
+            <button class="btn toggle-btn d-block d-sm-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <!-- desktop toggle btn -->
+            <button class="btn toggle-btn d-none d-md-block" id="toggleSidebar">
                 <i class="bi bi-list"></i>
             </button>
 
