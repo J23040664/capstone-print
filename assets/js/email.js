@@ -1,6 +1,6 @@
 // EmailJS SDK
 // Dont share this secret key to others, because have quota
-// const emailjsSecretKey = 'TNGpLDAkuXkvOJgR1';
+// const emailjsSecretKey = 'xqOuw3Z-26loqt4Fg';
 // const emailjsserviceKey = 'service_gkayr3w';
 // const emailjsTemplateKey = 'template_scesfvy';
 // emailjs.init(emailjsSecretKey);
