@@ -9,7 +9,7 @@ if ($_SESSION['id'] == $_GET['id']) {
     $user_id = $_GET['id'];
     $user_info = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id WHERE a.user_id = '$user_id'";
     $result_user_info = mysqli_query($conn, $user_info);
-    $row_user_info = mysqli_fetch_assoc($result_user_info);
+    $rowShowUserInfo = mysqli_fetch_assoc($result_user_info);
 } else {
     header("Location: login.php");
     exit;
@@ -263,7 +263,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // If everything is successful
     echo "<script>
-    alert('Order inserted successfully!');
+    alert('Order submitted successfully!');
     window.location.href='payment.php?order_id=$order_id&id=$user_id';
     </script>";
     exit;
@@ -286,7 +286,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="./assets/css/systemStyle.css">
 </head>
 
-<body>
+<body class="adminDash-body">
 
     <!-- Offcanvas Sidebar (mobile only) -->
     <div class="offcanvas offcanvas-start d-md-none text-bg-dark" tabindex="-1" id="mobileSidebar">
@@ -297,13 +297,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="offcanvas-body p-3">
             <ul class="nav nav-pills flex-column">
                 <li class="nav-item">
-                    <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i> Dashboard</a>
+                    <a href="customerDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i> Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a href="adminOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i> Manage Orders</a>
+                    <a href="createOrder.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i> Place Orders</a>
                 </li>
                 <li class="nav-item">
-                    <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i> Manage Quotations</a>
+                    <a href="customerOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-clock-history"></i> History Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a href="createQuotation.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i> Ask Quotation</a>
                 </li>
             </ul>
         </div>
@@ -317,13 +320,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <hr style="height: 2px; background-color: #FAFAFA; border: none;">
         <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-                <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i> <span>Dashboard</span></a>
+                <a href="customerDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i> <span>Dashboard</span></a>
             </li>
             <li class="nav-item">
-                <a href="adminOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i> <span>Manage Orders</span></a>
+                <a href="createOrder.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i> <span>Place Orders</span></a>
             </li>
             <li class="nav-item">
-                <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i> <span>Manage Quotations</span></a>
+                <a href="customerOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-clock-history"></i> <span>History Orders</span></a>
+            </li>
+            <li class="nav-item">
+                <a href="createQuotation.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i> <span>Ask Quotation</span></a>
             </li>
         </ul>
     </div>
@@ -347,13 +353,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="dropdown">
                     <button class="btn dropdown-toggle d-flex align-items-center gap-2"
                         data-bs-toggle="dropdown">
-                        <img src="data:<?php echo $row_user_info['img_type']; ?>;base64,<?php echo base64_encode($row_user_info['img_data']); ?>"
+                        <img src="data:<?php echo $rowShowUserInfo['img_type']; ?>;base64,<?php echo base64_encode($rowShowUserInfo['img_data']); ?>"
                             class="rounded-circle" width="30" height="30" alt="profile" />
-                        <span style="color: #FAFAFA;"><?php echo $row_user_info['name']; ?></span>
+                        <span style="color: #FAFAFA;"><?php echo $rowShowUserInfo['name']; ?></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="profile.php?id=<?php echo $user_id; ?>">My Profile</a></li>
-                        <li><a class="dropdown-item" href="adminSettings.php?id=<?php echo $user_id; ?>">Settings</a></li>
                         <li>
                             <hr class="dropdown-divider" />
                         </li>
@@ -378,7 +383,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <!-- Customer Name -->
                     <div class="mb-4">
                         <label for="customerName" class="form-label">Name:</label>
-                        <input class="form-control" type="text" id="customerName" name="customerName" value="<?php echo $row_user_info['name']; ?>" required>
+                        <input class="form-control" type="text" id="customerName" name="customerName" value="<?php echo $rowShowUserInfo['name']; ?>" required>
                     </div>
 
                     <!-- File Upload -->
@@ -514,7 +519,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <!-- Form Buttons -->
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="orderlist.html" class="btn btn-light">Cancel</a>
+                        <a href="customerOrderlist.php?id=<?php echo $user_id; ?>" class="btn btn-light">Cancel</a>
                         <button type="submit" class="btn login-btn">Submit</button>
                     </div>
 
@@ -525,6 +530,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
+
+    <script>
+        const toggleBtn = document.getElementById('toggleSidebar');
+        const sidebar = document.getElementById('sidebar');
+        const topbar = document.getElementById('topNavbar');
+        const maincontent = document.getElementById('mainContent');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            topbar.classList.toggle('collapsed');
+            maincontent.classList.toggle('collapsed');
+        });
+    </script>
 
     <!-- JS price maps + update logic -->
     <script>

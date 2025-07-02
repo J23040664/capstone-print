@@ -124,7 +124,7 @@ button.dropdown-toggle:active {
 .top-navbar.collapsed {
     margin-left: 80px;
 }
-
+ 
 .sidebar.collapsed {
     width: 80px;
 }
@@ -215,6 +215,10 @@ button.dropdown-toggle:active {
     .main-content {
         margin-left: 0 !important;
     }
+
+    .adminDash-body {
+        font-size: 12px;
+    }
 }
 
 .custom-card {
@@ -260,4 +264,39 @@ button.dropdown-toggle:active {
 .change-email-btn:hover {
     background-color: #EAECEF;
     outline-color: #c62828;
+}
+
+/* create quotation form */
+.form-container {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.help-btn {
+    margin-left: 6px;
+    padding: 0 6px;
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
+/* payment */
+.content-box {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.online-portals {
+    display: none;
+}
+
+input:disabled,
+textarea:disabled,
+select:disabled,
+button:disabled {
+    cursor: not-allowed;
 }

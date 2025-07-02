@@ -29,8 +29,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["signinbtn"])) {
                 $_SESSION['role'] = $user['role'];
                 $_SESSION['login_success'] = true;
 
-                header("Refresh: 1; url=adminDashboard.php?id=" . urlencode($user['user_id']));
-                exit;
+                if ($user['role'] == "Admin") {
+                    header("Refresh: 1; url=adminDashboard.php?id=" . urlencode($user['user_id']));
+                    exit;
+                } 
+                
+                if ($user['role'] == "Staff") {
+                    header("Refresh: 1; url=adminDashboard.php?id=" . urlencode($user['user_id']));
+                    exit;
+                }
+                
+                if ($user['role'] == "Customer") {
+                    header("Refresh: 1; url=customerDashboard.php?id=" . urlencode($user['user_id']));
+                    exit;
+                }
             } else {
                 $errorMessage = '<div class="alert alert-danger" role="alert">
                                     Password is invalid
