@@ -48,6 +48,21 @@ $stmt_file->execute();
 $result_file = $stmt_file->get_result();
 $file = $result_file->fetch_assoc();
 
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['viewFileBtn'])) {
+    $file_id = $_POST['viewFileId'];
+    $query = "SELECT file_name, file_type, file_path FROM `file` WHERE file_id = '$file_id'";
+    $result = mysqli_query($conn, $query);
+
+    if ($row = mysqli_fetch_assoc($result)) {
+        header("Content-Type: application/{$row['file_type']}");
+        header("Content-Disposition: inline; filename=\"" . $row['file_name'] . "\"");
+        echo $row['file_path'];
+        exit;
+    } else {
+        echo "File not found.";
+    }
+}
+
 // Preload service list
 $service_options = [];
 $sql_service = "SELECT service_id, service_desc FROM service_list WHERE service_status = 'Available' AND service_type = 'print'";
@@ -181,56 +196,20 @@ while ($row = mysqli_fetch_assoc($result_finishing)) {
                 <!-- Customer Name -->
                 <div class="mb-4">
                     <label class="form-label">Name:</label>
-                    <?php if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['id'] == $_GET['id']) { ?>
-                        <?php
-                        $customerInfoId = $order['customer_id'];
-                        $customerInfo = "SELECT user_id, name, email, phone_number FROM user
-                        WHERE user_id = '$customerInfoId'";
-                        $queryCustomerInfo = mysqli_query($conn, $customerInfo) or die(mysqli_error($conn));
-                        $rowCustomerInfo = mysqli_fetch_assoc($queryCustomerInfo); ?>
-
-                        <button type="button" name="customerInfo" class="btn change-email-btn form-control text-start" data-bs-toggle="modal" data-bs-target="#customerInfoModal">
-                            <span><?php echo htmlspecialchars($rowShowUserInfo['name']); ?></span>
-                        </button>
-
-                        <!-- Customer Info Modal -->
-                        <div class="modal fade" id="customerInfoModal">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Customer Info</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="mb-3">
-                                            <label for="customerinfoid">User ID:</label>
-                                            <input type="text" class="form-control" value="<?php echo $rowCustomerInfo['user_id'] ?>" disabled>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="customerinfoname">Name:</label>
-                                            <input type="text" class="form-control" value="<?php echo $rowCustomerInfo['name'] ?>" disabled>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="customerinfoemail">Email:</label>
-                                            <input type="text" class="form-control" value="<?php echo $rowCustomerInfo['email'] ?>" disabled>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="customerinfophonenumber">Phone Number:</label>
-                                            <input type="text" class="form-control" value="<?php echo $rowCustomerInfo['phone_number'] ?>" disabled>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <?php } else { ?>
-                        <input class="form-control" type="text" value="<?php echo htmlspecialchars($order['customer_name']); ?>" disabled>
-                    <?php } ?>
+                    <input class="form-control" type="text" value="<?php echo htmlspecialchars($order['customer_name']); ?>" disabled>
                 </div>
 
                 <!-- Uploaded File -->
                 <div class="mb-4">
                     <label class="form-label">Uploaded File:</label>
-                    <input class="form-control" type="text" value="<?php echo htmlspecialchars($file['file_name']); ?>" disabled>
+                    <?php if (!empty($file['file_path'])): ?>
+                        <form method="post" target="_blank">
+                            <input type="hidden" class="form-control" name="viewFileId" value="<?php echo htmlspecialchars($file['file_id']); ?>">
+                            <button type="submit" class="btn login-btn w-20" name="viewFileBtn">View File</button>
+                        </form>
+                    <?php else: ?>
+                        <input type="text" class="form-control" value="No file uploaded" disabled>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Type of Services -->

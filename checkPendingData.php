@@ -8,7 +8,7 @@ $checkTodaySales = "SELECT SUM(total_price) AS total_sales_today FROM `order` WH
 $queryCheckTodaySales = $conn->query($checkTodaySales);
 if ($queryCheckTodaySales) {
     $row = $queryCheckTodaySales->fetch_assoc();
-    $response['today_sales'] = (int)$row['total_sales_today'];
+    $response['today_sales'] = number_format((float)$row['total_sales_today'], 2, '.', '');
 } else {
     $response['today_sales_error'] = $conn->error;
 }

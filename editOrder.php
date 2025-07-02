@@ -164,7 +164,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editOrderBtn'])) {
                     <!-- Customer Name -->
                     <div class="mb-4">
                         <label class="form-label">Name:</label>
-                        <input class="form-control" type="text" value="<?php echo htmlspecialchars($rowShowOrderDetails['customer_name']); ?>" disabled>
+                        <?php
+                        $customerInfoId = $rowShowOrderDetails['customer_id'];
+                        $customerInfo = "SELECT user_id, name, email, phone_number FROM user
+                        WHERE user_id = '$customerInfoId'";
+                        $queryCustomerInfo = mysqli_query($conn, $customerInfo) or die(mysqli_error($conn));
+                        $rowCustomerInfo = mysqli_fetch_assoc($queryCustomerInfo); ?>
+
+                        <button type="button" name="customerInfo" class="btn change-email-btn form-control text-start" data-bs-toggle="modal" data-bs-target="#customerInfoModal">
+                            <span><?php echo htmlspecialchars($rowCustomerInfo['name']); ?></span>
+                        </button>
+
+                        <!-- Customer Info Modal -->
+                        <div class="modal fade" id="customerInfoModal">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Customer Info</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label for="customerinfoid">User ID:</label>
+                                            <input type="text" class="form-control" value="<?php echo $rowCustomerInfo['user_id'] ?>" disabled>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="customerinfoname">Name:</label>
+                                            <input type="text" class="form-control" value="<?php echo $rowCustomerInfo['name'] ?>" disabled>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="customerinfoemail">Email:</label>
+                                            <input type="text" class="form-control" value="<?php echo $rowCustomerInfo['email'] ?>" disabled>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="customerinfophonenumber">Phone Number:</label>
+                                            <input type="text" class="form-control" value="<?php echo $rowCustomerInfo['phone_number'] ?>" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- upload file -->

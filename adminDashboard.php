@@ -104,7 +104,7 @@ foreach ($orderCounts as $month => $count) {
 $currentMonth = date("Y-m");
 $todayCount = $orderCounts[$currentMonth] ?? 0;
 $todayCost = $orderCosts[$currentMonth] ?? 0.0;
-$todayNewUsers = $newUserCounts[$currentMonth] ?? 0;
+$currentMonthNewUsers = $newUserCounts[$currentMonth] ?? 0;
 ?>
 
 <!DOCTYPE html>
@@ -286,7 +286,7 @@ $todayNewUsers = $newUserCounts[$currentMonth] ?? 0;
                     <div class="card h-100 w-100">
                         <div class="card-body">
                             <h5 class="card-title fs-6">New Users in <?php echo date('F'); ?></h5>
-                            <p class="card-text fs-2"><?php echo $todayNewUsers; ?></p>
+                            <p class="card-text fs-2"><?php echo $currentMonthNewUsers; ?></p>
                             <canvas id="newUserChart" height="100"></canvas>
                         </div>
                     </div>
@@ -464,7 +464,7 @@ $todayNewUsers = $newUserCounts[$currentMonth] ?? 0;
 
         async function fetchPendingCounts() {
             try {
-                const response = await fetch('checkPendingData.php');
+                const response = await fetch('./checkPendingData.php');
                 const data = await response.json();
 
                 document.getElementById('todaySales').textContent = data.today_sales ?? 0;
