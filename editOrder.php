@@ -39,18 +39,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['viewFileBtn'])) {
     }
 }
 
-
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editOrderBtn'])) {
     $orderStatus = $_POST['orderStatus'];
-    $updateOrderStatus = "UPDATE `order` 
-    SET order_status = '$orderStatus'
-    WHERE order_id = '$order_id'";
+    if ($orderStatus === 'Completed') {
+        $updateOrderStatus = "
+        UPDATE `order` 
+        SET order_status = '$orderStatus',
+            completed_date = NOW()
+        WHERE order_id = '$order_id'
+    ";
+    } else {
+        $updateOrderStatus = "
+        UPDATE `order` 
+        SET order_status = '$orderStatus'
+        WHERE order_id = '$order_id'
+    ";
+    }
 
     if (mysqli_query($conn, $updateOrderStatus)) {
         echo "<script>
-            alert('Order updated successfully.');
-            window.location.href = 'adminOrderlist.php?id=$user_id';
-        </script>";
+        alert('Order updated successfully.');
+        window.location.href = 'adminOrderlist.php?id=$user_id';
+    </script>";
         exit;
     } else {
         echo "Error: " . mysqli_error($conn);

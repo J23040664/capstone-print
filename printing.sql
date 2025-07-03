@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 02, 2025 at 01:26 PM
+-- Generation Time: Jul 03, 2025 at 06:45 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -35,6 +35,14 @@ CREATE TABLE `file` (
   `file_path` longblob DEFAULT NULL,
   `file_type` varchar(5) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `file`
+--
+
+INSERT INTO `file` (`file_id`, `order_id`, `item_id`, `file_name`, `file_path`, `file_type`) VALUES
+('F0000002', 'O0000002', 'I0000002', 'example.pdf', NULL, 'pdf'),
+('F0000003', 'O0000003', 'I0000003', 'example.pdf', NULL, 'pdf');
 
 -- --------------------------------------------------------
 
@@ -82,8 +90,17 @@ CREATE TABLE `order` (
   `payment_id` varchar(8) DEFAULT NULL,
   `payment_status` varchar(50) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `completed_date` date DEFAULT current_timestamp()
+  `completed_date` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `order`
+--
+
+INSERT INTO `order` (`order_id`, `item_id`, `service_total_price`, `finishing_quantity`, `finishing_total_price`, `total_price`, `order_status`, `customer_id`, `customer_name`, `payment_id`, `payment_status`, `created_at`, `completed_date`) VALUES
+('O0000001', 'I0000001', 0.30, 1, 0.20, 0.50, 'Completed', 10000003, 'customer', 'P0000001', 'Paid', '2025-07-02 20:14:09', '2025-07-02'),
+('O0000002', 'I0000002', 1.20, 1, 0.20, 1.40, 'Completed', 10000003, 'customer', 'P0000002', 'Pending', '2025-07-03 10:54:41', '2025-07-02'),
+('O0000003', 'I0000003', 0.40, 0, 0.00, 0.40, 'Completed', 10000001, 'Admin', 'P0000003', 'Paid', '2025-07-03 10:55:53', '2025-07-02');
 
 -- --------------------------------------------------------
 
@@ -117,6 +134,15 @@ CREATE TABLE `order_detail` (
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `order_detail`
+--
+
+INSERT INTO `order_detail` (`item_id`, `order_id`, `file_id`, `service_id`, `service_desc`, `service_price`, `copies`, `pages`, `size`, `colour`, `service_total_price`, `finishing_1`, `finishing_desc1`, `finishing_price1`, `finishing_2`, `finishing_desc2`, `finishing_price2`, `finishing_3`, `finishing_desc3`, `finishing_price3`, `item_price`, `remarks`, `created_at`) VALUES
+('I0000001', 'O0000001', 'F0000001', 'S001', 'Print-1side', 0.30, 1, 1, 'A4', 'Black and White', 0.30, 'F003', 'Stapler-Top Left', 0.20, NULL, '', 0.00, NULL, '', 0.00, 0.50, '', '2025-07-02 20:14:09'),
+('I0000002', 'O0000002', 'F0000002', 'S001', 'Print-1side', 0.30, 1, 1, 'A3', 'Colour', 1.20, 'F004', 'Stapler-Top Right', 0.20, NULL, '', 0.00, NULL, '', 0.00, 1.40, '', '2025-07-03 10:54:41'),
+('I0000003', 'O0000003', 'F0000003', 'S003', 'Photocopy-1side', 0.20, 1, 1, 'A3', 'Black and White', 0.40, NULL, '', 0.00, NULL, '', 0.00, NULL, '', 0.00, 0.40, '', '2025-07-03 10:55:53');
+
 -- --------------------------------------------------------
 
 --
@@ -131,6 +157,15 @@ CREATE TABLE `payment` (
   `payment_status` varchar(9) DEFAULT NULL,
   `payment_date` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `payment`
+--
+
+INSERT INTO `payment` (`payment_id`, `order_id`, `total_price`, `payment_type`, `payment_status`, `payment_date`) VALUES
+('P0000001', 'O0000001', 0.50, 'Online', 'Paid', '2025-07-02 20:14:49'),
+('P0000002', 'O0000002', 1.40, NULL, 'Pending', NULL),
+('P0000003', 'O0000003', 0.40, 'Walk-in', 'Paid', '2025-07-03 11:08:54');
 
 -- --------------------------------------------------------
 
@@ -181,6 +216,13 @@ CREATE TABLE `quotation` (
   `create_date` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `quotation`
+--
+
+INSERT INTO `quotation` (`quotation_id`, `requester_name`, `requester_email`, `requester_phone_number`, `contact_method`, `request_type`, `quantity`, `paper_size`, `size_unit`, `size_width`, `size_height`, `paper_type`, `finishing`, `file_type`, `file_data`, `file_page`, `remark`, `quotation_status`, `create_date`) VALUES
+('Q0000001', 'john', 'john@mail.com', '123456', 'phone', 'service', 1, 'A2', '1', 1.00, 1.00, 'color', 'lamination', 'pdf', NULL, NULL, NULL, 'Done', '2025-06-29');
+
 -- --------------------------------------------------------
 
 --
@@ -210,7 +252,8 @@ INSERT INTO `service_list` (`service_id`, `service_type`, `service_desc`, `servi
 ('S008', 'size', 'A4', 1.00, 'Available'),
 ('S009', 'print', 'Lamination(Photocopy)', 2.50, 'Available'),
 ('S010', 'print', 'Lamination(Print)', 2.50, 'Available'),
-('S011', 'test', 'print', 1.20, 'Available');
+('S011', 'test', 'print', 1.20, 'Available'),
+('S012', 'print', 'print color', 10.00, 'Available');
 
 -- --------------------------------------------------------
 
@@ -236,7 +279,7 @@ CREATE TABLE `user` (
 INSERT INTO `user` (`user_id`, `email`, `password`, `name`, `img_id`, `phone_number`, `role`, `create_date`) VALUES
 (10000001, 'admin@mail.com', '$2y$10$Z.UXLUO.3jp53tgt5vtqM.AWzbV1X.uIeGCv/EuS6N0s3bku5FVPS', 'Admin', 2, '0123456789', 'Admin', '2025-06-07'),
 (10000003, 'customer@mail.com', '$2y$10$TEAstA2BidJCjUar/9Uhn.0ONqfYdP4oB7yPmc4jN5bUHBVrrBXLe', 'customer', 1, '01234567890', 'Customer', '2025-06-11'),
-(10000005, 'm.jackson99@gmail.com', '$2y$10$cFCjy0ulrBLN33cFMzC0QO5rN04eIaM/4kogwaQ8SWdnB9H58BAVC', 'Michael Jackson', 1, '0123456789', 'Staff', '2025-06-12'),
+(10000005, 'm.jackson99@gmail.com', '$2y$10$cFCjy0ulrBLN33cFMzC0QO5rN04eIaM/4kogwaQ8SWdnB9H58BAVC', 'Michael Jackson', 1, '0123456789', 'Staff', '2025-07-12'),
 (10000006, 'm.ali00@gmail.com', '$2y$10$Fa5fuPcYbaTibzCzsbPzQu6PTQi9aW6F.uR9g5H5jhnYg.uIOAFdG', 'Muhammad Ali', 1, '123456789', 'Customer', '2025-06-12'),
 (10000007, 'tcc1212@yahoo.com', '$2y$10$vPhAU.I4T/zrYd3vChmGk.QPGf/60jm18K4x2jI/qNi2xxI.EKZ9q', 'Tony Cha', 1, '0123456789', 'Admin', '2025-06-12');
 

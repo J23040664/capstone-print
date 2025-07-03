@@ -19,6 +19,13 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] == "Admin" || $_SESSION['role
     exit;
 }
 
+$deleteCompletedFile = "UPDATE file f
+                        JOIN `order` o ON f.order_id = o.order_id
+                        SET f.file_path = NULL
+                        WHERE o.order_status = 'Completed'
+                        AND o.completed_date < NOW() - INTERVAL 1 DAY;";
+$queryDeleteCompletedFile = mysqli_query($conn, $deleteCompletedFile) or die(mysqli_error($conn));
+
 $currentYear = date("Y");
 $startDate = "$currentYear-01-01";
 $endDate = "$currentYear-12-31";

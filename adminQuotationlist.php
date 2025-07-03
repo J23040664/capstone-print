@@ -16,6 +16,12 @@ if (isset($_SESSION['role']) && ($_SESSION['role'] == "Admin" || $_SESSION['role
 $showQuotation = "SELECT * FROM quotation";
 $queryShowQuotation = mysqli_query($conn, $showQuotation) or die(mysqli_error($conn));
 
+$deleteCompletedFile = "UPDATE quotation
+                        SET file_data = NULL
+                        WHERE quotation_status = 'Done'
+                        AND create_date < NOW() - INTERVAL 3 DAY;";
+$queryDeleteCompletedFile = mysqli_query($conn, $deleteCompletedFile) or die(mysqli_error($conn));
+
 ?>
 
 <!DOCTYPE html>
