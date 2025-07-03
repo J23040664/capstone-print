@@ -17,8 +17,23 @@ if (isset($_SESSION['id']) && $_SESSION['id'] == $_GET['id']) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['cancel_payment'])) {
-        echo "<script>alert('Payment was not completed. You can complete your payment from the order list page.'); window.location.href = 'customerOrderlist.php?id=" . $_POST['user_id'] . "';</script>";
-        exit;
+        if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin") {
+            echo "<script>alert('Payment was not completed. You can complete your payment from the order list page.'); window.location.href = 'adminOrderlist.php?id=" . $_POST['user_id'] . "';</script>";
+            exit;
+        }
+        if (isset($_SESSION['role']) && $_SESSION['role'] == "Staff") {
+            echo "<script>alert('Payment was not completed. You can complete your payment from the order list page.'); window.location.href = 'adminOrderlist.php?id=" . $_POST['user_id'] . "';</script>";
+            exit;
+        }
+
+        if (isset($_SESSION['role']) && $_SESSION['role'] == "Customer") {
+            echo "<script>alert('Payment was not completed. You can complete your payment from the order list page.'); window.location.href = 'customerOrderlist.php?id=" . $_POST['user_id'] . "';</script>";
+            exit;
+        }
+
+        else {
+            exit;
+        }
     }
 
     $order_id = $_POST['order_id'];
@@ -37,20 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt_update_order->execute();
 
     if ($stmt_update_payment->affected_rows > 0 && $stmt_update_order->affected_rows > 0) {
-        if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin") {
-            echo "<script>alert('Payment successful!'); window.location.href = 'adminOrderlist.php?id=" . $user_id . "';</script>";
-            exit;
-        }
-
-        if (isset($_SESSION['role']) && $_SESSION['role'] == "Staff") {
-            echo "<script>alert('Payment successful!'); window.location.href = 'adminOrderlist.php?id=" . $user_id . "';</script>";
-            exit;
-        }
-
-        if (isset($_SESSION['role']) && $_SESSION['role'] == "Customer") {
-            echo "<script>alert('Payment successful!'); window.location.href = 'customerOrderlist.php?id=" . $user_id . "';</script>";
-            exit;
-        }
+        header("Location: orderSubmitSuccess.php?order_id=" . urlencode($order_id) . "&id=" . urlencode($user_id));
+        exit;
     } else {
         echo "<script>alert('Payment update failed.');</script>";
     }

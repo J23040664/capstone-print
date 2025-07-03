@@ -456,7 +456,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
 
                                             <div class="mb-3">
                                                 <label for="newServiceType">Service Type:</label>
-                                                <input type="text" class="form-control" name="newServiceType" required>
+                                                <select name="newServiceType" class="form-select" required>
+                                                    <option value="print">Print</option>
+                                                    <option value="color">Color</option>
+                                                    <option value="size">Size</option>
+                                                </select>
                                             </div>
 
                                             <div class="mb-3">
@@ -1004,6 +1008,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
             scrollY: '400px', // Set vertical scroll height
             scrollCollapse: true, // Collapse table height when fewer rows
             paging: true, // Enable pagination
+            "order": [[0, "desc"]], //sort descending order from col 1
             columnDefs: [{
                     targets: '_all',
                     className: 'text-start'
@@ -1028,6 +1033,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
             scrollY: '400px', // Set vertical scroll height
             scrollCollapse: true, // Collapse table height when fewer rows
             paging: true, // Enable pagination
+            "order": [[0, "desc"]], //sort descending order from col 1
             columnDefs: [{
                     targets: '_all',
                     className: 'text-start'

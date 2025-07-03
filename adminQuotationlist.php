@@ -2,7 +2,7 @@
 session_start();
 include('dbms.php');
 
-if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['id'] == $_GET['id']) {
+if (isset($_SESSION['role']) && ($_SESSION['role'] == "Admin" || $_SESSION['role'] == "Staff") && $_SESSION['id'] == $_GET['id']) {
     $user_id = $_GET['id'];
     // show the user info
     $showUserInfo = "SELECT a.*, b.* FROM user a LEFT JOIN profile_images b ON a.img_id = b.img_id WHERE a.user_id = '$user_id'";

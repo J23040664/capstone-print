@@ -253,6 +253,11 @@ button.dropdown-toggle:active {
     border-color: #FAFAFA;
 }
 
+.form-select:focus {
+    outline: none;
+    border-color: #c62828;
+}
+
 /* profile setting page */
 .change-email-btn {
     outline: 1px solid #DEE2E6;

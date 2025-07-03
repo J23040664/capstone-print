@@ -2,7 +2,7 @@
 session_start();
 include('dbms.php');
 
-if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['id'] == $_GET['id']) {
+if (isset($_SESSION['role']) && ($_SESSION['role'] == "Admin" || $_SESSION['role'] == "Staff") && $_SESSION['id'] == $_GET['id']) {
 
     $user_id = $_GET['id'];
     // show the user info
@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editOrderBtn'])) {
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Create Order</title>
+    <title>Edit Order</title>
 
     <!-- Bootstrap and Bootstrap Icons CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">

@@ -1,3 +1,8 @@
+<?php
+session_start();
+$order_id = $_GET['order_id'];
+$user_id = $_GET['id'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -69,12 +74,32 @@
         <h2 class="fw-semibold mb-2">Thank you for your order!</h2>
         <p class="text-muted mb-4">Your request has been submitted. We will process it shortly.</p>
         <div class="d-flex gap-2 flex-wrap justify-content-center">
-            <a href="#" class="btn btn-outline-success flex-fill">View Order</a>
-            <a href="dashboard.html" class="btn btn-success flex-fill">Back to home</a>
+            <!-- view order -->
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin") { ?>
+                <a href="editOrder.php?order_id=<?php echo $order_id; ?>&id=<?php echo $user_id; ?>" class="btn btn-outline-success flex-fill">View Order</a>
+            <?php } ?>
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] == "Staff") { ?>
+                <a href="orderDetails.php?order_id=<?php echo $order_id; ?>&id=<?php echo $user_id; ?>" class="btn btn-outline-success flex-fill">View Order</a>
+            <?php } ?>
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] == "Customer") { ?>
+                <a href="customerDashboard.php?id=<?php echo $user_id; ?>" class="btn btn-success flex-fill">Back to home</a>
+            <?php } ?>
+
+            <!-- back to dashboard -->
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin") { ?>
+                <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="btn btn-success flex-fill">Back to home</a>
+            <?php } ?>
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] == "Staff") { ?>
+                <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="btn btn-success flex-fill">Back to home</a>
+            <?php } ?>
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] == "Customer") { ?>
+                <a href="customerDashboard.php?id=<?php echo $user_id; ?>" class="btn btn-success flex-fill">Back to home</a>
+            <?php } ?>
         </div>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

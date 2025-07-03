@@ -75,7 +75,7 @@ session_start();
 
                     <div class="form-group">
                         <label>Finishing 1</label>
-                        <select id="finishing1" class="finishing-select" onchange="preventFinishingSelect()">
+                        <select id="finishing1" class="finishing-select">
                             <option id="" value="">Select Finishing</option>
                             <?php
                             $finishingList = "SELECT * FROM finishing_list WHERE finishing_status = 'Available'";
@@ -88,7 +88,7 @@ session_start();
 
                     <div class="form-group">
                         <label>Finishing 2</label>
-                        <select id="finishing2" class="finishing-select" onchange="preventFinishingSelect()">
+                        <select id="finishing2" class="finishing-select">
                             <option value="">Select Finishing</option>
                             <?php
                             $finishingList = "SELECT * FROM finishing_list WHERE finishing_status = 'Available'";
@@ -101,7 +101,7 @@ session_start();
 
                     <div class="form-group">
                         <label>Finishing 3</label>
-                        <select id="finishing3" class="finishing-select" onchange="preventFinishingSelect()">
+                        <select id="finishing3" class="finishing-select">
                             <option value="">Select Finishing</option>
                             <?php
                             $finishingList = "SELECT * FROM finishing_list WHERE finishing_status = 'Available'";
@@ -134,21 +134,24 @@ session_start();
 
 <script>
     function preventFinishingSelect() {
-        const selectedValues = [
-            document.getElementById('finishing1').value,
-            document.getElementById('finishing2').value,
-            document.getElementById('finishing3').value
-        ];
+        // Get the IDs of currently selected options
+        const selectedOptionIds = Array.from(document.querySelectorAll('.finishing-select')).map(select => {
+            return select.options[select.selectedIndex]?.id || null;
+        });
 
+        // Loop through each select
         document.querySelectorAll('.finishing-select').forEach(select => {
-            const currentValue = select.value;
+            const currentOptionId = select.options[select.selectedIndex]?.id;
 
             Array.from(select.options).forEach(option => {
-                if (option.value !== '') {
-                    option.disabled = selectedValues.includes(option.value) && currentValue !== option.value;
-                } else {
+                if (option.value === '') {
+                    // Always enable the "Select Finishing" default
                     option.disabled = false;
+                    return;
                 }
+
+                // Disable if selected elsewhere, but not in the current dropdown
+                option.disabled = selectedOptionIds.includes(option.id) && option.id !== currentOptionId;
             });
         });
     }

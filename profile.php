@@ -202,7 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
         </div>
         <hr style="height: 2px; background-color: #FAFAFA; border: none;">
         <ul class="nav nav-pills flex-column">
-            <?php if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin") { ?>
+            <?php if (isset($_SESSION['role']) && ($_SESSION['role'] == "Admin" || $_SESSION['role'] == "Staff")) { ?>
                 <li class="nav-item">
                     <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i> <span>Dashboard</span></a>
                 </li>

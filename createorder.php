@@ -319,18 +319,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <hr style="height: 2px; background-color: #FAFAFA; border: none;">
         <ul class="nav nav-pills flex-column">
-            <li class="nav-item">
-                <a href="customerDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i> <span>Dashboard</span></a>
-            </li>
-            <li class="nav-item">
-                <a href="createOrder.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i> <span>Place Orders</span></a>
-            </li>
-            <li class="nav-item">
-                <a href="customerOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-clock-history"></i> <span>History Orders</span></a>
-            </li>
-            <li class="nav-item">
-                <a href="createQuotation.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i> <span>Ask Quotation</span></a>
-            </li>
+            <?php if (isset($_SESSION['role']) && ($_SESSION['role'] == "Admin" || $_SESSION['role'] == "Staff")) { ?>
+                <li class="nav-item">
+                    <a href="adminDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i> <span>Dashboard</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="adminOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i> <span>Manage Orders</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="adminQuotationlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i> <span>Manage Quotations</span></a>
+                </li>
+            <?php } ?>
+
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] == "Customer") { ?>
+                <li class="nav-item">
+                    <a href="customerDashboard.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-house"></i> <span>Dashboard</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="createOrder.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-card-list"></i> <span>Place Orders</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="customerOrderlist.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-clock-history"></i> <span>History Orders</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="createQuotation.php?id=<?php echo $user_id; ?>" class="nav-link"><i class="bi bi-patch-question"></i> <span>Ask Quotation</span></a>
+                </li>
+            <?php } ?>
         </ul>
     </div>
 

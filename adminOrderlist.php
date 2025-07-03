@@ -2,7 +2,7 @@
 session_start();
 include('dbms.php');
 
-if (isset($_SESSION['role']) && $_SESSION['role'] == "Admin" && $_SESSION['id'] == $_GET['id']) {
+if (isset($_SESSION['role']) && ($_SESSION['role'] == "Admin" || $_SESSION['role'] == "Staff") && $_SESSION['id'] == $_GET['id']) {
 
     $user_id = $_GET['id'];
     // show the user info
@@ -147,7 +147,7 @@ if (mysqli_num_rows($queryShowOrderList) === 0) {
                                         <?php echo htmlspecialchars($rowShowOrderList['order_id']); ?>
                                     </a>
                                 </td>
-                                <td><?php echo $rowShowOrderList['total_price']; ?></td>
+                                <td>RM <?php echo $rowShowOrderList['total_price']; ?></td>
                                 <td><?php echo $rowShowOrderList['customer_name']; ?></td>
                                 <td>
                                     <?php if ($rowShowOrderList['order_status'] == "Pending") { ?>
