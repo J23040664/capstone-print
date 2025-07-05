@@ -67,7 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     )";
 
     if ($conn->query($sql)) {
-        echo "<script>alert('Quotation submitted successfully!'); window.location.href = 'customerOrderlist.php';</script>";
+        echo "<script>alert('Quotation submitted successfully!'); window.location.href = 'customerOrderlist.php?id=$user_id';</script>";
     } else {
         echo "Error: " . $conn->error;
     }
@@ -192,15 +192,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <div class="mb-3">
                     <label class="form-label d-block">Preferred Contact Method</label>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="contact_method" id="contact_email" value="Email" required>
+                        <input class="form-check-input" type="radio" name="contact_method" id="contact_email" value="email" required>
                         <label class="form-check-label" for="contact_email">Email</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="contact_method" id="contact_whatsapp" value="WhatsApp">
+                        <input class="form-check-input" type="radio" name="contact_method" id="contact_whatsapp" value="whatsapp">
                         <label class="form-check-label" for="contact_whatsapp">WhatsApp</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="contact_method" id="contact_call" value="Phone Call">
+                        <input class="form-check-input" type="radio" name="contact_method" id="contact_call" value="phone">
                         <label class="form-check-label" for="contact_call">Phone Call</label>
                     </div>
                 </div>

@@ -161,19 +161,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editQuotationBtn'])) {
 
                     <div class="mb-3">
                         <label class="form-label">Email</label>
-                        <input type="email" name="requester_email" class="form-control" value="<?php echo $rowShowQuotationDetails['requester_name'] ?>" disabled>
+                        <input type="email" name="requester_email" class="form-control" value="<?php echo $rowShowQuotationDetails['requester_email'] ?>" disabled>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Phone Number</label>
-                        <input type="text" name="requester_phone_number" class="form-control" value="<?php echo $rowShowQuotationDetails['requester_name'] ?>" disabled>
+                        <input type="text" name="requester_phone_number" class="form-control" value="<?php echo $rowShowQuotationDetails['requester_phone_number'] ?>" disabled>
                     </div>
 
                     <!-- Prefered Contact Method -->
                     <div class="mb-3">
                         <label class="form-label d-block">Preferred Contact Method</label>
                         <div class="form-check form-check-inline">
-                            <?php if ($rowShowQuotationDetails['contact_method'] == "Email") { ?>
+                            <?php if (strtolower($rowShowQuotationDetails['contact_method']) == "email") { ?>
                                 <input class="form-check-input" type="radio" checked disabled>
                             <?php } else { ?>
                                 <input class="form-check-input" type="radio" disabled>
@@ -181,7 +181,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editQuotationBtn'])) {
                             <label class="form-check-label">Email</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <?php if ($rowShowQuotationDetails['contact_method'] == "WhatsApp") { ?>
+                            <?php if (strtolower($rowShowQuotationDetails['contact_method']) == "whatsapps") { ?>
                                 <input class="form-check-input" type="radio" checked disabled>
                             <?php } else { ?>
                                 <input class="form-check-input" type="radio" disabled>
@@ -189,7 +189,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editQuotationBtn'])) {
                             <label class="form-check-label">WhatsApp</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <?php if ($rowShowQuotationDetails['contact_method'] == "Phone Call") { ?>
+                            <?php if (strtolower($rowShowQuotationDetails['contact_method']) == "phone") { ?>
                                 <input class="form-check-input" type="radio" checked disabled>
                             <?php } else { ?>
                                 <input class="form-check-input" type="radio" disabled>
@@ -201,13 +201,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editQuotationBtn'])) {
                     <!-- Request Type -->
                     <div class="mb-3">
                         <label class="form-label">Request Type</label>
-                        <input type="text" name="request_type" class="form-control" value="<?php echo $rowShowQuotationDetails['requester_name'] ?>" disabled>
+                        <input type="text" name="request_type" class="form-control" value="<?php echo $rowShowQuotationDetails['request_type'] ?>" disabled>
                     </div>
 
                     <!-- Quantity -->
                     <div class="mb-3">
                         <label class="form-label">Quantity</label>
-                        <input type="text" name="quantity" class="form-control" value="<?php echo $rowShowQuotationDetails['requester_name'] ?>" disabled>
+                        <input type="text" name="quantity" class="form-control" value="<?php echo $rowShowQuotationDetails['quantity'] ?>" disabled>
                     </div>
 
                     <!-- Paper Size -->
@@ -216,19 +216,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editQuotationBtn'])) {
                         <select name="paper_size" id="paper_size" class="form-select" disabled>
                             <?php if ($rowShowQuotationDetails['paper_size'] == "") { ?>
                                 <option value="" selected>Select a size</option>
-                            <?php } else if ($rowShowQuotationDetails['paper_size'] == "A4") { ?>
+                            <?php } else if (strtolower(trim($rowShowQuotationDetails['paper_size'])) == "a4") { ?>
                                 <option value="A4">A4</option>
-                            <?php } else if ($rowShowQuotationDetails['paper_size'] == "A3") { ?>
+                            <?php } else if (strtolower(trim($rowShowQuotationDetails['paper_size'])) == "a3") { ?>
                                 <option value="A3">A3</option>
-                            <?php } else if ($rowShowQuotationDetails['paper_size'] == "A5") { ?>
+                            <?php } else if (strtolower(trim($rowShowQuotationDetails['paper_size'])) == "a5") { ?>
                                 <option value="A5">A5</option>
-                            <?php } else if ($rowShowQuotationDetails['paper_size'] == "Custom") { ?>
+                            <?php } else if (strtolower(trim($rowShowQuotationDetails['paper_size'])) == "custom") { ?>
                                 <option value="Custom">Custom</option>
                             <?php } ?>
                         </select>
                     </div>
 
-                    <?php if ($rowShowQuotationDetails['paper_size'] == "A4" || $rowShowQuotationDetails['paper_size'] == "A3" || $rowShowQuotationDetails['paper_size'] == "A5") { ?>
+                    <?php if (strtolower(trim($rowShowQuotationDetails['paper_size'])) == "a4" || strtolower(trim($rowShowQuotationDetails['paper_size'])) == "a3" || strtolower(trim($rowShowQuotationDetails['paper_size'])) == "a5") { ?>
                         <div id="size-display" class="mb-3" style="display: block;">
                             <label class="form-label">Dimensions</label>
                             <div class="d-flex align-items-center gap-2">
@@ -267,13 +267,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editQuotationBtn'])) {
                     <!-- Paper Type -->
                     <div class="mt-3 mb-3">
                         <label class="form-label">Paper Type</label>
-                        <input type="text" name="paper_type" class="form-control" value="<?php echo $rowShowQuotationDetails['requester_name'] ?>" disabled>
+                        <input type="text" name="paper_type" class="form-control" value="<?php echo $rowShowQuotationDetails['paper_type'] ?>" disabled>
                     </div>
 
                     <!-- Finishing -->
                     <div class="mb-3">
                         <label class="form-label">Finishing</label>
-                        <input type="text" name="finishing" class="form-control" value="<?php echo $rowShowQuotationDetails['requester_name'] ?>" disabled>
+                        <input type="text" name="finishing" class="form-control" value="<?php echo $rowShowQuotationDetails['finishing'] ?>" disabled>
                     </div>
 
                     <!-- File Upload -->
@@ -292,7 +292,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editQuotationBtn'])) {
                     <!-- Remarks -->
                     <div class="mb-3">
                         <label class="form-label">Remark</label>
-                        <textarea name="remark" rows="4" class="form-control" placeholder="Any notes or requests..." disabled><?php echo $rowShowQuotationDetails['requester_name'] ?></textarea>
+                        <textarea name="remark" rows="4" class="form-control" placeholder="Any notes or requests..." disabled><?php echo $rowShowQuotationDetails['remark'] ?></textarea>
                     </div>
 
 
