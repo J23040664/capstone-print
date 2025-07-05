@@ -18,7 +18,7 @@ $user_id = $_GET['id'];
         body {
             margin: 0;
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #f5f6f8;
+            background-color: #FFF6F5;
             display: flex;
             justify-content: center;
             align-items: center;
