@@ -213,6 +213,7 @@ if (mysqli_num_rows($queryShowOrderList) === 0) {
             scrollY: '400px', // Set vertical scroll height
             scrollCollapse: true, // Collapse table height when fewer rows
             paging: true, // Enable pagination
+            "order": [[5, "desc"]],
             columnDefs: [{
                 targets: '_all',
                 className: 'text-center'

@@ -2,6 +2,7 @@
 session_start();
 include('dbms.php');
 
+// access control, only admin can access this page, else direct login page
 if (isset($_SESSION['role']) && ($_SESSION['role'] == "Admin" || $_SESSION['role'] == "Staff") && $_SESSION['id'] == $_GET['id']) {
     $user_id = $_GET['id'];
 
@@ -469,6 +470,7 @@ $currentMonthNewUsers = $newUserCounts[$currentMonth] ?? 0;
             }
         });
 
+        // fetch data from checkPendingData.php
         async function fetchPendingCounts() {
             try {
                 const response = await fetch('./checkPendingData.php');

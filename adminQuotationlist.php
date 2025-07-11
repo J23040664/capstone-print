@@ -19,7 +19,7 @@ $queryShowQuotation = mysqli_query($conn, $showQuotation) or die(mysqli_error($c
 $deleteCompletedFile = "UPDATE quotation
                         SET file_data = NULL
                         WHERE quotation_status = 'Done'
-                        AND create_date < NOW() - INTERVAL 3 DAY;";
+                        AND create_date < NOW() - INTERVAL 1 DAY;";
 $queryDeleteCompletedFile = mysqli_query($conn, $deleteCompletedFile) or die(mysqli_error($conn));
 
 ?>
@@ -186,6 +186,7 @@ $queryDeleteCompletedFile = mysqli_query($conn, $deleteCompletedFile) or die(mys
             scrollY: '400px', // Set vertical scroll height
             scrollCollapse: true, // Collapse table height when fewer rows
             paging: true, // Enable pagination
+            "order": [[0, "desc"]],
             columnDefs: [{
                 targets: '_all',
                 className: 'text-center'
