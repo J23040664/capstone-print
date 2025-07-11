@@ -74,7 +74,7 @@ include './assets/includes/header.php';
                         <p><strong>Address:</strong><br>Subang SS15, Selangor, Malaysia</p>
                         <p><strong>Phone:</strong> +6012-345 6789</p>
                         <p><strong>Email:</strong> info@artprintss15.com</p>
-                        <p><strong>Hours:</strong><br>Mon-Fri: 9AM-7PM<br>Sat: 9AM-5PM<br>Sun: Closed</p>
+                        <p><strong>Hours:</strong><br>Mon-Fri: 9AM-7PM<br>Sat & Sun: Closed</p>
                     </div>
                     <div class="dashboard-card">
                         <h3>Get Quote</h3>

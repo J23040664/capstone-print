@@ -25,7 +25,7 @@
 
             <div class="auth-buttons desktop-visible">
                 <a href="login.php" class="btn btn-secondary">Login</a>
-                <a href="register.php" class="btn btn-primary">Register</a>
+                <a href="signup.php" class="btn btn-primary">Register</a>
             </div>
         </nav>
     </div>
