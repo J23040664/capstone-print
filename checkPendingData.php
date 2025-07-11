@@ -45,18 +45,3 @@ echo json_encode($response);
 $conn->close();
 exit;
 ?>
-
-async function fetchPendingCounts() {
-try {
-const response = await fetch('checkPendingData.php');
-const data = await response.json();
-
-document.getElementById('pendingOrders').textContent = data.pending_orders ?? 0;
-document.getElementById('pendingQuotations').textContent = data.pending_quotations ?? 0;
-} catch (error) {
-console.error('Failed to fetch pending counts:', error);
-}
-}
-
-fetchPendingCounts();
-setInterval(fetchPendingCounts, 5000);
