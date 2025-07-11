@@ -177,22 +177,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <form method="POST" enctype="multipart/form-data">
                 <!-- Customer Info -->
                 <div class="mb-3">
-                    <label class="form-label">Full Name</label>
+                    <label class="form-label">Full Name <span class="text-danger">*</span></label>
                     <input type="text" name="requester_name" class="form-control" value="<?php echo $rowShowUserInfo['name'];  ?>" required>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Email</label>
+                    <label class="form-label">Email <span class="text-danger">*</span></label>
                     <input type="email" name="requester_email" class="form-control" required>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Phone Number</label>
+                    <label class="form-label">Phone Number (Optional)</label>
                     <input type="text" name="requester_phone_number" class="form-control">
                 </div>
                 <!-- Prefered Contact Method -->
                 <div class="mb-3">
                     <label class="form-label d-block">Preferred Contact Method</label>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="contact_method" id="contact_email" value="email" required>
+                        <input class="form-check-input" type="radio" name="contact_method" id="contact_email" value="email" checked>
                         <label class="form-check-label" for="contact_email">Email</label>
                     </div>
                     <div class="form-check form-check-inline">

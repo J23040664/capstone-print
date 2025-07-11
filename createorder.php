@@ -396,20 +396,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <!-- Customer Name -->
                     <div class="mb-4">
-                        <label for="customerName" class="form-label">Name:</label>
+                        <label for="customerName" class="form-label">Name <span class="text-danger">*</span></label>
                         <input class="form-control" type="text" id="customerName" name="customerName" value="<?php echo $rowShowUserInfo['name']; ?>" required>
                     </div>
 
                     <!-- File Upload -->
                     <div class="mb-4">
-                        <label for="pdfFile" class="form-label">Upload PDF File:</label>
+                        <label for="pdfFile" class="form-label">Upload PDF File <span class="text-danger">*</span></label>
                         <input class="form-control" type="file" id="pdfFile" name="pdfFile" accept="application/pdf" required>
                     </div>
 
                     <!-- Service Type Dropdown -->
                     <div class="mb-4">
-                        <label for="serviceType" class="form-label">Type Of Services:</label>
-                        <select class="form-select" id="serviceType" name="serviceType">
+                        <label for="serviceType" class="form-label">Type Of Services <span class="text-danger">*</span></label>
+                        <select class="form-select" id="serviceType" name="serviceType" required>
                             <option value="None">-- Select Service --</option>
                             <?php
                             $sql = "SELECT service_id, service_desc FROM service_list WHERE service_status = 'Available' AND service_type = 'print'";
@@ -423,7 +423,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <!-- Paper Size Dropdown -->
                     <div class="mb-4">
-                        <label for="paperSize" class="form-label">Paper Size:</label>
+                        <label for="paperSize" class="form-label">Paper Size <span class="text-danger">*</span></label>
                         <select class="form-select" id="paperSize" name="paperSize">
                             <option value="None">-- Select Paper Size --</option>
                             <?php
@@ -438,7 +438,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <!-- Print Color Option -->
                     <div class="mb-4">
-                        <label class="form-label">Print Colour:</label>
+                        <label class="form-label">Print Colour <span class="text-danger">*</span></label>
                         <div class="row">
                             <div class="col-2">
                                 <div class="form-check">
@@ -457,7 +457,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <!-- Number of Copies Input -->
                     <div class="mb-4">
-                        <label for="copies" class="form-label">Number of Copies:</label>
+                        <label for="copies" class="form-label">Number of Copies <span class="text-danger">*</span></label>
                         <input class="form-control" type="number" id="copies" name="copies" min="1" value="1" required>
                     </div>
 
@@ -469,13 +469,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <!-- Service Cost Output -->
                     <div class="mb-4">
-                        <label class="form-label">Service Cost:</label>
+                        <label class="form-label"><strong>Service Cost</strong></label>
                         <input class="form-control" style="background-color: #EAECEF; cursor: not-allowed;" type="text" id="serviceCost" name="serviceCost" value="RM 0.00" readonly>
                     </div>
 
+                    <hr class="mt-5 mb-5">
+
                     <!-- Finishing Type 1 Dropdown -->
                     <div class="mb-4">
-                        <label for="finishing1" class="form-label">Finishing 1:</label>
+                        <label for="finishing1" class="form-label">Finishing 1 (Optional)</label>
                         <select class="form-select finishing-select" id="finishing1" name="finishing1">
                             <option value="None">-- Select Finishing 1 --</option>
                             <?php
@@ -490,7 +492,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <!-- Finishing Type 2 Dropdown -->
                     <div class="mb-4">
-                        <label for="finishing2" class="form-label">Finishing 2:</label>
+                        <label for="finishing2" class="form-label">Finishing 2 (Optional)</label>
                         <select class="form-select finishing-select" id="finishing2" name="finishing2">
                             <option value="None">-- Select Finishing 2 --</option>
                             <?php
@@ -505,7 +507,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <!-- Finishing Type 3 Dropdown -->
                     <div class="mb-4">
-                        <label for="finishing3" class="form-label">Finishing 3:</label>
+                        <label for="finishing3" class="form-label">Finishing 3 (Optional)</label>
                         <select class="form-select finishing-select" id="finishing3" name="finishing3">
                             <option value="None">-- Select Finishing 3 --</option>
                             <?php
@@ -521,18 +523,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <!-- Finishing Cost Output -->
                     <div class="mb-4">
-                        <label class="form-label">Finishing Cost:</label>
+                        <label class="form-label"><strong>Finishing Cost</strong></label>
                         <input class="form-control" style="background-color: #EAECEF; cursor: not-allowed;" type="text" id="finishingCost" name="finishingCost" value="RM 0.00" readonly>
                     </div>
 
+                    <hr class="mt-5 mb-3">
+
                     <!-- Total Cost Output -->
                     <div class="mb-4">
-                        <label class="form-label">Total Cost:</label>
+                        <label class="form-label"><strong>Total Cost</strong></label>
                         <input class="form-control" style="background-color: #EAECEF; cursor: not-allowed;" type="text" id="totalCost" name="totalCost" value="RM 0.00" readonly>
                     </div>
 
                     <!-- Form Buttons -->
-                    <div class="d-flex justify-content-end gap-2">
+                    <div class="d-flex justify-content-end gap-2 mt-5">
                         <a href="customerOrderlist.php?id=<?php echo $user_id; ?>" class="btn btn-light">Cancel</a>
                         <button type="submit" class="btn login-btn">Submit</button>
                     </div>
