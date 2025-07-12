@@ -2,7 +2,7 @@
     <div class="container">
         <nav>
             <a href="index.php" class="logo">
-                <img src="../img/logo.png" alt="Art & Print SS15 Logo" class="nav-logo-img">
+                <img src="../assets/img/logo.png" alt="Art & Print SS15 Logo" class="nav-logo-img">
             </a>
 
             <div class="nav-toggle" id="navToggle">

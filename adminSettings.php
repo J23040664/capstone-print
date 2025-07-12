@@ -540,7 +540,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
                                                                 <form method="POST">
                                                                     <div class="mb-3">
                                                                         <label for="updateServiceId">Service Id:</label>
-                                                                        <input type="text" class="form-control" name="updateServiceId" value="<?php echo $rowShowServiceList['service_id']; ?>" readonly>
+                                                                        <input type="text" class="form-control" style="background-color: #EAECEF; cursor: not-allowed;" name="updateServiceId" value="<?php echo $rowShowServiceList['service_id']; ?>" readonly>
                                                                     </div>
 
                                                                     <div class="mb-3">
@@ -708,7 +708,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
                                                                 <form method="POST">
                                                                     <div class="mb-3">
                                                                         <label for="updateFinishingId">Finishing Id:</label>
-                                                                        <input type="text" class="form-control" name="updateFinishingId" value="<?php echo $rowShowFinishingList['finishing_id']; ?>" readonly>
+                                                                        <input type="text" class="form-control" style="background-color: #EAECEF; cursor: not-allowed;" name="updateFinishingId" value="<?php echo $rowShowFinishingList['finishing_id']; ?>" readonly>
                                                                     </div>
 
                                                                     <div class="mb-3">
@@ -1008,7 +1008,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
             scrollY: '400px', // Set vertical scroll height
             scrollCollapse: true, // Collapse table height when fewer rows
             paging: true, // Enable pagination
-            "order": [[0, "desc"]], //sort descending order from col 1
+            "order": [
+                [0, "desc"]
+            ], //sort descending order from col 1
             columnDefs: [{
                     targets: '_all',
                     className: 'text-start'
@@ -1033,7 +1035,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
             scrollY: '400px', // Set vertical scroll height
             scrollCollapse: true, // Collapse table height when fewer rows
             paging: true, // Enable pagination
-            "order": [[0, "desc"]], //sort descending order from col 1
+            "order": [
+                [0, "desc"]
+            ], //sort descending order from col 1
             columnDefs: [{
                     targets: '_all',
                     className: 'text-start'
