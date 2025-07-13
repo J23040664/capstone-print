@@ -72,12 +72,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateInfoBtn'])) {
 
 // update email
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateEmailBtn'])) {
-    $newEmail = $_POST['updateEmail'];
+    $newEmail = trim($_POST['updateEmail']);
 
+    // Fetch current email from database
+    $currentEmailQuery = "SELECT email FROM user WHERE user_id = '$user_id'";
+    $result = mysqli_query($conn, $currentEmailQuery);
+    $row = mysqli_fetch_assoc($result);
+
+    if ($row['email'] === $newEmail) {
+        // New email is the same as current one
+        $_SESSION['update_error'] = true;
+        echo "<script>
+        alert('New Email can't same with Current Email.');
+        window.location.href = 'profile.php?id={$user_id}';
+        </script>";
+        exit;
+    }
+
+    // Check if new email is already used by another user
+    $checkEmailQuery = "SELECT * FROM user WHERE email = '$newEmail' AND user_id != '$user_id'";
+    $checkResult = mysqli_query($conn, $checkEmailQuery);
+
+    if (mysqli_num_rows($checkResult) > 0) {
+        // Email already in use
+        $_SESSION['update_error'] = true;
+        echo "<script>
+        alert('New Email have already exist, please try another email!');
+        window.location.href = 'profile.php?id={$user_id}';
+        </script>";
+        exit;
+    }
+
+    // Passed all checks, proceed to update
     $updateEmail = "UPDATE user SET email = '$newEmail' WHERE user_id = '$user_id'";
-
     if (mysqli_query($conn, $updateEmail)) {
-
         $_SESSION['update_success'] = true;
         header("Location: profile.php?id={$user_id}");
         exit;
@@ -87,6 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateEmailBtn'])) {
         exit;
     }
 }
+
 
 // Update Password
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn'])) {
@@ -108,6 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
     $rowOldPassword = mysqli_fetch_assoc($queryOldPassword);
     $hashedOldPassword = $rowOldPassword['password'];
     if (!password_verify($old_password, $hashedOldPassword)) {
+        $_SESSION['update_error'] = true;
         echo "<script>
         alert('Old password is not match.');
         window.location.href = 'profile.php?id={$user_id}';
@@ -116,6 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
     }
 
     if ($new_password !== $confirm_password) {
+        $_SESSION['update_error'] = true;
         echo "<script>
         alert('New Password and Confirm Password is not match.');
         window.location.href = 'profile.php?id={$user_id}';
@@ -375,13 +406,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
                                 <label for="updateEmail">New Email Address:</label>
                                 <input type="email" class="form-control mb-3" name="updateEmail" id="updateEmail" required>
 
-                                <label for="code">Verification Code:</label>
+                                <!-- <label for="code">Verification Code:</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="code" name="code" required />
                                     <button type="button" class="btn btn-sm sendcode-btn" onclick="verifyCode(document.getElementById('updateEmail').value)" id="send_code_btn" disabled>
                                         Send code
                                     </button>
-                                </div>
+                                </div> -->
                             </div>
 
                             <div class="modal-footer">
