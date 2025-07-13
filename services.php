@@ -67,6 +67,76 @@ include './assets/includes/header.php';
                         <h3>Digital Scanning</h3>
                         <p>RM 1.00/page</p>
                     </div>
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fa-solid fa-stamp"></i>
+                        </div>
+                        <h3>Rubber Stamps</h3>
+                        <p>Contact Us for More Details</p>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fa-solid fa-stamp"></i>
+                        </div>
+                        <h3>Pre-Ink Stamps</h3>
+                        <p>Contact Us for More Details</p>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fa-solid fa-file-contract"></i>
+                        </div>
+                        <h3>Brochures</h3>
+                        <p>Contact Us for More Details</p>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fa-solid fa-file-contract"></i>
+                        </div>
+                        <h3>Flyers</h3>
+                        <p>Contact Us for More Details</p>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fa-solid fa-file-contract"></i>
+                        </div>
+                        <h3>Banner</h3>
+                        <p>Contact Us for More Details</p>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fa-solid fa-signs-post"></i>
+                        </div>
+                        <h3>Signages</h3>
+                        <p>Contact Us for More Details</p>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fa-solid fa-calendar"></i>
+                        </div>
+                        <h3>Calendars</h3>
+                        <p>Contact Us for More Details</p>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fa-solid fa-brush"></i>
+                        </div>
+                        <h3>Slik Screen</h3>
+                        <p>Contact Us for More Details</p>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fa-solid fa-tag"></i>
+                        </div>
+                        <h3>Labels</h3>
+                        <p>Contact Us for More Details</p>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fa-solid fa-note-sticky"></i>
+                        </div>
+                        <h3>Sticker</h3>
+                        <p>Contact Us for More Details</p>
+                    </div>
                 </div>
             </div>
     </main>
