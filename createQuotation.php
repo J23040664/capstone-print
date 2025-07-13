@@ -31,14 +31,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $requester_email = mysqli_real_escape_string($conn, $_POST['requester_email']);
     $requester_phone_number = mysqli_real_escape_string($conn, $_POST['requester_phone_number']);
     $contact_method = mysqli_real_escape_string($conn, $_POST['contact_method']);
-    $request_type = mysqli_real_escape_string($conn, $_POST['request_type']);
+    $request_type = $_POST['request_type'] === 'Other' ? $_POST['request_type_other'] : $_POST['request_type'];
+
     $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : null;
     $paper_size = mysqli_real_escape_string($conn, $_POST['paper_size']);
     $size_unit = mysqli_real_escape_string($conn, $_POST['custom_unit'] ?? $_POST['size_unit'] ?? '');
     $size_width = isset($_POST['custom_width']) && $_POST['custom_width'] !== '' ? (float)$_POST['custom_width'] : (float)($_POST['size_width'] ?? 0);
     $size_height = isset($_POST['custom_height']) && $_POST['custom_height'] !== '' ? (float)$_POST['custom_height'] : (float)($_POST['size_height'] ?? 0);
-    $paper_type = mysqli_real_escape_string($conn, $_POST['paper_type']);
-    $finishing = mysqli_real_escape_string($conn, $_POST['finishing']);
+    $paper_type = $_POST['paper_type'] === 'Other' ? $_POST['paper_type_other'] : $_POST['paper_type'];
+    $paper_type = mysqli_real_escape_string($conn, $paper_type);
+    $finishing = $_POST['finishing'] === 'Other' ? $_POST['finishing_other'] : $_POST['finishing'];
+    $finishing = mysqli_real_escape_string($conn, $finishing);
     $file_type = mysqli_real_escape_string($conn, $_POST['file_type']);
     $file_page = isset($_POST['file_page']) ? (int)$_POST['file_page'] : null;
     $remark = mysqli_real_escape_string($conn, $_POST['remark']);
@@ -207,18 +210,37 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 <!-- Request Type -->
                 <div class="mb-3">
-                    <label class="form-label">
-                        Request Type
-                        <button type="button" class="btn btn-outline-secondary help-btn"
+                    <label class="form-label d-flex align-items-center" style="text-align: left;">
+                        <span class="me-2">Request Type</span>
+                        <button type="button"
+                            class="btn btn-sm btn-light border-0 rounded-circle p-0 d-flex justify-content-center align-items-center"
+                            style="width: 20px; height: 20px; font-size: 14px; color: #0d6efd; background-color: #e7f1ff;"
                             data-bs-toggle="popover"
                             data-bs-container="body"
                             data-bs-placement="right"
                             data-bs-html="true"
-                            title="Examples"
-                            data-bs-content="<ul style='margin-left: -20px; padding-left: 0;'><li>Booklet</li><li>Poster</li><li>Flyer</li><li>Banner</li><li>Name Card</li></ul>">?</button>
+                            title="How?"
+                            tabindex="0" 
+                            data-bs-content="Select a request type from the menu. If your request is not listed, choose 'Other' and type your specific request.">?</button>
                     </label>
-                    <input type="text" name="request_type" class="form-control">
+
+                    <select name="request_type" class="form-select" id="requestTypeSelect" onchange="toggleOtherInput()">
+                        <option value="" disabled selected>Select a request type</option>
+                        <option value="Booklet">Booklet</option>
+                        <option value="Poster">Poster</option>
+                        <option value="Flyer">Flyer</option>
+                        <option value="Banner">Banner</option>
+                        <option value="Brochures">Brochures</option>
+                        <option value="Catalouge">Catalouge</option>
+                        <option value="Sticker">Sticker</option>
+                        <option value="Calendars">Calendars</option>
+                        <option value="Name Card">Name Card</option>
+                        <option value="Other">---Other---</option>
+                    </select>
+
+                    <input type="text" name="request_type_other" id="requestTypeOther" class="form-control mt-2" placeholder="Please specify..." style="display: none;">
                 </div>
+
 
                 <!-- Quantity -->
                 <div class="mb-3">
@@ -234,7 +256,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <option value="A4">A4</option>
                         <option value="A3">A3</option>
                         <option value="A5">A5</option>
-                        <option value="Custom">Custom</option>
+                        <option value="Custom">---Custom---</option>
                     </select>
                 </div>
 
@@ -271,32 +293,58 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 <!-- Paper Type -->
                 <div class="mb-3">
-                    <label class="form-label">
-                        Paper Type
-                        <button type="button" class="btn btn-outline-secondary help-btn"
+                    <label class="form-label d-flex align-items-center" style="text-align: left;">
+                        <span class="me-2">Paper Type</span>
+                        <button type="button"
+                            class="btn btn-sm btn-light border-0 rounded-circle p-0 d-flex justify-content-center align-items-center"
+                            style="width: 20px; height: 20px; font-size: 14px; color: #0d6efd; background-color: #e7f1ff;"
                             data-bs-toggle="popover"
                             data-bs-container="body"
                             data-bs-placement="right"
                             data-bs-html="true"
-                            title="Examples"
-                            data-bs-content="<ul style='margin-left: -20px; padding-left: 0;'><li>Glossy Art Paper</li><li>Matte Art Paper</li><li>Simili</li><li>Sticker</li></ul>">?</button>
+                            title="How?"
+                            tabindex="0" 
+                            data-bs-content="Select a paper type from the list. If not listed, choose 'Other' and enter your paper type.">?</button>
                     </label>
-                    <input type="text" name="paper_type" class="form-control">
+
+                    <select name="paper_type" class="form-select" id="paperTypeSelect" onchange="toggleOtherInput('paperTypeSelect', 'paperTypeOther')">
+                        <option value="" disabled selected>Select a paper type</option>
+                        <option value="Glossy Art Paper">Glossy Art Paper</option>
+                        <option value="Matte Art Paper">Matte Art Paper</option>
+                        <option value="Simili">Simili</option>
+                        <option value="Sticker">Sticker</option>
+                        <option value="Other">---Other---</option>
+                    </select>
+
+                    <input type="text" name="paper_type_other" id="paperTypeOther" class="form-control mt-2" placeholder="Please specify..." style="display: none;">
                 </div>
 
                 <!-- Finishing -->
                 <div class="mb-3">
-                    <label class="form-label">
-                        Finishing
-                        <button type="button" class="btn btn-outline-secondary help-btn"
+                    <label class="form-label d-flex align-items-center" style="text-align: left;">
+                        <span class="me-2">Finishing</span>
+                        <button type="button"
+                            class="btn btn-sm btn-light border-0 rounded-circle p-0 d-flex justify-content-center align-items-center"
+                            style="width: 20px; height: 20px; font-size: 14px; color: #0d6efd; background-color: #e7f1ff;"
                             data-bs-toggle="popover"
                             data-bs-container="body"
                             data-bs-placement="right"
                             data-bs-html="true"
-                            title="Examples"
-                            data-bs-content="<ul style='margin-left: -20px; padding-left: 0;'><li>Lamination</li><li>Binding</li><li>Trimming</li><li>Folding</li></ul>">?</button>
+                            title="How?"
+                            tabindex="0" 
+                            data-bs-content="Choose a finishing method. If not listed, select 'Other' and enter your custom finishing.">?</button>
                     </label>
-                    <input type="text" name="finishing" class="form-control">
+
+                    <select name="finishing" class="form-select" id="finishingSelect" onchange="toggleOtherInput('finishingSelect', 'finishingOther')">
+                        <option value="" disabled selected>Select a finishing</option>
+                        <option value="Lamination">Lamination</option>
+                        <option value="Binding">Binding</option>
+                        <option value="Trimming">Trimming</option>
+                        <option value="Folding">Folding</option>
+                        <option value="Other">---Other---</option>
+                    </select>
+
+                    <input type="text" name="finishing_other" id="finishingOther" class="form-control mt-2" placeholder="Please specify..." style="display: none;">
                 </div>
 
                 <!-- File Upload -->
@@ -351,31 +399,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
-            const popovers = [];
-
             popoverTriggerList.forEach(el => {
-                const popover = new bootstrap.Popover(el);
-                popovers.push({
-                    trigger: el,
-                    instance: popover
-                });
-            });
-
-            // Close all popovers on outside click
-            document.addEventListener("click", function(e) {
-                popovers.forEach(({
-                    trigger,
-                    instance
-                }) => {
-                    if (!trigger.contains(e.target) && !document.querySelector(".popover")?.contains(e.target)) {
-                        instance.hide();
-                    }
+                new bootstrap.Popover(el, {
+                    trigger: 'focus',
+                    html: true
                 });
             });
         });
     </script>
+
 
     <!-- Handle Paper Size Function -->
     <script>
@@ -509,6 +543,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             document.getElementById("paper_size").selectedIndex = 0;
         });
     </script>
+
+    <!-- Control dropdown menu for request type-->
+    <script>
+    function toggleOtherInput(selectId, inputId) {
+        const select = document.getElementById(selectId);
+        const input = document.getElementById(inputId);
+
+        if (select.value === 'Other') {
+            input.style.display = 'block';
+            input.required = true;
+        } else {
+            input.style.display = 'none';
+            input.required = false;
+            input.value = '';
+        }
+    }
+    </script>
+
+
 </body>
 
 </html>
