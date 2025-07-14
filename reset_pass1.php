@@ -1,6 +1,7 @@
 <?php
 include("./dbms.php");
 session_start();
+$errorMessage = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['checkAccount'])) {
 
