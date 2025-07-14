@@ -263,14 +263,21 @@ $rowOrderCancelled = mysqli_fetch_assoc($queryOrderCancelled);
                                                     <td>
                                                         <?php
                                                         $order_status = $row['order_status'];
-                                                        $order_badge_class = ($order_status == 'Completed') ? 'bg-success text-white' : (($order_status == 'Pending') ? 'badge bg-warning text-black' : 'bg-primary text-white');
+                                                        $order_badge_class =
+                                                            $order_badge_class =
+                                                            ($order_status == 'Completed') ? 'status-completed text-black' : 
+                                                                            (($order_status == 'Pending') ? 'status-pending text-black' : 
+                                                                            (($order_status == 'In Progress') ? 'status-in-progress text-black' : 
+                                                                            (($order_status == 'Ready To Collect') ? 'status-ready-to-collect text-black' :
+                                                                            (($order_status == 'Cancelled') ? 'status-cancelled text-black' : 
+                                                                            'bg-primary text-white'))));
                                                         ?>
                                                         <span class="badge <?php echo $order_badge_class; ?>"><?php echo htmlspecialchars($order_status); ?></span>
                                                     </td>
                                                     <td>
                                                         <?php
                                                         $payment_status = $row['payment_status'];
-                                                        $payment_badge_class = ($payment_status == 'Paid') ? 'bg-success text-white' : 'bg-warning text-dark';
+                                                        $payment_badge_class = ($payment_status == 'Paid') ? 'status-completed text-black' : 'status-pending text-black';
                                                         ?>
                                                         <span class="badge <?php echo $payment_badge_class; ?>"><?php echo htmlspecialchars($payment_status); ?></span>
                                                     </td>
