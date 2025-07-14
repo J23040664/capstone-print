@@ -406,13 +406,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updatePasswordBtn']))
                                 <label for="updateEmail">New Email Address:</label>
                                 <input type="email" class="form-control mb-3" name="updateEmail" id="updateEmail" required>
 
-                                <!-- <label for="code">Verification Code:</label>
+                                <label for="code">Verification Code:</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="code" name="code" required />
                                     <button type="button" class="btn btn-sm sendcode-btn" onclick="verifyCode(document.getElementById('updateEmail').value)" id="send_code_btn" disabled>
                                         Send code
                                     </button>
-                                </div> -->
+                                </div>
                             </div>
 
                             <div class="modal-footer">
