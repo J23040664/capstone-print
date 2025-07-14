@@ -1,10 +1,10 @@
 // EmailJS SDK
 // Dont share this secret key to others, because have quota
-// const emailjsSecretKey = 'xqOuw3Z-26loqt4Fg';
-// const emailjsserviceKey = 'service_gkayr3w';
-// const emailjsTemplateKey1 = 'template_scesfvy';
-// const emailjsTemplateKey2 = 'template_sfes04c';
-// emailjs.init(emailjsSecretKey);
+const emailjsSecretKey = 'xqOuw3Z-26loqt4Fg';
+const emailjsserviceKey = 'service_gkayr3w';
+const emailjsTemplateKey1 = 'template_scesfvy';
+const emailjsTemplateKey2 = 'template_sfes04c';
+emailjs.init(emailjsSecretKey);
 
 function generateVerificationCode() {
     return Math.floor(100000 + Math.random() * 900000).toString();
