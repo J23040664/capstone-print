@@ -1,9 +1,11 @@
 README File
 A Instruction to guide how to import the system to local
 
-1. Download and extract the zip file
-2. Open XAMPP and start the local server
-3. Go phpMyAdmin and create database named “printing”
-4. Import “printing.sql” file from the folder
-5. If import successfully, open new tabs from browser and search “localhost/capstone-project/”.
-6. Successfully direct to landing page.
+1. Download zip file from github and extract the zip file
+2. Rename the file named "capstone-print"
+3. Copy the file and paste it to XAMPP > htdocs
+4. Open XAMPP and start the Web server and MySQL database
+5. Open browser and search "localhost", go to phpMyAdmin and create database named “printing”
+6. Import “printing.sql” file from the folder, ensure import into "printing" database
+7. If import successfully, open new tabs from browser and search “localhost/capstone-project/”.
+8. Successfully direct to landing page.
