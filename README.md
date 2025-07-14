@@ -20,5 +20,5 @@ password: customer
 
 IMPORTANT!!! IMPORTANT!!! IMPORTANT!!!
 1. EmailJS is free service only can send 200 emails / month.
-2. The email service will until Aug 2025, please register own EmailJS for explore more if needed.
+2. The email service will until September 2025, please register own EmailJS for explore more if needed.
 3. Can change the own public key from this file -> assets > js > email.js.
