@@ -517,9 +517,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
                                             <td><?php echo $rowShowServiceList['service_price']; ?></td>
                                             <td>
                                                 <?php if ($rowShowServiceList['service_status'] == "Available") { ?>
-                                                    <span class="badge bg-success text-white"><?php echo $rowShowServiceList['service_status']; ?></span>
+                                                    <span class="badge status-completed text-black"><?php echo $rowShowServiceList['service_status']; ?></span>
                                                 <?php } else if ($rowShowServiceList['service_status'] == "Not Available") { ?>
-                                                    <span class="badge bg-danger text-white"><?php echo $rowShowServiceList['service_status']; ?></span>
+                                                    <span class="badge status-cancelled text-black"><?php echo $rowShowServiceList['service_status']; ?></span>
                                                 <?php } ?>
                                             </td>
 
@@ -685,9 +685,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
                                             <td><?php echo $rowShowFinishingList['finishing_price']; ?></td>
                                             <td>
                                                 <?php if ($rowShowFinishingList['finishing_status'] == "Available") { ?>
-                                                    <span class="badge bg-success text-white"><?php echo $rowShowFinishingList['finishing_status']; ?></span>
+                                                    <span class="badge status-completed text-black"><?php echo $rowShowFinishingList['finishing_status']; ?></span>
                                                 <?php } else if ($rowShowFinishingList['finishing_status'] == "Not Available") { ?>
-                                                    <span class="badge bg-danger text-white"><?php echo $rowShowFinishingList['finishing_status']; ?></span>
+                                                    <span class="badge status-cancelled text-black"><?php echo $rowShowFinishingList['finishing_status']; ?></span>
                                                 <?php } ?>
                                             </td>
 
@@ -866,11 +866,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['deleteUserBtn'])) {
                                         <td><?php echo $rowShowUserList['phone_number']; ?></td>
                                         <td>
                                             <?php if ($rowShowUserList['role'] == "Admin") { ?>
-                                                <span class="badge bg-success text-white"><?php echo $rowShowUserList['role']; ?></span>
+                                                <span class="badge status-completed text-black"><?php echo $rowShowUserList['role']; ?></span>
                                             <?php } else if ($rowShowUserList['role'] == "Staff") { ?>
-                                                <span class="badge bg-danger text-white"><?php echo $rowShowUserList['role']; ?></span>
+                                                <span class="badge status-cancelled text-black"><?php echo $rowShowUserList['role']; ?></span>
                                             <?php } else if ($rowShowUserList['role'] == "Customer") { ?>
-                                                <span class="badge bg-warning text-white"><?php echo $rowShowUserList['role']; ?></span>
+                                                <span class="badge status-pending text-black"><?php echo $rowShowUserList['role']; ?></span>
                                             <?php } ?>
                                         </td>
                                         <td><?php echo $rowShowUserList['create_date']; ?></td>

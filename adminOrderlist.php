@@ -151,20 +151,22 @@ if (mysqli_num_rows($queryShowOrderList) === 0) {
                                 <td><?php echo $rowShowOrderList['customer_name']; ?></td>
                                 <td>
                                     <?php if ($rowShowOrderList['order_status'] == "Pending") { ?>
-                                        <span class="badge bg-warning text-black"><?php echo $rowShowOrderList['order_status']; ?></span>
+                                        <span class="badge status-pending text-black"><?php echo $rowShowOrderList['order_status']; ?></span>
                                     <?php } else if ($rowShowOrderList['order_status'] == "In Progress") { ?>
-                                        <span class="badge bg-warning text-black"><?php echo $rowShowOrderList['order_status']; ?></span>
+                                        <span class="badge status-in-progress text-black"><?php echo $rowShowOrderList['order_status']; ?></span>
                                     <?php } else if ($rowShowOrderList['order_status'] == "Ready To Collect") { ?>
-                                        <span class="badge bg-warning text-black"><?php echo $rowShowOrderList['order_status']; ?></span>
+                                        <span class="badge status-ready-to-collect text-black"><?php echo $rowShowOrderList['order_status']; ?></span>
                                     <?php } else if ($rowShowOrderList['order_status'] == "Completed") { ?>
-                                        <span class="badge bg-warning text-black"><?php echo $rowShowOrderList['order_status']; ?></span>
+                                        <span class="badge status-completed text-black"><?php echo $rowShowOrderList['order_status']; ?></span>
+                                    <?php } else if ($rowShowOrderList['order_status'] == "Cancelled") { ?>
+                                        <span class="badge status-cancelled text-black"><?php echo $rowShowOrderList['order_status']; ?></span>
                                     <?php } ?>
                                 </td>
                                 <td>
                                     <?php if ($rowShowOrderList['payment_status'] == "Pending") { ?>
-                                        <span class="badge bg-warning text-black"><?php echo $rowShowOrderList['payment_status']; ?></span>
+                                        <span class="badge status-pending text-black"><?php echo $rowShowOrderList['payment_status']; ?></span>
                                     <?php } else if ($rowShowOrderList['payment_status'] == "Paid") { ?>
-                                        <span class="badge bg-success text-white"><?php echo $rowShowOrderList['payment_status']; ?></span>
+                                        <span class="badge status-completed text-black"><?php echo $rowShowOrderList['payment_status']; ?></span>
                                     <?php } ?>
                                 </td>
                                 <td>
@@ -213,7 +215,9 @@ if (mysqli_num_rows($queryShowOrderList) === 0) {
             scrollY: '400px', // Set vertical scroll height
             scrollCollapse: true, // Collapse table height when fewer rows
             paging: true, // Enable pagination
-            "order": [[5, "desc"]],
+            "order": [
+                [5, "desc"]
+            ],
             columnDefs: [{
                 targets: '_all',
                 className: 'text-center'

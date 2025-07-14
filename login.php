@@ -2,6 +2,7 @@
 session_start();
 include "dbms.php";
 $errorMessage = "";
+
 $showLogoutToast = false;
 if (isset($_SESSION['logout']) && $_SESSION['logout']) {
     $showLogoutToast = true;
