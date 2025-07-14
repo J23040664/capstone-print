@@ -219,6 +219,10 @@ button.dropdown-toggle:active {
     .adminDash-body {
         font-size: 12px;
     }
+
+    .orderlist-btn {
+        font-size: 12px;
+    }
 }
 
 .custom-card {
@@ -228,6 +232,17 @@ button.dropdown-toggle:active {
 }
 
 /* order list page */
+.orderlist-btn {
+    background: #c62828;
+    color: #FAFAFA;
+}
+
+.orderlist-btn:hover {
+    background: transparent;
+    color: #c62828;
+    border: 1px solid #c62828;
+}
+
 .dt-paging-button.page-item .page-link {
     color: #c62828;
 }

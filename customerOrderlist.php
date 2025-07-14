@@ -231,10 +231,11 @@ $result = $stmt->get_result();
         $('#customerOrderlist').DataTable({
             lengthChange: false,
             ordering: false,
+            paging: false,
             dom: '<"d-flex justify-content-between align-items-center mb-3"fB>t<"d-flex justify-content-between mt-2"ip>',
             buttons: [{
                 text: '<i class="bi bi-plus-circle"></i> Create New Order',
-                className: 'btn login-btn',
+                className: 'btn orderlist-btn btn-sm',
                 action: function() {
                     window.location.href = 'createOrder.php?id=<?php echo urlencode($user_id); ?>';
                 }
