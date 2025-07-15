@@ -79,10 +79,10 @@ $user_id = $_GET['id'];
                 <a href="editOrder.php?order_id=<?php echo $order_id; ?>&id=<?php echo $user_id; ?>" class="btn btn-outline-success flex-fill">View Order</a>
             <?php } ?>
             <?php if (isset($_SESSION['role']) && $_SESSION['role'] == "Staff") { ?>
-                <a href="orderDetails.php?order_id=<?php echo $order_id; ?>&id=<?php echo $user_id; ?>" class="btn btn-outline-success flex-fill">View Order</a>
+                <a href="editOrder.php?order_id=<?php echo $order_id; ?>&id=<?php echo $user_id; ?>" class="btn btn-outline-success flex-fill">View Order</a>
             <?php } ?>
             <?php if (isset($_SESSION['role']) && $_SESSION['role'] == "Customer") { ?>
-                <a href="orderDetails.php?id=<?php echo $user_id; ?>" class="btn btn-success flex-fill">View Order Details</a>
+                <a href="orderDetails.php?order_id=<?php echo $order_id; ?>&id=<?php echo $user_id; ?>" class="btn btn-outline-success flex-fill">View Order</a>
             <?php } ?>
 
             <!-- back to dashboard -->
