@@ -219,6 +219,10 @@ button.dropdown-toggle:active {
     .adminDash-body {
         font-size: 12px;
     }
+
+    .orderlist-btn {
+        font-size: 12px;
+    }
 }
 
 .custom-card {
@@ -228,6 +232,51 @@ button.dropdown-toggle:active {
 }
 
 /* order list page */
+.status-pending {
+    background: #fff3cd;
+    /* warm yellow */
+    color: #856404;
+    /* dark yellow/brown */
+    border: 1px solid #ffe08a;
+}
+
+.status-in-progress {
+    background: #cce5ff;
+    /* soft blue */
+    color: #004085;
+    /* dark blue */
+    border: 1px solid #b8daff;
+}
+
+.status-ready-to-collect {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-completed {
+    background: #c3e6cb;
+    color: #0b2e13;
+    border: 1px solid #8fd19e;
+}
+
+.status-cancelled {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.orderlist-btn {
+    background: #c62828;
+    color: #FAFAFA;
+}
+
+.orderlist-btn:hover {
+    background: transparent;
+    color: #c62828;
+    border: 1px solid #c62828;
+}
+
 .dt-paging-button.page-item .page-link {
     color: #c62828;
 }

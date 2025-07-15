@@ -2,6 +2,14 @@
 session_start();
 include('dbms.php');
 
+$email = $_SESSION['email'] ?? null;
+$order_id = $_SESSION['order_id'] ?? null;
+$customer_name = $_SESSION['customer_name'] ?? null;
+$order_status = $_SESSION['order_status'] ?? null;
+
+// Clear session variables after reading (optional)
+unset($_SESSION['email'], $_SESSION['order_id'], $_SESSION['customer_name'], $_SESSION['order_status']);
+
 if (isset($_SESSION['role']) && ($_SESSION['role'] == "Admin" || $_SESSION['role'] == "Staff") && $_SESSION['id'] == $_GET['id']) {
 
     $user_id = $_GET['id'];
@@ -42,25 +50,39 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['viewFileBtn'])) {
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editOrderBtn'])) {
     $orderStatus = $_POST['orderStatus'];
     if ($orderStatus === 'Completed') {
-        $updateOrderStatus = "
-        UPDATE `order` 
-        SET order_status = '$orderStatus',
-            completed_date = NOW()
-        WHERE order_id = '$order_id'
-    ";
+        $updateOrderStatus = "UPDATE `order` 
+        SET order_status = '$orderStatus', completed_date = NOW()
+        WHERE order_id = '$order_id'";
     } else {
-        $updateOrderStatus = "
-        UPDATE `order` 
+        $updateOrderStatus = "UPDATE `order` 
         SET order_status = '$orderStatus'
-        WHERE order_id = '$order_id'
-    ";
+        WHERE order_id = '$order_id'";
     }
 
     if (mysqli_query($conn, $updateOrderStatus)) {
+        // find customer email
+        $sqlCustomerInfo = "SELECT a.customer_id, a.customer_name, a.order_id, a.order_status, b.email
+        FROM `order` a
+        LEFT JOIN user b 
+        ON a.customer_id = b.user_id
+        WHERE a.order_id = '$order_id'";
+        $queryCustomerInfo = mysqli_query($conn, $sqlCustomerInfo) or die(mysqli_error($conn));
+        $rowCustomerInfo = mysqli_fetch_assoc($queryCustomerInfo);
+
+        $cus_email = $rowCustomerInfo['email'];
+        $cus_order_id = $rowCustomerInfo['order_id'];
+        $cus_name = $rowCustomerInfo['customer_name'];
+        $cus_order_status = $rowCustomerInfo['order_status'];
+
+        $_SESSION['email'] = $cus_email;
+        $_SESSION['order_id'] = $cus_order_id;
+        $_SESSION['customer_name'] = $cus_name;
+        $_SESSION['order_status'] = $cus_order_status;
+
         echo "<script>
-        alert('Order updated successfully.');
-        window.location.href = 'adminOrderlist.php?id=$user_id';
-    </script>";
+            alert('Update Order Status Successfully!');
+            window.location.href = 'editOrder.php?order_id=$order_id&id=$user_id';
+        </script>";
         exit;
     } else {
         echo "Error: " . mysqli_error($conn);
@@ -326,6 +348,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editOrderBtn'])) {
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="./assets/js/email.js"></script>
+
+    <!-- run the function to send email to customer -->
+    <?php if ($email && $order_id && $customer_name && $order_status): ?>
+        <script>
+            window.onload = function() {
+                sendOrderStatusEmail(
+                    <?php echo json_encode($email); ?>,
+                    <?php echo json_encode($order_id); ?>,
+                    <?php echo json_encode($customer_name); ?>,
+                    <?php echo json_encode($order_status); ?>
+                );
+            };
+        </script>
+    <?php endif; ?>
 
     <script>
         // Sidebar toggle logic

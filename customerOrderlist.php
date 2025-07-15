@@ -165,14 +165,20 @@ $result = $stmt->get_result();
                                         <td>
                                             <?php
                                             $order_status = $row['order_status'];
-                                            $order_badge_class = ($order_status == 'Completed') ? 'bg-success text-white' : (($order_status == 'Pending') ? 'badge bg-warning text-black' : 'bg-primary text-white');
+                                            $order_badge_class =
+                                                ($order_status == 'Completed') ? 'status-completed text-dark' : 
+                                                (($order_status == 'Pending') ? 'status-pending text-dark' : 
+                                                (($order_status == 'In Progress') ? 'status-in-progress text-dark' : 
+                                                (($order_status == 'Ready To Collect') ? 'status-ready-to-collect text-dark' : 
+                                                (($order_status == 'Cancelled') ? 'status-cancelled text-dark' :
+                                                                'bg-primary text-white'))));
                                             ?>
                                             <span class="badge <?php echo $order_badge_class; ?>"><?php echo htmlspecialchars($order_status); ?></span>
                                         </td>
                                         <td>
                                             <?php
                                             $payment_status = $row['payment_status'];
-                                            $payment_badge_class = ($payment_status == 'Paid') ? 'bg-success text-white' : 'bg-warning text-dark';
+                                            $payment_badge_class = ($payment_status == 'Paid') ? 'status-completed text-dark' : 'status-pending text-dark';
                                             ?>
                                             <span class="badge <?php echo $payment_badge_class; ?>"><?php echo htmlspecialchars($payment_status); ?></span>
                                         </td>
@@ -231,10 +237,11 @@ $result = $stmt->get_result();
         $('#customerOrderlist').DataTable({
             lengthChange: false,
             ordering: false,
+            paging: false,
             dom: '<"d-flex justify-content-between align-items-center mb-3"fB>t<"d-flex justify-content-between mt-2"ip>',
             buttons: [{
                 text: '<i class="bi bi-plus-circle"></i> Create New Order',
-                className: 'btn login-btn',
+                className: 'btn orderlist-btn btn-sm',
                 action: function() {
                     window.location.href = 'createOrder.php?id=<?php echo urlencode($user_id); ?>';
                 }

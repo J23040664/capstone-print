@@ -31,7 +31,8 @@ $sql = "SELECT
         JOIN `order_detail` od ON o.item_id = od.item_id
         JOIN `service_list` s ON od.service_id = s.service_id
         WHERE o.customer_id = ?
-        ORDER BY o.created_at DESC";
+        ORDER BY o.created_at DESC
+        LIMIT 10";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
@@ -209,8 +210,8 @@ $rowOrderCancelled = mysqli_fetch_assoc($queryOrderCancelled);
                     <div class="card h-100 w-100 custom-card">
                         <div class="card-body d-flex flex-column justify-content-center align-items-center">
                             <h5 class="card-title fs-6" style="color: #198754;">Orders Ready For Collection</h5>
-                            <?php if (!empty($rowOrderInProgress['total'])) { ?>
-                                <p class="card-text fs-2" style="color: #198754;"><?php echo $rowOrderInProgress['total']; ?></p>
+                            <?php if (!empty($rowOrderReadyCollect['total'])) { ?>
+                                <p class="card-text fs-2" style="color: #198754;"><?php echo $rowOrderReadyCollect['total']; ?></p>
                             <?php } else { ?>
                                 <p class="card-text fs-2">0</p>
                             <?php } ?>
@@ -223,8 +224,8 @@ $rowOrderCancelled = mysqli_fetch_assoc($queryOrderCancelled);
                     <div class="card h-100 w-100 custom-card">
                         <div class="card-body d-flex flex-column justify-content-center align-items-center">
                             <h5 class="card-title fs-6" style="color: #C62828;">Cancel Orders</h5>
-                            <?php if (!empty($rowOrderInProgress['total'])) { ?>
-                                <p class="card-text fs-2" style="color: #C62828;"><?php echo $rowOrderInProgress['total']; ?></p>
+                            <?php if (!empty($rowOrderCancelled['total'])) { ?>
+                                <p class="card-text fs-2" style="color: #C62828;"><?php echo $rowOrderCancelled['total']; ?></p>
                             <?php } else { ?>
                                 <p class="card-text fs-2">0</p>
                             <?php } ?>
@@ -235,7 +236,7 @@ $rowOrderCancelled = mysqli_fetch_assoc($queryOrderCancelled);
             </div>
 
             <div class="row">
-                <!-- Sales and Orders Chart -->
+                <!-- Recent orders -->
                 <div class="col-md-12 mt-4 d-flex">
                     <div class="card h-100 w-100">
                         <div class="card-body">
@@ -263,14 +264,21 @@ $rowOrderCancelled = mysqli_fetch_assoc($queryOrderCancelled);
                                                     <td>
                                                         <?php
                                                         $order_status = $row['order_status'];
-                                                        $order_badge_class = ($order_status == 'Completed') ? 'bg-success text-white' : (($order_status == 'Pending') ? 'badge bg-warning text-black' : 'bg-primary text-white');
+                                                        $order_badge_class =
+                                                            $order_badge_class =
+                                                            ($order_status == 'Completed') ? 'status-completed text-black' : 
+                                                                            (($order_status == 'Pending') ? 'status-pending text-black' : 
+                                                                            (($order_status == 'In Progress') ? 'status-in-progress text-black' : 
+                                                                            (($order_status == 'Ready To Collect') ? 'status-ready-to-collect text-black' :
+                                                                            (($order_status == 'Cancelled') ? 'status-cancelled text-black' : 
+                                                                            'bg-primary text-white'))));
                                                         ?>
                                                         <span class="badge <?php echo $order_badge_class; ?>"><?php echo htmlspecialchars($order_status); ?></span>
                                                     </td>
                                                     <td>
                                                         <?php
                                                         $payment_status = $row['payment_status'];
-                                                        $payment_badge_class = ($payment_status == 'Paid') ? 'bg-success text-white' : 'bg-warning text-dark';
+                                                        $payment_badge_class = ($payment_status == 'Paid') ? 'status-completed text-black' : 'status-pending text-black';
                                                         ?>
                                                         <span class="badge <?php echo $payment_badge_class; ?>"><?php echo htmlspecialchars($payment_status); ?></span>
                                                     </td>

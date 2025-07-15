@@ -297,7 +297,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editQuotationBtn'])) {
 
 
 
-                    <a href="mailto:<?php echo $rowShowQuotation['requester_email']; ?>" class="btn btn-success mb-3 w-100">Reply</a>
+                    <a href="mailto:<?php echo $rowShowQuotationDetails['requester_email']; ?>" class="btn btn-success mb-3 w-100">Reply</a>
 
                     <hr class="mt-3 mb-5">
 
@@ -306,8 +306,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['editQuotationBtn'])) {
                         <div class="col-md-4">
                             <label for="quotationStatus">Quotation Status:</label>
                             <select class="form-select mt-3 mb-3" name="quotationStatus" required>
-                                <option value="Pending" <?php if ($rowShowQuotation['quotation_status'] === 'Pending') echo 'selected'; ?>>Pending</option>
-                                <option value="Done" <?php if ($rowShowQuotation['quotation_status'] === 'Done') echo 'selected'; ?>>Done</option>
+                                <option value="Pending" <?php if ($rowShowQuotationDetails['quotation_status'] === 'Pending') echo 'selected'; ?>>Pending</option>
+                                <option value="Done" <?php if ($rowShowQuotationDetails['quotation_status'] === 'Done') echo 'selected'; ?>>Done</option>
                             </select>
                         </div>
 

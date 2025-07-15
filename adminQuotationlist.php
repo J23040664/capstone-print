@@ -145,9 +145,9 @@ $queryDeleteCompletedFile = mysqli_query($conn, $deleteCompletedFile) or die(mys
                                 <td><?php echo $rowShowQuotation['requester_phone_number']; ?></td>
                                 <td>
                                     <?php if ($rowShowQuotation['quotation_status'] == "Pending") { ?>
-                                        <span class="badge bg-warning text-black"><?php echo $rowShowQuotation['quotation_status']; ?></span>
+                                        <span class="badge status-pending text-black"><?php echo $rowShowQuotation['quotation_status']; ?></span>
                                     <?php } else if ($rowShowQuotation['quotation_status'] == "Done") { ?>
-                                        <span class="badge bg-success text-white"><?php echo $rowShowQuotation['quotation_status']; ?></span>
+                                        <span class="badge status-completed text-black"><?php echo $rowShowQuotation['quotation_status']; ?></span>
                                     <?php } ?>
                                 </td>
                                 <td><?php echo $rowShowQuotation['create_date']; ?></td>
@@ -186,7 +186,9 @@ $queryDeleteCompletedFile = mysqli_query($conn, $deleteCompletedFile) or die(mys
             scrollY: '400px', // Set vertical scroll height
             scrollCollapse: true, // Collapse table height when fewer rows
             paging: true, // Enable pagination
-            "order": [[0, "desc"]],
+            "order": [
+                [0, "desc"]
+            ],
             columnDefs: [{
                 targets: '_all',
                 className: 'text-center'
