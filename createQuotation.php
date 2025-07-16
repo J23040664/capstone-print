@@ -185,11 +185,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Email <span class="text-danger">*</span></label>
-                    <input type="email" name="requester_email" class="form-control" required>
+                    <input type="email" name="requester_email" class="form-control" value="<?php echo $rowShowUserInfo['email'];  ?>" required>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Phone Number (Optional)</label>
-                    <input type="text" name="requester_phone_number" class="form-control">
+                    <label class="form-label">Phone Number <span class="text-danger">*</span></label>
+                    <input type="text" name="requester_phone_number" class="form-control" value="<?php echo $rowShowUserInfo['phone_number'];  ?>" required>
                 </div>
                 <!-- Prefered Contact Method -->
                 <div class="mb-3">
