@@ -185,11 +185,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Email <span class="text-danger">*</span></label>
-                    <input type="email" name="requester_email" class="form-control" required>
+                    <input type="email" name="requester_email" class="form-control" value="<?php echo $rowShowUserInfo['email'];  ?>" required>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Phone Number (Optional)</label>
-                    <input type="text" name="requester_phone_number" class="form-control">
+                    <label class="form-label">Phone Number <span class="text-danger">*</span></label>
+                    <input type="text" name="requester_phone_number" class="form-control" value="<?php echo $rowShowUserInfo['phone_number'];  ?>" required>
                 </div>
                 <!-- Prefered Contact Method -->
                 <div class="mb-3">
@@ -220,11 +220,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             data-bs-placement="right"
                             data-bs-html="true"
                             title="How?"
-                            tabindex="0" 
+                            tabindex="0"
                             data-bs-content="Select a request type from the menu. If your request is not listed, choose 'Other' and type your specific request.">?</button>
                     </label>
 
-                    <select name="request_type" class="form-select" id="requestTypeSelect" onchange="toggleOtherInput()">
+                    <select name="request_type" class="form-select" id="requestTypeSelect" onchange="toggleOtherInput('requestTypeSelect', 'requestTypeOther')">
                         <option value="" disabled selected>Select a request type</option>
                         <option value="Booklet">Booklet</option>
                         <option value="Poster">Poster</option>
@@ -303,7 +303,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             data-bs-placement="right"
                             data-bs-html="true"
                             title="How?"
-                            tabindex="0" 
+                            tabindex="0"
                             data-bs-content="Select a paper type from the list. If not listed, choose 'Other' and enter your paper type.">?</button>
                     </label>
 
@@ -331,7 +331,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             data-bs-placement="right"
                             data-bs-html="true"
                             title="How?"
-                            tabindex="0" 
+                            tabindex="0"
                             data-bs-content="Choose a finishing method. If not listed, select 'Other' and enter your custom finishing.">?</button>
                     </label>
 
@@ -399,7 +399,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
             popoverTriggerList.forEach(el => {
                 new bootstrap.Popover(el, {
@@ -546,19 +546,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <!-- Control dropdown menu for request type-->
     <script>
-    function toggleOtherInput(selectId, inputId) {
-        const select = document.getElementById(selectId);
-        const input = document.getElementById(inputId);
+        function toggleOtherInput(selectId, inputId) {
+            const select = document.getElementById(selectId);
+            const input = document.getElementById(inputId);
 
-        if (select.value === 'Other') {
-            input.style.display = 'block';
-            input.required = true;
-        } else {
-            input.style.display = 'none';
-            input.required = false;
-            input.value = '';
+            if (select.value === 'Other') {
+                input.style.display = 'block';
+                input.required = true;
+            } else {
+                input.style.display = 'none';
+                input.required = false;
+                input.value = '';
+            }
         }
-    }
     </script>
 
 
