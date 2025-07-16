@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $_GET['id']) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submitCode'])) {
-    header("Location: reset_pass3.php?user_id=" . $_SESSION['user_id']);
+    header("Location: reset_pass3.php?id=" . $_SESSION['user_id']);
     exit();
 }
 
