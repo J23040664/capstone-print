@@ -594,14 +594,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const f1 = document.getElementById('finishing1').value;
             const f2 = document.getElementById('finishing2').value;
             const f3 = document.getElementById('finishing3').value;
-
+            const copies = parseInt(document.getElementById('copies').value) || 0;
             // Calculate prices
             const p1 = f1 !== 'None' ? parseFloat(finishingPrices[f1] || 0) : 0;
             const p2 = f2 !== 'None' ? parseFloat(finishingPrices[f2] || 0) : 0;
             const p3 = f3 !== 'None' ? parseFloat(finishingPrices[f3] || 0) : 0;
 
 
-            const cost = p1 + p2 + p3;
+            const cost = (p1 + p2 + p3) * copies;
             document.getElementById('finishingCost').value = 'RM ' + cost.toFixed(2);
 
             updateTotalCost();

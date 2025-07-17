@@ -191,7 +191,7 @@ session_start();
         }
 
         const cost = copies * pages * size * color * service;
-        const finishingCost = finishing1 + finishing2 + finishing3;
+        const finishingCost = (finishing1 + finishing2 + finishing3) * copies;
         const totalCost = cost + finishingCost;
 
         calcResult.innerHTML =
